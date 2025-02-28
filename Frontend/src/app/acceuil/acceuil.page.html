@@ -1,0 +1,22 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Accueil</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="logout()">Déconnexion</ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <h2>Bienvenue, {{ userName }} !</h2>
+  <p>Ceci est la page principale après connexion.</p>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>À propos</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      Cette application permet l'authentification et la gestion des utilisateurs.
+    </ion-card-content>
+  </ion-card>
+</ion-content>
