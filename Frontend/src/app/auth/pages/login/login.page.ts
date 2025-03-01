@@ -30,11 +30,15 @@ export class LoginPage {
     this.authService.login({ email: this.email, password: this.password }).subscribe({
       next: (response) => {
         console.log('Login successful', response);
+        (document.activeElement as HTMLElement)?.blur();
         this.router.navigate(['/acceuil']);
       },
       error: (error) => {
         this.errorMessage = 'Login failed: ' + (error.error.message || 'Unknown error');
       },
     });
+  }
+  forgotPassword() {
+    this.router.navigate(['/forgot-password']); // Assurez-vous d'avoir cette route définie
   }
 }

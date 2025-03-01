@@ -5,8 +5,10 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+  
   <form (ngSubmit)="login()">
     <ion-item>
+      <h2 class="text-xl font-bold text-center mt-6">WELCOME BACK</h2>
       <ion-label position="floating">Email</ion-label>
       <ion-input type="email" [(ngModel)]="email" name="email" required></ion-input>
     </ion-item>
@@ -19,6 +21,9 @@
     <p *ngIf="errorMessage" class="error-text">{{ errorMessage }}</p>
 
     <ion-button expand="full" type="submit">Login</ion-button>
+    <p class="forgot-password">
+      <a (click)="forgotPassword()">Having issues with your password?</a>
+    </p>
 
   </form>
 </ion-content>

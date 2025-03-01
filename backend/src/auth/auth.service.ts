@@ -27,19 +27,31 @@ export class AuthService {
   async forgotPassword(email: string) {
     const user = await this.prisma.user.findUnique({ where: { email } });
     if (!user) throw new BadRequestException('User not found');
-
-    const resetToken = Math.random().toString(36).substring(2, 8); // Générer un code temporaire
+  
+    const resetToken = Math.random().toString(36).substring(2, 8); // Générer un token temporaire
+  
+    // Stocker le token en base
+    await this.prisma.user.update({
+      where: { email },
+      data: { resetToken },
+    });
+  
     return { message: 'Password reset token generated', token: resetToken };
   }
+  
 
-  async resetPassword(email: string, newPassword: string) {
-    const user = await this.prisma.user.findUnique({ where: { email } });
-    if (!user) throw new BadRequestException('Invalid reset request');
-
+  async resetPassword(token: string, newPassword: string) {
+    const user = await this.prisma.user.findFirst({ where: { resetToken: token } });
+    if (!user) throw new BadRequestException('Invalid or expired reset token');
+  
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    return this.prisma.user.update({
-      where: { email },
-      data: { password: hashedPassword },
+  
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { password: hashedPassword, resetToken: null }, // Réinitialise le token
     });
+  
+    return { message: 'Password successfully reset' };
   }
+  
 }
