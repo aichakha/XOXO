@@ -8,6 +8,5 @@ export class SignupDto {
   email: string;
 
   @IsNotEmpty()
-  @MinLength(6)
   password: string;
 }

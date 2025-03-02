@@ -26,9 +26,9 @@ export class ForgotPasswordPage {
     }
 
     this.authService.forgotPassword(this.email).subscribe({
-      next: () => {
-        alert('Vérifiez votre e-mail pour le lien de réinitialisation.');
-        this.router.navigate(['/reset-password']);
+      next: (response: { email: string; token: string }) => {  // ✅ Typage correct
+        alert('Check your email for the reset link!');
+        this.router.navigate(['/reset-password'], { queryParams: { email: this.email, token: response.token } });
       },
       error: (err) => console.error('Erreur de réinitialisation du mot de passe :', err)
     });

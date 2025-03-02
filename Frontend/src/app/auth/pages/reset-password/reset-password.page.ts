@@ -17,6 +17,7 @@ import { IonicModule } from '@ionic/angular';
   styleUrls: ['./reset-password.page.scss']
 })
 export class ResetPasswordPage {
+  email = '';
   newPassword = '';
   confirmPassword = '';
   token = '';
@@ -24,7 +25,14 @@ export class ResetPasswordPage {
   showConfirmPassword = false;
 
   constructor(private authService: AuthService, private route: ActivatedRoute, private router: Router) {
-    this.token = this.route.snapshot.queryParams['token'];
+    
+  }
+  ngOnInit() {
+    this.route.queryParams.subscribe(params => {
+      this.email = params['email'];
+      this.token = params['token'];
+      console.log('📩 Email et Token récupérés:', this.email, this.token);
+    });
   }
 
   togglePassword() {
@@ -36,7 +44,7 @@ export class ResetPasswordPage {
   }
 
   resetPassword() {
-    if (!this.newPassword || !this.confirmPassword) {
+    if (!this.email || !this.newPassword || !this.confirmPassword) {
       alert('Please fill in all fields');
       return;
     }
@@ -46,7 +54,7 @@ export class ResetPasswordPage {
       return;
     }
 
-    const data = { token: this.token, newPassword: this.newPassword };
+    const data = { email: this.email, token: this.token, newPassword: this.newPassword };
     this.authService.resetPassword(data).subscribe({
       next: () => {
         alert('Password updated successfully!');
