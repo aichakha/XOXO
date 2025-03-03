@@ -30,6 +30,7 @@ export class LoginPage {
     this.authService.login({ email: this.email, password: this.password }).subscribe({
       next: (response) => {
         console.log('Login successful', response);
+        this.authService.setToken(response.token);
         (document.activeElement as HTMLElement)?.blur();
         this.router.navigate(['/acceuil']);
       },

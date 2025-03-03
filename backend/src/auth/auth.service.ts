@@ -2,9 +2,10 @@ import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
+import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService,private jwtService: JwtService) {}
 
   async signUp(name: string, email: string, password: string) {
     const existingUser = await this.prisma.user.findUnique({ where: { email } });
@@ -25,8 +26,13 @@ export class AuthService {
     console.log('Hashed password from DB:', user.password);
     console.log('Password match:', passwordMatch);
     if (!passwordMatch) throw new UnauthorizedException('Invalid credentials');
-
-    return { message: 'Login successful', userId: user.id };
+    const payload = { email: user.email, sub: user.id };
+    const token = this.jwtService.sign(payload);
+    return { 
+      message: 'Login successful', 
+      userId: user.id, 
+      token 
+    };
   }
 
   async forgotPassword(email: string) {
