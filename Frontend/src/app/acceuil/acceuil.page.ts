@@ -24,6 +24,11 @@ export class AcceuilPage {
     localStorage.removeItem('user');
     this.router.navigate(['/login']);
   }
+  signup() {
+    // Déconnexion de l'utilisateur (peut être améliorée avec JWT plus tard)
+    
+    this.router.navigate(['signup']);
+  }
 
   ngOnInit() {
     const user = localStorage.getItem('user');
