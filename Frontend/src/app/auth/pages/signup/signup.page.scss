@@ -1,0 +1,57 @@
+/* Fond dégradé */
+ion-content {
+    --background: linear-gradient(to bottom, #a38cd6, #6a5acd);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    position: relative;
+  }
+  
+  /* Conteneur du formulaire */
+  .form-container {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 400px;
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+  
+  /* Titres */
+  ion-title {
+    text-align: center;
+    font-weight: bold;
+  }
+  
+  /* Champs d'entrée */
+  ion-input {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 10px 0;
+    --padding-start: 10px;
+  }
+  
+  /* Bouton */
+  ion-button {
+    --background: #a38cd6;
+    --color: white;
+    font-weight: bold;
+    border-radius: 10px;
+    margin-top: 15px;
+  }
+  
+  /* Icônes dans les champs */
+  ion-item {
+    --border-radius: 8px;
+    --inner-padding-start: 10px;
+    margin: 10px 0;
+  }
+  
