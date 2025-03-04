@@ -10,7 +10,7 @@ export const routes: Routes = [
   { path: 'acceuil', component: AcceuilPage },
   { path: 'login', component: LoginPage },
   { path: 'signup', component: SignupPage },
-  { path: 'forgot-password', component: ForgotPasswordPage }, 
+  { path: 'forgot-password', component: ForgotPasswordPage },
   { path: 'reset-password',component: ResetPasswordPage },
   {
     path: 'signup',
@@ -25,5 +25,5 @@ export const routes: Routes = [
     loadComponent: () => import('./auth/pages/reset-password/reset-password.page').then( m => m.ResetPasswordPage)
   },
 
-  
+
 ];

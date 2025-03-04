@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { AuthService } from '../auth/services/auth.service';
 import { CommonModule } from '@angular/common';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
+import { AuthService } from '../auth/services/auth.service';
 @Component({
   selector: 'app-acceuil',
   imports: [
@@ -15,6 +15,9 @@ import { IonicModule } from '@ionic/angular';
   styleUrls: ['./acceuil.page.scss'],
 })
 export class AcceuilPage {
+  login() {
+    this.router.navigate(['/login']);
+  }
   userName: string = '';
 
   constructor(private router: Router, private authService: AuthService) {}
@@ -26,7 +29,7 @@ export class AcceuilPage {
   }
   signup() {
     // Déconnexion de l'utilisateur (peut être améliorée avec JWT plus tard)
-    
+
     this.router.navigate(['signup']);
   }
 
@@ -35,5 +38,8 @@ export class AcceuilPage {
     if (user) {
       this.userName = JSON.parse(user).name;
     }
+  }
+  Home() {
+    this.router.navigate(['/acceuil']);
   }
 }

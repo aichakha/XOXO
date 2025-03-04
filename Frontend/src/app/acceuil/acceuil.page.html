@@ -1,23 +1,42 @@
-<ion-header>
-  <ion-toolbar>
-    <ion-title>Accueil</ion-title>
-    <ion-buttons slot="end">
-      <ion-button (click)="logout()">Déconnexion</ion-button>
-      <ion-button (click)="  signup()">signup</ion-button>
-    </ion-buttons>
-  </ion-toolbar>
+
+    <div class="container">
+      <ion-header class="navbar">
+        <div class="logo">
+          <div id="logo">
+
+            <ion-buttons slot="start">
+              <ion-img src="assets/icon/Logo2.png"  style="height: 50px; width: auto;"></ion-img>
+            </ion-buttons>
+            </div>
+        </div>
+        <nav>
+          <ul>
+            <li><a (click)="Home()">Home</a></li>
+            <li><a href="ac">History</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </nav>
+        <div class="auth-buttons">
+          <button class="sign-in" (click)="login()">SIGN IN</button>
+          <button class="join-now" (click)="signup()">JOIN NOW</button>
+        </div>
+
 </ion-header>
 
-<ion-content class="ion-padding">
-  <h2>Bienvenue, {{ userName }} !</h2>
-  <p>Ceci est la page principale après connexion.</p>
 
-  <ion-card>
-    <ion-card-header>
-      <ion-card-title>À propos</ion-card-title>
-    </ion-card-header>
-    <ion-card-content>
-      Cette application permet l'authentification et la gestion des utilisateurs.
-    </ion-card-content>
-  </ion-card>
-</ion-content>
+  <main class="upload-section">
+    <div class="upload-box">
+      <div class="icon">
+        <img src="assets/icon/icon.png" />
+      </div>
+      <p class="upload-text">CLICK TO ADD YOUR CLIP</p>
+      <p>OR</p>
+      <input type="text" placeholder="INSERT LINK TO THE MEDIA" class="input-link" />
+      <button class="convert-button">CONVERT TO TEXT</button>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 Recapify Inc. All rights reserved.</p>
+  </footer>
+</div>
