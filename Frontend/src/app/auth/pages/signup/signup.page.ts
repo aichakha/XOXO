@@ -27,4 +27,8 @@ export class SignupPage {
     
     
   }
+  backlogin() {
+    this.router.navigate(['/login']); // Assurez-vous d'avoir cette route définie
+  }
 }
+

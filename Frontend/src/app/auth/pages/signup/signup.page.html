@@ -25,7 +25,10 @@
     </ion-item>
 
     <ion-button expand="full" (click)="signup()">Sign Up</ion-button>
-
-    <p>Already have an account? <a routerLink="/login">Log in</a></p>
+    
+    <p class="back-to-login">Already have an account? 
+      <a (click)="backlogin()">login</a>
+    </p>
+    
   </div>
 </ion-content>
