@@ -42,10 +42,9 @@ export class AcceuilPage {
   Home() {
     this.router.navigate(['/acceuil']);
   }
-<<<<<<< HEAD
   History() {
     this.router.navigate(['/history']);
-=======
+  }
   Contact() {
     this.router.navigate(['/contact']);
   }
@@ -62,6 +61,6 @@ export class AcceuilPage {
       const file = input.files[0];
       console.log('Fichier sélectionné :', file.name);
 }
->>>>>>> d7d5fc38fc9ae51a89110471040d064f4704f3d6
+
   }
 }
