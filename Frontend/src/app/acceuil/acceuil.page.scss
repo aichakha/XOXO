@@ -66,6 +66,9 @@ body {
       text-decoration: none;
       color: #333;
       font-weight: bold;
+      font-size: 18px;
+      transition: color 0.3s ease;
+      cursor: pointer;
 
       &:hover {
         color: $primary-color;
@@ -75,20 +78,21 @@ body {
 
  .auth-buttons {
     display: flex;
-    gap: 10px;
+    gap: 15px;
 
     button {
       padding: 10px 20px;
       border: none;
-      border-radius: 5px;
+      border-radius: 8px;
       cursor: pointer;
-      font-size: $font-size-base;
-      transition: background-color 0.3s ease;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background 0.3s ease;
 
       &.sign-in {
-        background-color: transparent;
+        background: transparent;
         color: $primary-color;
-        border: 1px solid $primary-color;
+        border: 2px solid $primary-color;
 
         &:hover {
           background-color: $primary-color;
@@ -97,7 +101,7 @@ body {
       }
 
       &.join-now {
-        background-color: $primary-color;
+        background: $primary-color;
         color: white;
 
         &:hover {

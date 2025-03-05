@@ -43,38 +43,82 @@ body {
   align-items: center;
   width: 100%;
   padding: 10px 20px;
-  background-color: rgba(255, 255, 255, 0.8); // Fond semi-transparent
+  background: rgba(255, 255, 255, 0.9); // Fond plus opaque
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
   margin-bottom: 20px;
+  position: fixed; // Fixer la navbar en haut
+  top: 0;
+  left: 0;
+  z-index: 1000;
+}
 
-  .logo {
-    margin-right: auto; // Keeps logo aligned left
+.logo {
+  display: flex;
+  align-items: center;
+
+  ion-img {
+    height: 50px;
+    width: auto;
   }
+}
 
-  nav ul {
-    list-style:none;
-    display: flex;
-    justify-content: center;
-    // Center the list items
-    gap: 20px;
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 30px;
+  margin: 0;
+  padding: 0;
 
-    margin: 0;
-    padding: 0;
-    flex-grow: 1; // Ensures the nav items expand to the full available width
+  li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    font-size: 18px;
+    transition: color 0.3s ease;
+    cursor: pointer;
 
-    li a {
-      text-decoration: none;
-      color: #333;
-      font-weight: bold;
-
-
-      &:hover {
-        color: $primary-color;
-      }
+    &:hover {
+      color: $primary-color;
     }
   }
 }
+
+// Boutons d'authentification
+.auth-buttons {
+  display: flex;
+  gap: 15px;
+
+  button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    font-weight: bold;
+  }
+
+  .sign-in {
+    background: transparent;
+    color: $primary-color;
+    border: 2px solid $primary-color;
+
+    &:hover {
+      background: $primary-color;
+      color: white;
+    }
+  }
+
+  .join-now {
+    background: $primary-color;
+    color: white;
+
+    &:hover {
+      background: darken($primary-color, 10%);
+    }
+  }
+}
+
 
 // Conteneur principal du formulaire
 .contact-container {
@@ -145,7 +189,7 @@ footer {
   background-color: rgba(255, 255, 255, 0.8); // Fond semi-transparent
   width: 100%;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
+  
   position: fixed;
   bottom: 0;
 

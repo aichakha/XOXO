@@ -1,8 +1,17 @@
 // Variables
-$primary-color: #6a5acd; // Violet principal
-$secondary-color: #a38cd6; // Violet clair
+$primary-color: #6a5acd; // Couleur principale (violet)
+$secondary-color: #a38cd6; // Couleur secondaire (violet clair)
 $font-family: Arial, sans-serif; // Police de caractères
 $font-size-base: 16px; // Taille de base de la police
+
+ion-content {
+  --background: linear-gradient(to bottom, #a38cd6, #6a5acd);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200vh;
+  position: relative;
+}
 
 // Mixins
 @mixin flex-center {
@@ -11,30 +20,39 @@ $font-size-base: 16px; // Taille de base de la police
   align-items: center;
 }
 
-// Styles généraux
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+// Styles de base
+body {
+  font-family: $font-family;
+  margin: 0;
+  padding: 0;
+  font-size: $font-size-base;
+  background: linear-gradient(to bottom, $secondary-color, $primary-color); // Dégradé de fond
   height: 100vh;
-  background: linear-gradient(to bottom, #8a72cf, #7b60c6);
+  @include flex-center;
 }
 
-// Navbar
+.container {
+  @include flex-center;
+  flex-direction: column;
+  width: 100vw; // Assure que ça prend toute la largeur de l'écran
+  height: 100vh; // Assure que ça prend toute la hauteur de l'écran
+  margin: 0;
+}
+
+// Barre de navigation
 .navbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
   padding: 10px 20px;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.8); // Fond semi-transparent
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
   margin-bottom: 20px;
 
   .logo img {
     height: 60px;
-    width: 60px;
+    width: 60px; // Taille du logo
   }
 
   nav ul {
@@ -43,15 +61,45 @@ $font-size-base: 16px; // Taille de base de la police
     gap: 20px;
     margin: 0;
     padding: 0;
+    margin-left: -110px; 
+    justify-content: flex-start; // Aligne verticalement en haut
+    align-items: center;
 
     li a {
       text-decoration: none;
       color: #333;
       font-weight: bold;
+      font-size: 18px;
+      transition: color 0.3s ease;
       cursor: pointer;
+     
 
       &:hover {
         color: $primary-color;
+      }
+    }
+  }
+
+  .auth-buttons {
+    display: flex;
+    gap: 15px;
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+
+      &.logout {
+        background: $primary-color;
+        color: white;
+
+        &:hover {
+          background-color: darken($primary-color, 10%);
+        }
       }
     }
   }
@@ -61,32 +109,36 @@ $font-size-base: 16px; // Taille de base de la police
 .history-page {
   display: flex;
   flex-direction: column;
-  align-items: flex-start; // Aligner tout à gauche
+  align-items: flex-start;
   width: 100%;
-  background: linear-gradient(to bottom, $primary-color, $secondary-color);
   font-family: $font-family;
   padding: 20px;
+  background-color: rgba(255, 255, 255, 0.8); // Fond semi-transparent
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 // Barre de recherche
 .search-container {
-  width: 100%;
-  max-width: 800px; // Même largeur que les notes
-  margin-bottom: 20px; // Espace entre la barre de recherche et les notes
-}
+  width: 42%;
+  max-width: 800px;
+  margin-bottom: 20px;
+  margin-left: 170px;
+  
 
-ion-searchbar {
-  width: 100%;
-  padding: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  font-size: $font-size-base;
+  ion-searchbar {
+    width: 100%;
+    padding: 10px;
+    border-radius: 20px;
+    
+    font-size: $font-size-base;
+  }
 }
 
 // Conteneur des clips
 .clips-container {
   width: 100%;
-  max-width: 800px; // Même largeur que la barre de recherche
+  max-width: 800px;
   display: flex;
   flex-wrap: wrap;
   gap: 15px;
@@ -161,20 +213,24 @@ ion-card {
 
   h2 {
     color: $primary-color;
+    font-size: 24px;
   }
 
   h4 {
     color: $secondary-color;
+    font-size: 18px;
   }
 
   p {
     margin: 10px 0;
     color: #333;
+    font-size: 16px;
   }
 
   small {
     display: block;
     color: gray;
+    font-size: 14px;
   }
 
   ion-button {
@@ -187,10 +243,11 @@ ion-card {
 // Bouton de chargement
 .load-more-container {
   text-align: center;
-  margin: 20px 0;
+  margin: 10px 0;
 
   ion-button {
-    background-color: $primary-color;
+   
+    --background: #a38cd6;
     color: white;
     border-radius: 5px;
     padding: 10px 20px;
@@ -198,38 +255,13 @@ ion-card {
   }
 }
 
-// Boutons d'authentification
-.auth-buttons {
-  display: flex;
-  gap: 10px;
-
-  button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: $font-size-base;
-    transition: background-color 0.3s ease;
-
-    &.logout {
-      background-color: $primary-color;
-      color: white;
-
-      &:hover {
-        background-color: darken($primary-color, 10%);
-      }
-    }
-  }
-}
-
-// Footer
+// Pied de page
 footer {
   text-align: center;
   padding: 10px;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.8); // Fond semi-transparent
   width: 100%;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
   margin-top: 20px;
 
   p {

@@ -45,7 +45,9 @@ export class HistoryPage implements OnInit {
     this.filterClips();
   }
 
-
+  Contact() {
+    this.router.navigate(['/contact']);
+  }
 
   Home() {
     this.router.navigate(['/acceuil']);

@@ -64,6 +64,17 @@ export class ContactPage implements OnInit {
   Contact() {
     this.router.navigate(['/contact']); // Navigation fonctionnelle
   }
+  History() {
+    this.router.navigate(['/history']);
+  }
+  login() {
+    this.router.navigate(['/login']);
+  }
+  signup() {
+    // Déconnexion de l'utilisateur (peut être améliorée avec JWT plus tard)
+
+    this.router.navigate(['signup']);
+  }
 
   ngOnInit() {}
 }

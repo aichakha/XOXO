@@ -1,64 +1,68 @@
-<ion-header class="navbar">
-  <div class="logo">
-    <div id="logo">
-      <ion-buttons slot="start">
-        <a (click)="Home()">
-          <ion-img src="assets/icon/Logo2.png" style="height: 50px; width: auto;"></ion-img>
-        </a>
-      </ion-buttons>
+<div class="container">
+  <ion-header class="navbar">
+    <div class="logo">
+      <div id="logo">
+        <ion-buttons slot="start">
+          <a (click)="Home()">
+            <ion-img src="assets/icon/Logo2.png" style="height: 50px; width: auto;"></ion-img>
+          </a>
+        </ion-buttons>
+      </div>
     </div>
-  </div>
-
-  <nav>
-    <ul>
-      <li><a (click)="Home()">Home</a></li>
-      <li><a (click)="History()">History</a></li>
-      <li><a href="#">Contact</a></li>
-    </ul>
-  </nav>
-
-  <div class="auth-buttons">
-    <button class="logout" (click)="logout()">LOGOUT</button>
-  </div>
-</ion-header>
-
-<ion-content class="history-page">
-  <div class="search-container">
-    <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="filterClips()"></ion-searchbar>
-  </div>
-
-  <div class="content-container">
-    <!-- Liste des notes -->
-    <div class="clips-container">
-      <ion-card *ngFor="let clip of filteredClips" (click)="selectClip(clip)">
-        <ion-card-header>
-          <ion-card-title>{{ clip.name }}</ion-card-title>
-          <ion-card-subtitle>{{ clip.username }}</ion-card-subtitle>
-        </ion-card-header>
-        <ion-card-content>
-          {{ clip.text }}
-        </ion-card-content>
-        <ion-footer>
-          <small>{{ clip.date }}</small>
-        </ion-footer>
-      </ion-card>
+  
+    <nav>
+      <ul>
+        <li><a (click)="Home()">Home</a></li>
+        <li><a (click)="History()">History</a></li>
+        <li><a (click)="Contact()">Contact</a></li>
+      </ul>
+    </nav>
+  
+    <div class="auth-buttons">
+      <button class="logout" (click)="logout()">LOGOUT</button>
     </div>
-
-    <!-- Panneau latéral des détails de la note -->
-    <div class="note-details" *ngIf="selectedClip">
-      <h2>{{ selectedClip.name }}</h2>
-      <h4>{{ selectedClip.username }}</h4>
-      <p>{{ selectedClip.text }}</p>
-      <small>{{ selectedClip.date }}</small>
-      <ion-button (click)="closeDetails()">Close</ion-button>
+  </ion-header>
+  
+  <ion-content class="history-page">
+    <div class="search-container">
+      <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="filterClips()"></ion-searchbar>
     </div>
+  
+    <div class="content-container">
+      <!-- Liste des notes -->
+      <div class="clips-container">
+        <ion-card *ngFor="let clip of filteredClips" (click)="selectClip(clip)">
+          <ion-card-header>
+            <ion-card-title>{{ clip.name }}</ion-card-title>
+            <ion-card-subtitle>{{ clip.username }}</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            {{ clip.text }}
+          </ion-card-content>
+          <ion-footer>
+            <small>{{ clip.date }}</small>
+          </ion-footer>
+        </ion-card>
+      </div>
+  
+      <!-- Panneau latéral des détails de la note -->
+      <div class="note-details" *ngIf="selectedClip">
+        <h2>{{ selectedClip.name }}</h2>
+        <h4>{{ selectedClip.username }}</h4>
+        <p>{{ selectedClip.text }}</p>
+        <small>{{ selectedClip.date }}</small>
+        <ion-button (click)="closeDetails()">Close</ion-button>
+      </div>
+    </div>
+  
+    <div class="load-more-container">
+      <ion-button (click)="loadMore()">Show more</ion-button>
+    </div>
+    
+  </ion-content>
+  <footer>
+    <p>© 2025 Recapify Inc. All rights reserved.</p>
+  </footer>
+  
   </div>
-
-  <div class="load-more-container">
-    <ion-button (click)="loadMore()">Show more</ion-button>
-  </div>
-</ion-content>
-
-<footer>
-  <p>© 2025 Recapify Inc. All rights reserved.</p>
-</footer>
+  
