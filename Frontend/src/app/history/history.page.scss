@@ -1,0 +1,240 @@
+// Variables
+$primary-color: #6a5acd; // Violet principal
+$secondary-color: #a38cd6; // Violet clair
+$font-family: Arial, sans-serif; // Police de caractères
+$font-size-base: 16px; // Taille de base de la police
+
+// Mixins
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// Styles généraux
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(to bottom, #8a72cf, #7b60c6);
+}
+
+// Navbar
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px 20px;
+  background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  margin-bottom: 20px;
+
+  .logo img {
+    height: 60px;
+    width: 60px;
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    gap: 20px;
+    margin: 0;
+    padding: 0;
+
+    li a {
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+      cursor: pointer;
+
+      &:hover {
+        color: $primary-color;
+      }
+    }
+  }
+}
+
+// Page d'historique
+.history-page {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start; // Aligner tout à gauche
+  width: 100%;
+  background: linear-gradient(to bottom, $primary-color, $secondary-color);
+  font-family: $font-family;
+  padding: 20px;
+}
+
+// Barre de recherche
+.search-container {
+  width: 100%;
+  max-width: 800px; // Même largeur que les notes
+  margin-bottom: 20px; // Espace entre la barre de recherche et les notes
+}
+
+ion-searchbar {
+  width: 100%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: $font-size-base;
+}
+
+// Conteneur des clips
+.clips-container {
+  width: 100%;
+  max-width: 800px; // Même largeur que la barre de recherche
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+// Style des cartes
+ion-card {
+  width: 300px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+
+  ion-card-header {
+    background: $primary-color;
+    color: white;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    padding: 10px;
+  }
+
+  ion-card-title {
+    font-size: 18px;
+    font-weight: bold;
+  }
+
+  ion-card-subtitle {
+    font-size: 14px;
+    opacity: 0.8;
+  }
+
+  ion-card-content {
+    padding: 10px;
+    font-size: 14px;
+    color: #333;
+  }
+
+  ion-footer {
+    text-align: right;
+    padding: 10px;
+    font-size: 12px;
+    color: gray;
+  }
+}
+
+// Conteneur principal
+.content-container {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+}
+
+// Panneau latéral des détails
+.note-details {
+  flex: 1;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 20px;
+  height: fit-content;
+  min-width: 300px;
+
+  h2 {
+    color: $primary-color;
+  }
+
+  h4 {
+    color: $secondary-color;
+  }
+
+  p {
+    margin: 10px 0;
+    color: #333;
+  }
+
+  small {
+    display: block;
+    color: gray;
+  }
+
+  ion-button {
+    margin-top: 10px;
+    background-color: $primary-color;
+    color: white;
+  }
+}
+
+// Bouton de chargement
+.load-more-container {
+  text-align: center;
+  margin: 20px 0;
+
+  ion-button {
+    background-color: $primary-color;
+    color: white;
+    border-radius: 5px;
+    padding: 10px 20px;
+    transition: background-color 0.3s ease;
+  }
+}
+
+// Boutons d'authentification
+.auth-buttons {
+  display: flex;
+  gap: 10px;
+
+  button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: $font-size-base;
+    transition: background-color 0.3s ease;
+
+    &.logout {
+      background-color: $primary-color;
+      color: white;
+
+      &:hover {
+        background-color: darken($primary-color, 10%);
+      }
+    }
+  }
+}
+
+// Footer
+footer {
+  text-align: center;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  width: 100%;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  margin-top: 20px;
+
+  p {
+    margin: 0;
+    color: #333;
+    font-size: 14px;
+  }
+}

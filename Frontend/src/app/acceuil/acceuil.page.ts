@@ -42,4 +42,7 @@ export class AcceuilPage {
   Home() {
     this.router.navigate(['/acceuil']);
   }
+  History() {
+    this.router.navigate(['/history']);
+  }
 }
