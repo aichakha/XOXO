@@ -4,6 +4,7 @@ import { AcceuilPage } from './acceuil/acceuil.page';
 import { SignupPage } from './auth/pages/signup/signup.page';
 import { ForgotPasswordPage } from './auth/pages/forgot-password/forgot-password.page';
 import { ResetPasswordPage } from './auth/pages/reset-password/reset-password.page';
+import { ContactPage } from './contact/contact.page';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/acceuil', pathMatch: 'full' },
@@ -12,6 +13,7 @@ export const routes: Routes = [
   { path: 'signup', component: SignupPage },
   { path: 'forgot-password', component: ForgotPasswordPage },
   { path: 'reset-password',component: ResetPasswordPage },
+  { path: 'contact',component: ContactPage },
   {
     path: 'signup',
     loadComponent: () => import('./auth/pages/signup/signup.page').then( m => m.SignupPage)
@@ -23,6 +25,10 @@ export const routes: Routes = [
   {
     path: 'reset-password',
     loadComponent: () => import('./auth/pages/reset-password/reset-password.page').then( m => m.ResetPasswordPage)
+  },
+  {
+    path: 'contact',
+    loadComponent: () => import('./contact/contact.page').then( m => m.ContactPage)
   },
 
 

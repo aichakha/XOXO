@@ -42,6 +42,9 @@ export class AcceuilPage {
   Home() {
     this.router.navigate(['/acceuil']);
   }
+  Contact() {
+    this.router.navigate(['/contact']);
+  }
   triggerFileInput() {
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     if (fileInput) {

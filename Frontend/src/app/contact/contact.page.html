@@ -1,0 +1,41 @@
+<div class="container">
+  <ion-header class="navbar">
+    <div class="logo">
+      <div id="logo">
+
+        <ion-buttons slot="start">
+          <ion-img src="assets/icon/Logo2.png"  style="height: 50px; width: auto;"></ion-img>
+        </ion-buttons>
+        </div>
+    </div>
+    <nav>
+      <ul>
+        <li><a (click)="Home()">Home</a></li>
+        <li><a href="ac">History</a></li>
+        <li><a (click)="Contact()">Contact</a></li>
+      </ul>
+    </nav>
+
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <div class="contact-container">
+    <div class="contact-card">
+      <h2>Contact</h2>
+
+      <div class="input-group">
+        <ion-input placeholder="First Name*" class="input"></ion-input>
+        <ion-input placeholder="Last Name*" class="input"></ion-input>
+      </div>
+
+      <ion-input placeholder="Email*" class="input"></ion-input>
+      <ion-input placeholder="Phone Number*" class="input"></ion-input>
+      <ion-textarea placeholder="Your message..." class="textarea"></ion-textarea>
+
+      <ion-button expand="full" class="send-button">Send Message</ion-button>
+    </div>
+  </div>
+  <footer>
+    <p>© 2025 Recapify Inc. All rights reserved.</p>
+  </footer>
+</ion-content>

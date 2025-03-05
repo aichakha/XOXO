@@ -1,0 +1,157 @@
+// Variables
+$primary-color: #6a5acd; // Couleur principale (violet)
+$secondary-color: #a38cd6; // Couleur secondaire (violet clair)
+$font-family: Arial, sans-serif; // Police de caractères
+$font-size-base: 16px; // Taille de base de la police
+$text-color: #333;
+ion-content {
+  --background: linear-gradient(to bottom, #a38cd6, #6a5acd);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  position: relative;
+}
+// Mixins
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// Styles généraux
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: $font-family;
+}
+
+body {
+  background: linear-gradient(135deg, $primary-color, $secondary-color);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+// Navbar
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px 20px;
+  background-color: rgba(255, 255, 255, 0.8); // Fond semi-transparent
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  margin-bottom: 20px;
+
+  .logo {
+    margin-right: auto; // Keeps logo aligned left
+  }
+
+  nav ul {
+    list-style:none;
+    display: flex;
+    justify-content: center;
+    // Center the list items
+    gap: 20px;
+
+    margin: 0;
+    padding: 0;
+    flex-grow: 1; // Ensures the nav items expand to the full available width
+
+    li a {
+      text-decoration: none;
+      color: #333;
+      font-weight: bold;
+
+
+      &:hover {
+        color: $primary-color;
+      }
+    }
+  }
+}
+
+// Conteneur principal du formulaire
+.contact-container {
+  @include flex-center;
+  height: 100vh;
+}
+
+.contact-card {
+  background: white;
+  padding: 30px;
+  border-radius: 15px;
+  width: 400px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); // Ajout direct sans mixin
+
+  h2 {
+    margin-bottom: 20px;
+    font-size: 24px;
+    color: $text-color;
+  }
+}
+
+// Groupes d'entrée pour aligner les champs sur la même ligne
+.input-group {
+  display: flex;
+  gap: 10px;
+
+  .input {
+    flex: 1;
+  }
+}
+
+// Champs de saisie
+.input, .textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: $font-size-base;
+}
+
+.textarea {
+  height: 100px;
+  resize: none;
+}
+
+// Bouton d'envoi
+.send-button {
+  padding: 10px 20px;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: $font-size-base;
+  transition: background-color 0.3s ease;
+  --background: #a38cd6;
+  --color: white;
+  font-weight: bold;
+  border-radius: 10px;
+  margin-top: 15px;
+
+}
+// Pied de page
+footer {
+  text-align: center;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.8); // Fond semi-transparent
+  width: 100%;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  position: fixed;
+  bottom: 0;
+
+  p {
+    margin: 0;
+    color: #333;
+    font-size: 14px;
+  }
+}
