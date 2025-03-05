@@ -26,9 +26,10 @@
 
   <main class="upload-section">
     <div class="upload-box">
-      <div class="icon">
+      <div class="icon" (click)="triggerFileInput()">
         <img src="assets/icon/icon.png" />
       </div>
+      <input type="file" id="fileInput" accept="video/*,audio/*" style="display: none;" (change)="onFileSelected($event)">
       <p class="upload-text">CLICK TO ADD YOUR CLIP</p>
       <p>OR</p>
       <input type="text" placeholder="INSERT LINK TO THE MEDIA" class="input-link" />

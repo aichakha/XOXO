@@ -42,4 +42,18 @@ export class AcceuilPage {
   Home() {
     this.router.navigate(['/acceuil']);
   }
+  triggerFileInput() {
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.click();
+    }
+  }
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      const file = input.files[0];
+      console.log('Fichier sélectionné :', file.name);
+}
+  }
 }
