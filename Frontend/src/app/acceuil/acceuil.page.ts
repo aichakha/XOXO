@@ -39,6 +39,9 @@ export class AcceuilPage {
       this.userName = JSON.parse(user).name;
     }
   }
+  view() {
+    this.router.navigate(['/view']); // Assurez-vous d'avoir cette route définie
+  }
   Home() {
     this.router.navigate(['/acceuil']);
   }

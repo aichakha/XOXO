@@ -1,0 +1,82 @@
+<ion-header class="navbar">
+  <div class="logo">
+    <div id="logo">
+      <ion-buttons slot="start">
+        <a (click)="Home()">
+          <ion-img src="assets/icon/Logo2.png" style="height: 50px; width: auto;"></ion-img>
+        </a>
+      </ion-buttons>
+    </div>
+  </div>
+
+  <nav>
+    <ul>
+      <li><a (click)="Home()">Home</a></li>
+      <li><a (click)="History()">History</a></li>
+      <li><a (click)="Contact()">Contact</a></li>
+    </ul>
+  </nav>
+
+  <div class="auth-buttons">
+    <button class="logout" (click)="logout()">LOGOUT</button>
+  </div>
+</ion-header>
+
+  
+
+    <!-- Contenu principal -->
+    <main>
+        <div class="content">
+            <h2>Item Surface</h2>
+            <div class="card">
+                <div class="user-info">
+                    <div class="user-avatar"></div>
+                    <div class="user-name">
+                        <strong>Name</strong><br>
+                        <small>username</small>
+                    </div>
+                </div>
+                <p>
+                    There's no other program that walks you through exactly what you need to know to start an online store fast...
+                </p>
+                <small>23.03.2021</small>
+            </div>
+        </div>
+<!--
+<button class="menu-btn" (click)="toggleSidebar()">☰ Menu</button>
+
+
+<aside class="sidebar" [ngClass]="{ 'open': sidebarOpen }">
+    <button>📥 Save</button>
+    <button>📩 Download</button>
+    <button>✏️ Edit</button>
+    <button>🔗 Share</button>
+    <button>🌍 Translate</button>
+    <button>📑 Summarize</button>
+</aside>-->
+   
+
+<div class="dropdown">
+  <i class="icon-menu" (click)="toggleDropdown($event)">☰</i>
+
+  <div class="dropdown-content" [ngClass]="{ 'open': dropdownOpen }">
+    <a href="#">📥 Save</a>
+    <a href="#">📩 Download</a>
+    <a href="#">✏️ Edit</a>
+    <a href="#">🔗 Share</a>
+    <a href="#">🌍 Translate</a>
+    <a href="#">📑 Summarize</a>
+  </div>
+</div>
+
+
+
+
+    </main>
+
+    <!-- Pied de page -->
+    <footer>
+        <p>© 2025 Recapify Inc. All rights reserved.</p>
+    </footer>
+
+

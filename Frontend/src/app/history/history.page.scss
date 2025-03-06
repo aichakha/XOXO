@@ -19,7 +19,10 @@ ion-content {
   justify-content: center;
   align-items: center;
 }
-
+.main{
+  background: linear-gradient(to bottom, $secondary-color, $primary-color); // Dégradé de fond
+  --background: linear-gradient(to bottom, #a38cd6, #6a5acd);
+}
 // Styles de base
 body {
   font-family: $font-family;
