@@ -21,15 +21,21 @@ $dark-text: #333;
   font-family: Arial, sans-serif;
 }
 
-body {
+
  
-  height: 100vh;
-  display: flex;
-  flex-direction: column;
+  body {
+    min-height: 100vh;
+    width: 100%;
+    background: linear-gradient(to bottom, #a38cd6, #6a5acd) !important; // Dégradé du violet clair au foncé
+    background-repeat: no-repeat;
+    background-attachment: fixed; // Empêche le scrolling du fond
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+  }
   
-  align-items: center;
-  justify-content: flex-start;
-}
+
 
 // Barre de navigation
 .navbar {
@@ -40,6 +46,7 @@ body {
   padding: 10px 20px;
   background-color: rgba(255, 255, 255, 0.8); // Fond semi-transparent
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
   margin-bottom: 20px;
 
   .logo img {
@@ -143,9 +150,9 @@ main {
   position: absolute;
   top: 5px;
   right: 26px;
-  font-size: 50px; // Augmente la taille ici
+  font-size: 40px; // Augmente la taille ici
   cursor: pointer;
-  color: #6a5acd;
+  color: #0a0a0a;
   transition: transform 0.2s ease;
 }
 
