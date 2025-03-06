@@ -1,31 +1,24 @@
-
-    <div class="container">
-      <ion-header class="navbar">
-        <div class="logo">
-          <div id="logo">
-
-            <ion-buttons slot="start">
-              <ion-img src="assets/icon/Logo2.png"  style="height: 50px; width: auto;"></ion-img>
-            </ion-buttons>
-            </div>
-        </div>
-        <nav>
-          <ul>
-            <li><a (click)="Home()">Home</a></li>
-
-            <li><a (click)="History()">History</a></li>
-            
-            <li><a (click)="Contact()">Contact</a></li>
-
-          </ul>
-        </nav>
-        <div class="auth-buttons">
-          <button class="sign-in" (click)="login()">SIGN IN</button>
-          <button class="join-now" (click)="signup()">JOIN NOW</button>
-        </div>
-
-</ion-header>
-
+<div class="container">
+  <ion-header class="navbar">
+    <div class="logo">
+      <div id="logo">
+        <ion-buttons slot="start">
+          <ion-img src="assets/icon/Logo2.png" style="height: 50px; width: auto;"></ion-img>
+        </ion-buttons>
+      </div>
+    </div>
+    <nav>
+      <ul>
+        <li><a (click)="Home()">Home</a></li>
+        <li><a (click)="History()">History</a></li>
+        <li><a (click)="Contact()">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="auth-buttons">
+      <button class="sign-in" (click)="login()">SIGN IN</button>
+      <button class="join-now" (click)="signup()">JOIN NOW</button>
+    </div>
+  </ion-header>
 
   <main class="upload-section">
     <div class="upload-box">
