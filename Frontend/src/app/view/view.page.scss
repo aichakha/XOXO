@@ -150,7 +150,7 @@ main {
   position: absolute;
   top: 5px;
   right: 26px;
-  font-size: 40px; // Augmente la taille ici
+  font-size: 22px; // Augmente la taille ici
   cursor: pointer;
   color: #0a0a0a;
   transition: transform 0.2s ease;
@@ -158,6 +158,12 @@ main {
 
 .icon-menu:hover {
   transform: scale(1.2); // Effet au survol
+}
+ion-img {
+  width: 65px;  // Set the desired small width
+  height: 26px; // Set the desired small height
+  display: inline-block; // Keep it aligned with text
+  vertical-align: middle; // Align with text if needed
 }
 
 // Conteneur du menu
