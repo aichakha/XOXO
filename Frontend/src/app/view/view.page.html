@@ -1,82 +1,80 @@
-<ion-header class="navbar">
-  <div class="logo">
-    <div id="logo">
-      <ion-buttons slot="start">
-        <a (click)="Home()">
-          <ion-img src="assets/icon/Logo2.png" style="height: 50px; width: auto;"></ion-img>
-        </a>
-      </ion-buttons>
-    </div>
-  </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recapify</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="logo">
+            <a href="#" (click)="Home()">
+              <ion-img src="assets/icon/Logo2.png" style="height: 50px; width: auto;"></ion-img>
+            </a>
+        </div>
+        <nav>
+            <ul>
+                <li><a (click)="Home()">Home</a></li>
+                <li><a (click)="History()">History</a></li>
+                <li><a (click)="Contact()">Contact</a></li>
+            </ul>
+        </nav>
+        <div class="auth-buttons">
+          <button class="logout" (click)="logout()">LOGOUT</button>
+        </div>
+    </header>
 
-  <nav>
-    <ul>
-      <li><a (click)="Home()">Home</a></li>
-      <li><a (click)="History()">History</a></li>
-      <li><a (click)="Contact()">Contact</a></li>
-    </ul>
-  </nav>
-
-  <div class="auth-buttons">
-    <button class="logout" (click)="logout()">LOGOUT</button>
-  </div>
-</ion-header>
-
-  
-
-    <!-- Contenu principal -->
     <main>
-        <div class="content">
+        <section class="content">
             <h2>Item Surface</h2>
-            <div class="card">
+            <article class="card">
                 <div class="user-info">
                     <div class="user-avatar"></div>
                     <div class="user-name">
-                        <strong>Name</strong><br>
+                        <strong>Name</strong>
                         <small>username</small>
                     </div>
                 </div>
-                <p>
-                    There's no other program that walks you through exactly what you need to know to start an online store fast...
-                </p>
+                <p>There's no other program that walks you through exactly what you need to know to start an online store fast...</p>
                 <small>23.03.2021</small>
+            </article>
+        </section>
+
+        <div class="dropdown">
+            <i class="icon-menu" (click)="toggleDropdown($event)">☰</i>
+            <div class="dropdown-content" [ngClass]="{ 'open': dropdownOpen }">
+                <a href="assets/icon/1.png">
+                <ion-img src="assets/icon/1.png"></ion-img>
+                <span>Translate</span>
+                </a>
+                <a href="assets\icon\2.png">
+                <ion-img src="assets/icon/2.png"></ion-img>
+                <span>Download</span>
+                </a>
+                <a href="assets\icon\3.png">
+                <ion-img src="assets/icon/3.png"></ion-img>
+                <span>Summarize</span>
+                </a>
+                <a href="assets\icon\4.png">
+                <ion-img src="assets/icon/4.png"></ion-img>
+                <span>Edit</span>
+                </a>
+                <a href="assets\icon\5.png">
+                <ion-img src="assets/icon/5.png"></ion-img>
+                <span>Save</span>
+                </a>
+                <a href="assets\icon\6.png">
+                <ion-img src="assets/icon/6.png"></ion-img>
+                <span>Share</span>
+                </a>
             </div>
         </div>
-<!--
-<button class="menu-btn" (click)="toggleSidebar()">☰ Menu</button>
-
-
-<aside class="sidebar" [ngClass]="{ 'open': sidebarOpen }">
-    <button>📥 Save</button>
-    <button>📩 Download</button>
-    <button>✏️ Edit</button>
-    <button>🔗 Share</button>
-    <button>🌍 Translate</button>
-    <button>📑 Summarize</button>
-</aside>-->
+    </main>
    
 
-<div class="dropdown">
-  <i class="icon-menu" (click)="toggleDropdown($event)">☰</i>
-
-  <div class="dropdown-content" [ngClass]="{ 'open': dropdownOpen }">
-    <a href="#">📥 Save</a>
-    <a href="#">📩 Download</a>
-    <a href="#">✏️ Edit</a>
-    <a href="#">🔗 Share</a>
-    <a href="#">🌍 Translate</a>
-    <a href="#">📑 Summarize</a>
-  </div>
-</div>
-
-
-
-
-    </main>
-
-    <!-- Pied de page -->
     <footer>
         <p>© 2025 Recapify Inc. All rights reserved.</p>
     </footer>
-
-
+</body>
+</html>
