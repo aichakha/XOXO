@@ -56,5 +56,8 @@ export class LoginPage {
   backsignup() {
     this.router.navigate(['/signup']);
   }
+  goBack() {
+    this.router.navigate(['/acceuil']); // Replace with actual route
+  }
 
 }

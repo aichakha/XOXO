@@ -121,4 +121,27 @@ ion-content {
       margin-left: 8px; /* Espacement entre la case à cocher et le label */
     }
   }
+  .back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    width: 45px;  // Square button size
+    height: 45px;
+    border-radius: 15%;  // Make it circular
+    background: rgba(255, 255, 255, 0.2); // Subtle transparency effect
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .back-icon {
+    width: 24px; // Ensure the icon fits inside
+    height: 24px;
+    filter: invert(1); // Make sure it’s visible on a dark background
+  }
+  
 }
