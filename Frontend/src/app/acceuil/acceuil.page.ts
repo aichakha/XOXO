@@ -4,8 +4,11 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { AuthService } from '../auth/services/auth.service';
+import { HttpClient } from '@angular/common/http'; // Import HttpClient
+
 @Component({
   selector: 'app-acceuil',
+  standalone: true,
   imports: [
     CommonModule,
     FormsModule,
@@ -15,12 +18,16 @@ import { AuthService } from '../auth/services/auth.service';
   styleUrls: ['./acceuil.page.scss'],
 })
 export class AcceuilPage {
+  transcribedText: string = '';
+  uploadedFile: File | null = null;
+  mediaUrl: string = '';
+
   login() {
     this.router.navigate(['/login']);
   }
   userName: string = '';
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(private router: Router, private authService: AuthService,private http: HttpClient) {}
 
   logout() {
     // Déconnexion de l'utilisateur (peut être améliorée avec JWT plus tard)
@@ -39,9 +46,15 @@ export class AcceuilPage {
       this.userName = JSON.parse(user).name;
     }
   }
+
   view() {
-    this.router.navigate(['/view']); // Assurez-vous d'avoir cette route définie
+    if (this.transcribedText) {
+      this.router.navigate(['/view'], { queryParams: { text: this.transcribedText } });
+    } else {
+      alert("Aucun fichier ou lien n'a été fourni !");
+    }
   }
+
   Home() {
     this.router.navigate(['/acceuil']);
   }
@@ -51,19 +64,58 @@ export class AcceuilPage {
   Contact() {
     this.router.navigate(['/contact']);
   }
-  triggerFileInput() {
+
+
+  onFileSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.uploadedFile = input.files[0];
+      this.mediaUrl = '';
+      console.log('File selected:', this.uploadedFile.name);
+    }else {
+        this.uploadedFile = null; // S'assurer que la valeur est bien mise à jour
+      }
+    }
+
+  // Vérifier si un fichier a été uploadé ou si une URL est fournie
+
+    triggerFileInput() {
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     if (fileInput) {
       fileInput.click();
     }
   }
+  canConvert(): boolean {
+    return !!this.uploadedFile || (!!this.mediaUrl && this.mediaUrl.trim().length > 0);
+  }
 
-  onFileSelected(event: Event) {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      const file = input.files[0];
-      console.log('Fichier sélectionné :', file.name);
-}
+  convertToText() {
+    if (!this.canConvert()) {
+      alert('Veuillez sélectionner un fichier ou entrer une URL avant de continuer.');
+      return;
+    }
 
+    let formData = new FormData();
+    let apiUrl = 'http://localhost:3000/ai/transcribe';
+
+    if (this.uploadedFile) {
+      formData.append('file', this.uploadedFile);
+      console.log('Envoi du fichier:', this.uploadedFile.name);
+    } else if (this.mediaUrl.trim()) {
+      formData.append('url', this.mediaUrl);
+      console.log('Envoi de l’URL:', this.mediaUrl);
+    }
+
+    this.http.post<any>(apiUrl, formData).subscribe({
+      next: (response) => {
+        this.transcribedText = response.transcribedText;
+        this.router.navigate(['/view'], { queryParams: { text: this.transcribedText } });
+      },
+      error: (error) => {
+        console.error('Erreur lors de la transcription:', error);
+        alert("Erreur lors de la transcription. Vérifiez l'URL ou le fichier.");
+      }
+    });
   }
 }
+

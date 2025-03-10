@@ -1,33 +1,44 @@
-import { Injectable } from '@nestjs/common';
-import { spawn } from 'child_process';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import axios from 'axios';
 import * as fs from 'fs';
-import * as path from 'path';
+import * as FormData from 'form-data';
 
 @Injectable()
 export class AIService {
   async transcribeAudio(filePath: string): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const whisperPath = 'whisper'; // Assurez-vous que Whisper est installé et accessible
-      const args = ["test.mp3", '--model', 'base'];
+    if (!fs.existsSync(filePath)) {
+      throw new InternalServerErrorException(`Fichier introuvable: ${filePath}`);
+    }
 
-      const process = spawn(whisperPath, args);
+    try {
+      const formData = new FormData();
+      formData.append('file', fs.createReadStream(filePath));
 
-      let output = '';
-      process.stdout.on('data', (data) => {
-        output += data.toString();
+      const response = await axios.post('http://localhost:8001/transcribe/', formData, {
+        headers: {
+          ...formData.getHeaders(),
+        },
       });
 
-      process.stderr.on('data', (data) => {
-        console.error(`Erreur Whisper: ${data}`);
-      });
+      if (response.data && response.data.text) {
+        return response.data.text;
+      } else {
+        throw new InternalServerErrorException('La transcription n\'a pas été générée.');
+      }
+    } catch (error) {
+      throw new InternalServerErrorException(`Erreur de transcription: ${error.message}`);
+    }
+  }
 
-      process.on('close', (code) => {
-        if (code === 0) {
-          resolve(output.trim());
-        } else {
-          reject(new Error(`Whisper a échoué avec le code ${code}`));
-        }
-      });
-    });
+  async downloadAudio(url: string): Promise<string> {
+    const filePath = 'temp_audio_from_url.wav';
+    const response = await axios.get(url, { responseType: 'arraybuffer' });
+
+    if (response.status !== 200) {
+      throw new InternalServerErrorException('Erreur lors du téléchargement du fichier audio.');
+    }
+
+    fs.writeFileSync(filePath, response.data); // Sauvegarde le fichier
+    return filePath;
   }
 }
