@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { AuthService } from '../auth/services/auth.service';
 import { HttpClient } from '@angular/common/http'; // Import HttpClient
+import { LoadingController } from '@ionic/angular';  // <-- Import LoadingController
 
 @Component({
   selector: 'app-acceuil',
@@ -21,13 +22,16 @@ export class AcceuilPage {
   transcribedText: string = '';
   uploadedFile: File | null = null;
   mediaUrl: string = '';
-
+  isLoading: boolean = false;  // Flag to track the loading state
+  loadingMessage: string = 'Converting...';  // Message during conversion
   login() {
     this.router.navigate(['/login']);
   }
   userName: string = '';
 
-  constructor(private router: Router, private authService: AuthService,private http: HttpClient) {}
+  constructor(private router: Router, private authService: AuthService,private http: HttpClient,  private loadingCtrl: LoadingController,private loadingController: LoadingController
+
+  ) {}
 
   logout() {
     // Déconnexion de l'utilisateur (peut être améliorée avec JWT plus tard)
@@ -85,39 +89,76 @@ export class AcceuilPage {
       fileInput.click();
     }
   }
+  
+
+  
+  
+   
+  
+  // Show full-page loading spinner
+  async presentLoading() {
+    const loading = await this.loadingCtrl.create({
+      message: 'Converting...',  // Custom message
+      spinner: 'crescent',  // Spinner type
+      cssClass: 'full-page-loading',  // Custom CSS class to style the full page spinner
+      backdropDismiss: false,  // Disable dismiss when clicked outside
+    });
+
+    await loading.present();  // Show the loading spinner
+    return loading;  // Return the loading instance
+  }
+
   canConvert(): boolean {
     return !!this.uploadedFile || (!!this.mediaUrl && this.mediaUrl.trim().length > 0);
   }
 
-  convertToText() {
+  async convertToText() {
     if (!this.canConvert()) {
-      alert('Veuillez sélectionner un fichier ou entrer une URL avant de continuer.');
+      alert('Please select a file or enter a URL before continuing.');
       return;
     }
 
+    this.isLoading = true;
+    this.loadingMessage = 'Converting...';  // Initial "Converting..." message
     let formData = new FormData();
     let apiUrl = 'http://localhost:3000/ai/transcribe';
 
     if (this.uploadedFile) {
       formData.append('file', this.uploadedFile);
-      console.log('Envoi du fichier:', this.uploadedFile.name);
-      console.log("📤 Type MIME:", this.uploadedFile.type);
+      console.log('Sending file:', this.uploadedFile.name);
     } else if (this.mediaUrl.trim()) {
       formData.append('url', this.mediaUrl);
-      console.log('Envoi de l’URL:', this.mediaUrl);
+      console.log('Sending URL:', this.mediaUrl);
     }
-    console.log("🔄 Envoi de la requête à", apiUrl);
+
+    // Show the full-page loading spinner with animated effects
+    const loading = await this.loadingController.create({
+      spinner: 'crescent',
+      message: this.loadingMessage,
+      cssClass: 'full-page-loading',  // Apply the custom full-page class
+    });
+    await loading.present();
+
+    // Perform the HTTP request
     this.http.post<any>(apiUrl, formData).subscribe({
       next: (response) => {
-        console.log("✅ Réponse reçue:", response);
+        console.log('Response received:', response);
         this.transcribedText = response.text;
         this.router.navigate(['/view'], { queryParams: { text: this.transcribedText } });
+        this.isLoading = false;
+        loading.dismiss();  // Hide the loading spinner after the request completes
       },
       error: (error) => {
-        console.error('Erreur lors de la transcription:', error);
-        alert("Erreur lors de la transcription. Vérifiez l'URL ou le fichier.");
+        console.error('Error during transcription:', error);
+        alert('Error during transcription. Please check the file or URL.');
+        this.isLoading = false;
+        loading.dismiss();  // Hide the loading spinner on error
       }
     });
+
+    // Change the message to "Almost done!" after a delay
+    setTimeout(() => {
+      this.loadingMessage = 'Almost done!';  // Update message during conversion
+    }, 2000);  // Update after 2 seconds (or based on your actual process time)
   }
 }
-
