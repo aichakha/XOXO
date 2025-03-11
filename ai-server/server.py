@@ -1,9 +1,9 @@
 from fastapi import FastAPI, UploadFile, File, Form
 import whisper
-import torch
-import mimetypes
-import requests
 import os
+import shutil
+import requests
+from file import convert_audio
 
 app = FastAPI()
 
@@ -12,46 +12,58 @@ model = whisper.load_model("base")
 
 @app.post("/transcribe/")
 async def transcribe_audio(
-    file: UploadFile = File(None),
-    url: str = Form(None)  # Permet d'accepter une URL
+    file: UploadFile = File(...),
+    url: str = Form(None)
 ):
-    audio_path = "temp_audio.wav"  
+    try:
+        # Si un fichier est téléchargé
+        if file:
+            # Enregistrer temporairement le fichier uploadé
+            temp_file_path = f"temp_uploaded{os.path.splitext(file.filename)[1]}"
+            with open(temp_file_path, "wb") as f:
+                f.write(await file.read())
 
-    if file:
-        # Vérifier si c'est bien un fichier audio
-        mime_type, _ = mimetypes.guess_type(file.filename)
-        if not mime_type or not mime_type.startswith("audio"):
-            return {"error": "Le fichier sélectionné n'est pas un fichier audio."}
+            # Convertir le fichier en MP3 si nécessaire
+            converted_path = convert_audio(temp_file_path)
+            if converted_path is None:
+                return {"error": "Échec de la conversion du fichier en MP3."}
 
-        # Sauvegarder le fichier uploadé
-        contents = await file.read()
-        with open(audio_path, "wb") as f:
-            f.write(contents)
+            audio_path = converted_path  # Utiliser le fichier converti
 
-    elif url:
-        # Télécharger le fichier depuis l'URL
-        response = requests.get(url)
-        if response.status_code != 200:
-            return {"error": "Impossible de télécharger le fichier depuis l'URL."}
+        # Si une URL est fournie
+        elif url:
+            # Télécharger le fichier depuis l'URL
+            temp_file_path = "temp_downloaded_audio"
+            try:
+                response = requests.get(url)
+                if response.status_code == 200:
+                    with open(temp_file_path, "wb") as f:
+                        f.write(response.content)
+                    
+                    # Convertir le fichier téléchargé en MP3
+                    converted_path = convertir_fichier_en_mp3(temp_file_path)
+                    if converted_path is None:
+                        return {"error": "Échec de la conversion du fichier en MP3."}
+                    
+                    audio_path = converted_path  # Utiliser le fichier converti
+                else:
+                    return {"error": "Impossible de télécharger le fichier depuis l'URL."}
+            except Exception as e:
+                return {"error": f"Erreur lors du téléchargement du fichier: {str(e)}"}
 
-        # Vérifier si le fichier est bien un fichier audio
-        mime_type, _ = mimetypes.guess_type(url)
-        if not mime_type or not mime_type.startswith("audio"):
-            return {"error": "L'URL fournie ne pointe pas vers un fichier audio."}
+        else:
+            return {"error": "Aucun fichier ou URL fourni."}
 
-        with open(audio_path, "wb") as f:
-            f.write(response.content)
+        # Transcrire l'audio en texte avec Whisper
+        result = model.transcribe(audio_path)
 
-    else:
-        return {"error": "Aucun fichier ou URL fourni."}
+        # Supprimer le fichier après transcription
+        os.remove(audio_path)
 
-    # Transcrire l'audio en texte
-    result = model.transcribe(audio_path)
+        return {"text": result["text"]}
 
-    # Supprimer le fichier temporaire après utilisation
-    os.remove(audio_path)
-
-    return {"text": result["text"]}
+    except Exception as e:
+        return {"error": f"Une erreur est survenue: {str(e)}"}
 
 if __name__ == "__main__":
     import uvicorn
