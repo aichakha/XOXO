@@ -10,32 +10,6 @@ import { v4 as uuidv4 } from 'uuid';
 @Controller('ai')
 export class AIController {
   constructor(private readonly aiService: AIService) {}
-
-  // Define the 'transcribe' POST route
- /*@Post('transcribe')
-  @UseInterceptors(FileInterceptor('file')) // Handle file upload with Multer
-  async transcribe(@UploadedFile() file: Express.Multer.File) {
-    if (!file) {
-      return { error: 'Aucun fichier reçu' }; // Handle missing file case
-    }
-    // Vérifier le format du fichier
-    const allowedMimeTypes = ['audio/mpeg', 'audio/wav', 'audio/mp3'];
-    if (!allowedMimeTypes.includes(file.mimetype)) {
-      throw new BadRequestException('Format de fichier non pris en charge.');
-    }
-
-    try {
-      // Ensure the uploaded file path is absolute and valid
-      const filePath = path.join(__dirname, '..', 'uploads', file.filename); // Ensure this matches the upload folder path
-
-      // Call the AIService to process the file
-      const transcription = await this.aiService.transcribeAudio(filePath);
-      return { text: transcription }; // Return the transcribed text
-    } catch (error) {
-      // Handle transcription error
-      return { error: 'Erreur de transcription : ' + error.message };
-    }
-  }*/
     @Post('transcribe')
     @UseInterceptors(FileInterceptor('file', {
       storage: diskStorage({
