@@ -13,19 +13,21 @@ export class AIService {
     try {
       const formData = new FormData();
       formData.append('file', fs.createReadStream(filePath));
-
+      console.log("📤 Envoi du fichier pour transcription...");
       const response = await axios.post('http://localhost:8001/transcribe/', formData, {
         headers: {
           ...formData.getHeaders(),
         },
       });
-
+      console.log("✅ Réponse de l'API:", response.data);
       if (response.data && response.data.text) {
         return response.data.text;
       } else {
+        console.error("🚨 Aucune transcription reçue !");
         throw new InternalServerErrorException('La transcription n\'a pas été générée.');
       }
     } catch (error) {
+      console.error("🚨 Erreur de transcription:", error.message);
       throw new InternalServerErrorException(`Erreur de transcription: ${error.message}`);
     }
   }

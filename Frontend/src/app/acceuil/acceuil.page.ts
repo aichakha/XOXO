@@ -101,14 +101,16 @@ export class AcceuilPage {
     if (this.uploadedFile) {
       formData.append('file', this.uploadedFile);
       console.log('Envoi du fichier:', this.uploadedFile.name);
+      console.log("📤 Type MIME:", this.uploadedFile.type);
     } else if (this.mediaUrl.trim()) {
       formData.append('url', this.mediaUrl);
       console.log('Envoi de l’URL:', this.mediaUrl);
     }
-
+    console.log("🔄 Envoi de la requête à", apiUrl);
     this.http.post<any>(apiUrl, formData).subscribe({
       next: (response) => {
-        this.transcribedText = response.transcribedText;
+        console.log("✅ Réponse reçue:", response);
+        this.transcribedText = response.text;
         this.router.navigate(['/view'], { queryParams: { text: this.transcribedText } });
       },
       error: (error) => {
