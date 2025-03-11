@@ -26,7 +26,7 @@
         <img src="assets/icon/icon.png" />
       </div>
       <label for="fileInput" class="visually-hidden">Upload File</label>
-      <input type="file" id="fileInput" accept="audio/*" title="Upload File" (change)="onFileSelected($event)">
+      <input type="file" id="fileInput" accept="audio/*, video/*" title="Upload File" (change)="onFileSelected($event)">
       <p class="upload-text">CLICK TO ADD YOUR CLIP</p>
       <p>OR</p>
       <input type="text" placeholder="INSERT LINK TO THE MEDIA" class="input-link" [(ngModel)]="mediaUrl" (ngModelChange)="uploadedFile = null">
