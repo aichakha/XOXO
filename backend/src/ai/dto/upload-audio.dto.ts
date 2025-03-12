@@ -8,5 +8,5 @@ export class UploadAudioDto {
   @IsOptional() // Si ce champ est optionnel
   @IsUrl() // Vérifie que c'est une URL valide
   @IsString()
-  mediaUrl: string;
+  url: string;
 }

@@ -6,10 +6,13 @@ import { AuthController } from './auth/auth.controller';
 import { AuthModule } from './auth/auth.module';
 import { PrismaService } from './prisma/prisma.service';
 import { AIModule } from './ai/ai.module';
+import { SummarizeController } from './summarize/summarize.controller';
+import { SummarizeService } from './summarize/summarize.service';
+import { SummarizeModule } from './summarize/summarize.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule,AIModule] ,
-  controllers: [AppController, AuthController],
-  providers: [AppService,PrismaService],
+  imports: [PrismaModule, AuthModule,AIModule,SummarizeModule] ,
+  controllers: [AppController, AuthController,SummarizeController],
+  providers: [AppService,PrismaService,SummarizeService],
 })
 export class AppModule {}

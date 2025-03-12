@@ -27,7 +27,7 @@
 
     <main>
         <section class="content">
-            <h2>Item Surface</h2>
+            <h2>Text from your audio: </h2>
             <article class="card">
                 <div class="user-info">
                     <div class="user-avatar"></div>
@@ -39,6 +39,18 @@
                 <p>{{ transcribedText }}</p>
                 <small>23.03.2021</small>
             </article>
+
+            <!-- Bouton pour résumer le texte -->
+            <a (click)="summarizeText(transcribedText)">
+              <ion-img src="assets/icon/3.png"></ion-img>
+              <span>Summarize</span>
+            </a>
+
+            <!-- ✅ Affichage du résumé SEULEMENT si showSummary est true -->
+            <div *ngIf="showSummary" class="summary-box">
+              
+              <p>{{ summarizedText }}</p>
+            </div>
         </section>
 
         <div class="dropdown">
@@ -48,10 +60,11 @@
                 <ion-img src="assets/icon/1.png"></ion-img>
                 <span>Translate</span>
                 </a>
-                <a href="assets\icon\3.png">
-                <ion-img src="assets/icon/3.png"></ion-img>
-                <span>Summarize</span>
-                </a>
+                <!-- ✅ Appelle la fonction au clic -->
+                <a (click)="summarizeText(transcribedText)">
+                  <ion-img src="assets/icon/3.png"></ion-img>
+                  <span>Summarize</span>
+              </a>
                 <a href="assets\icon\4.png">
                 <ion-img src="assets/icon/4.png"></ion-img>
                 <span>Edit</span>
@@ -71,7 +84,6 @@
             </div>
         </div>
     </main>
-
 
     <footer>
         <p>© 2025 Recapify Inc. All rights reserved.</p>

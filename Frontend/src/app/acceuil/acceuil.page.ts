@@ -19,11 +19,13 @@ import { LoadingController } from '@ionic/angular';  // <-- Import LoadingContro
   styleUrls: ['./acceuil.page.scss'],
 })
 export class AcceuilPage {
+  uploadedFileName: string = '';
   transcribedText: string = '';
   uploadedFile: File | null = null;
   mediaUrl: string = '';
   isLoading: boolean = false;  // Flag to track the loading state
   loadingMessage: string = 'Converting...';  // Message during conversion
+ 
   login() {
     this.router.navigate(['/login']);
   }
@@ -72,14 +74,19 @@ export class AcceuilPage {
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
+    
     if (input.files && input.files.length > 0) {
-      this.uploadedFile = input.files[0];
-      this.mediaUrl = '';
-      console.log('File selected:', this.uploadedFile.name);
-    }else {
-        this.uploadedFile = null; // S'assurer que la valeur est bien mise à jour
-      }
+      const file = input.files[0];
+      this.uploadedFile = file;
+      this.uploadedFileName = file.name; // Stocke le nom du fichier
+      this.mediaUrl = ''; // Efface l'URL si un fichier est sélectionné
+  
+      console.log('Fichier sélectionné :', this.uploadedFileName);
+    } else {
+      this.uploadedFile = null;
+      this.uploadedFileName = ''; // Efface le nom s'il n'y a pas de fichier
     }
+  }
 
   // Vérifier si un fichier a été uploadé ou si une URL est fournie
 
@@ -89,12 +96,12 @@ export class AcceuilPage {
       fileInput.click();
     }
   }
-  
 
-  
-  
-   
-  
+
+
+
+
+
   // Show full-page loading spinner
   async presentLoading() {
     const loading = await this.loadingCtrl.create({
@@ -117,48 +124,60 @@ export class AcceuilPage {
       alert('Please select a file or enter a URL before continuing.');
       return;
     }
-
+  
     this.isLoading = true;
-    this.loadingMessage = 'Converting...';  // Initial "Converting..." message
-    let formData = new FormData();
-    let apiUrl = 'http://localhost:3000/ai/transcribe';
-
+    this.loadingMessage = 'Converting...';
+  
+    let apiUrl = this.uploadedFile ? 'http://localhost:3000/ai/transcribe' : 'http://localhost:3000/ai/process';
+    let requestData: any;
+    let options: any = {}; // Options par défaut
+  
     if (this.uploadedFile) {
+      let formData = new FormData();
       formData.append('file', this.uploadedFile);
-      console.log('Sending file:', this.uploadedFile.name);
+      requestData = formData;
+      // Pas de 'Content-Type', Angular le gère automatiquement
     } else if (this.mediaUrl.trim()) {
-      formData.append('url', this.mediaUrl);
-      console.log('Sending URL:', this.mediaUrl);
+      requestData = { url: this.mediaUrl };
+      options.headers = { 'Content-Type': 'application/json' }; // Définition ici uniquement pour JSON
     }
-
-    // Show the full-page loading spinner with animated effects
+  
     const loading = await this.loadingController.create({
       spinner: 'crescent',
       message: this.loadingMessage,
-      cssClass: 'full-page-loading',  // Apply the custom full-page class
+      cssClass: 'full-page-loading',
     });
     await loading.present();
-
-    // Perform the HTTP request
-    this.http.post<any>(apiUrl, formData).subscribe({
+  
+    this.http.post<{ text: string }>(apiUrl, requestData, {
+      headers: { 'Content-Type': 'application/json' }, // 🔹 Ajout de l'en-tête
+      observe: 'response' // 🔹 On veut récupérer l'objet `HttpResponse`
+    }).subscribe({
       next: (response) => {
-        console.log('Response received:', response);
-        this.transcribedText = response.text;
-        this.router.navigate(['/view'], { queryParams: { text: this.transcribedText } });
+        if (response.body) {  // 🔹 Vérifier que le `body` existe
+          console.log('Response received:', response.body);
+          this.transcribedText = response.body.text; // ✅ Plus d'erreur ici
+          this.router.navigate(['/view'], { queryParams: { text: this.transcribedText } });
+        } else {
+          console.error('Response body is empty');
+          alert('Error: Empty response from server.');
+        }
         this.isLoading = false;
-        loading.dismiss();  // Hide the loading spinner after the request completes
+        loading.dismiss();
       },
       error: (error) => {
         console.error('Error during transcription:', error);
         alert('Error during transcription. Please check the file or URL.');
         this.isLoading = false;
-        loading.dismiss();  // Hide the loading spinner on error
+        loading.dismiss();
       }
     });
-
-    // Change the message to "Almost done!" after a delay
+    
+    
+  
     setTimeout(() => {
-      this.loadingMessage = 'Almost done!';  // Update message during conversion
-    }, 2000);  // Update after 2 seconds (or based on your actual process time)
+      this.loadingMessage = 'Almost done!';
+    }, 2000);
   }
+  
 }
