@@ -78,6 +78,45 @@ async def transcribe_audio(
 
     except Exception as e:
         return {"error": f"Une erreur est survenue: {str(e)}"}
+
+@app.post("/transcribe")
+async def transcribe(file: UploadFile = File(...)):
+    file_path = f"temp_{file.filename}"
+
+    # 📂 Sauvegarde le fichier
+    with open(file_path, "wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    print(f"📂 Fichier reçu et enregistré: {file_path}")
+
+    # 🔄 Transcription avec Whisper
+    result = model.transcribe(file_path)
+
+    print(f"📝 Transcription obtenue: {result['text']}")
+
+    return {"text": result["text"]}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #résumé:
 @app.post("/summarize/")
 async def summarize_text(data: dict):

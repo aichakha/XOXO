@@ -1,4 +1,4 @@
-import { Controller, Post, UploadedFile, UseInterceptors, BadRequestException, Body  } from '@nestjs/common';
+import { Controller, Post, UploadedFile, UseInterceptors, BadRequestException, Body, InternalServerErrorException  } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express'; // Correct type for file uploaded
 import { AIService } from './ai.service';
@@ -38,11 +38,7 @@ export class AIController {
           console.log("📂 Type MIME du fichier:", file.mimetype);
           filePath = path.resolve('uploads', file.filename);
 
-        } else if (body.mediaUrl) {
-          // Si une URL est fournie, on télécharge le fichier
-          console.log("🌍 URL reçue:", body.mediaUrl);
-          filePath = await this.aiService.downloadAudio(body.mediaUrl);
-        } else {
+        }  else {
           console.error("🚨 Aucun fichier ni URL fourni !");
           throw new BadRequestException('Aucun fichier ni URL fourni.');
         }
@@ -54,6 +50,30 @@ export class AIController {
         return { text: transcription };
       } catch (error) {
         return { error: 'Erreur de transcription : ' + error.message };
+      }
+    }
+
+    @Post('process')
+    async processFile(@Body() body: UploadAudioDto) {
+      console.log("📝 Requête reçue pour transcription:", body);
+    
+      if (!body.url) {
+        console.error("🚨 Aucune URL fournie !");
+        throw new BadRequestException('URL requise.');
+      }
+    
+      try {
+        // Étape 1 : Télécharger l'audio
+        const filePath = await this.aiService.processUrl(body.url);
+    
+        // Étape 2 : Envoyer le fichier à Whisper
+        const transcription = await this.aiService.sendToWhisper(filePath);
+    
+        console.log("📝 Transcription obtenue:", transcription);
+        return { text: transcription };
+      } catch (error) {
+        console.error("🚨 Erreur dans le traitement:", error.message);
+        throw new InternalServerErrorException(`Erreur : ${error.message}`);
       }
     }
 }
