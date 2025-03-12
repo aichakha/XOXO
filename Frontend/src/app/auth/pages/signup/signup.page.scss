@@ -1,27 +1,30 @@
+/* Styling for ion-content */
 ion-content {
-  --background: linear-gradient(to bottom, #a38cd6, #6a5acd);
+  --background: none;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0)), 
+  url("/assets/background/Mobile-login-Cristina.jpg") no-repeat right center;
+  background-size: contain;
   display: flex;
-  justify-content: center;
   align-items: center;
   height: 100vh;
   position: relative;
-  overflow: hidden;
+  padding: 0 5%;
 }
+
 
 /* Styling for the form container */
 .form-container {
-  width: 90%;
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: 100%; /* Full width of its parent container */
+  max-width:480px;
+  height: 450px;
   background: #fff;
-  border-radius: 15px;
-  box-shadow: 0 4px 10px rgba(72, 68, 68, 0.1);
+  padding: 2.3rem;
+  border-radius: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  max-height: 80vh;
+  overflow: hidden;
+  margin: 50px; /* Ensure the container is centered */
 }
 
 h2 {
@@ -59,10 +62,11 @@ ion-item {
 }
 
 ion-button {
-  --background: #6a5acd;
+  --background: rgba(27, 207, 153, 0.719);
   --color: white;
   --border-radius: 10px;
   font-size: 1.1rem;
+  padding-left: 60px;
   transition: 0.3s ease-in-out;
   width: 100%; /* Ensure button spans full width */
 
