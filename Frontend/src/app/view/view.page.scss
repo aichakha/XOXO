@@ -22,7 +22,7 @@ $dark-text: #333;
 }
 
 
- 
+
   body {
     min-height: 100vh;
     width: 100%;
@@ -34,7 +34,7 @@ $dark-text: #333;
     align-items: center;
     justify-content: flex-start;
   }
-  
+
 
 
 // Barre de navigation
@@ -105,7 +105,7 @@ $dark-text: #333;
 
 // Contenu principal
 main {
-  
+
   display: flex;
   padding: 4rem 2rem;
   gap: 2rem;
@@ -121,6 +121,14 @@ main {
   position: absolute;
   top: 120px;
 }
+.summary-box {
+  border: 1px solid #ccc;
+  padding: 12px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin-top: 12px;
+}
+
 
 // Carte utilisateur
 .card {
@@ -210,10 +218,10 @@ ion-img {
   background: #f3f4f6;
 }
 
-  
-  
-  
-  
+
+
+
+
 // Pied de page
 footer {
   text-align: center;

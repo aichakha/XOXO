@@ -89,12 +89,12 @@ export class AcceuilPage {
       fileInput.click();
     }
   }
-  
 
-  
-  
-   
-  
+
+
+
+
+
   // Show full-page loading spinner
   async presentLoading() {
     const loading = await this.loadingCtrl.create({
