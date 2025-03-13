@@ -46,25 +46,6 @@ ion-content {
   flex-shrink: 0; /* Prevent the image from shrinking */
 }
 
-/* Back Button */
-.back-button {
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  z-index: 10;
-  width: 45px;
-  height: 45px;
-  border-radius: 50%;
-  background: rgba(27, 207, 153, 0.719);
-  backdrop-filter: blur(5px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  cursor: pointer;
-  transition: background 0.3s ease-in-out, transform 0.2s ease-in-out;
-}
-
 .back-button:hover {
   background: rgba(255, 255, 255, 0.5);
   transform: scale(1.1);
