@@ -22,6 +22,7 @@ export class AIController {
           cb(null, uniqueSuffix);
         },
       }),
+      limits: { fileSize: 50 * 1024 * 1024 },
     }))
     async transcribe(
       @UploadedFile() file: Express.Multer.File, 

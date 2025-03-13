@@ -119,58 +119,76 @@ export class AcceuilPage {
     }
   
     this.isLoading = true;
-    this.loadingMessage = 'Converting...';
+    this.loadingMessage = 'Converting...';  
   
-    let apiUrl = this.uploadedFile ? 'http://localhost:3000/ai/transcribe' : 'http://localhost:3000/ai/process';
-    let requestData: any;
-    let options: any = {}; // Options par défaut
+    let formData = new FormData();
+    let apiUrl = '';
   
     if (this.uploadedFile) {
-      let formData = new FormData();
+      apiUrl = 'http://localhost:3000/ai/transcribe';  // 🔹 Envoi du fichier
       formData.append('file', this.uploadedFile);
-      requestData = formData;
-      // Pas de 'Content-Type', Angular le gère automatiquement
-    } else if (this.mediaUrl.trim()) {
-      requestData = { url: this.mediaUrl };
-      options.headers = { 'Content-Type': 'application/json' }; // Définition ici uniquement pour JSON
-    }
-  
-    const loading = await this.loadingController.create({
-      spinner: 'crescent',
-      message: this.loadingMessage,
-      cssClass: 'full-page-loading',
-    });
-    await loading.present();
-  
-    this.http.post<{ text: string }>(apiUrl, requestData, {
-      headers: { 'Content-Type': 'application/json' }, // 🔹 Ajout de l'en-tête
-      observe: 'response' // 🔹 On veut récupérer l'objet `HttpResponse`
-    }).subscribe({
-      next: (response) => {
-        if (response.body) {  // 🔹 Vérifier que le `body` existe
-          console.log('Response received:', response.body);
-          this.transcribedText = response.body.text; // ✅ Plus d'erreur ici
+      console.log('📤 Envoi du fichier:', this.uploadedFile.name);
+
+      const loading = await this.loadingController.create({
+        spinner: 'crescent',
+        message: this.loadingMessage,
+        cssClass: 'full-page-loading',
+      });
+      await loading.present();
+
+      this.http.post<any>(apiUrl, formData).subscribe({
+        next: (response) => {
+          console.log('✅ Réponse reçue:', response);
+          this.transcribedText = response.text;
           this.router.navigate(['/view'], { queryParams: { text: this.transcribedText } });
-        } else {
-          console.error('Response body is empty');
-          alert('Error: Empty response from server.');
+          this.isLoading = false;
+          loading.dismiss();
+        },
+        error: (error) => {
+          console.error('🚨 Erreur de transcription:', error);
+          alert('Erreur lors de la transcription. Vérifiez le fichier ou l\'URL.');
+          this.isLoading = false;
+          loading.dismiss();
         }
+      });
+    
+      // Mise à jour du message après un délai
+      setTimeout(() => {
+        this.loadingMessage = 'Almost done!';
+      }, 2000);
+
+    } else if (this.mediaUrl.trim()) {
+      apiUrl = 'http://localhost:3000/ai/process';  // 🔹 Envoi de l'URL
+      const requestBody = { url: this.mediaUrl };
+      console.log('🌍 Envoi de l\'URL:', this.mediaUrl);
+
+      const loading = await this.loadingController.create({
+        spinner: 'crescent',
+        message: this.loadingMessage,
+        cssClass: 'full-page-loading',
+      });
+      await loading.present();
+
+      this.http.post<any>(apiUrl, requestBody, { headers: { 'Content-Type': 'application/json' } })
+    .subscribe({
+      next: (response) => {
+        console.log('✅ Réponse reçue:', response);
+        this.transcribedText = response.text;
+        this.router.navigate(['/view'], { queryParams: { text: this.transcribedText } });
         this.isLoading = false;
         loading.dismiss();
       },
       error: (error) => {
-        console.error('Error during transcription:', error);
-        alert('Error during transcription. Please check the file or URL.');
+        console.error('🚨 Erreur de transcription:', error);
+        alert('Erreur lors de la transcription. Vérifiez le fichier ou l\'URL.');
         this.isLoading = false;
         loading.dismiss();
       }
     });
-    
-    
+    }
   
-    setTimeout(() => {
-      this.loadingMessage = 'Almost done!';
-    }, 2000);
+    
   }
+  
   
 }
