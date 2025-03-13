@@ -95,28 +95,6 @@ async def transcribe(file: UploadFile = File(...)):
     print(f"📝 Transcription obtenue: {result['text']}")
 
     return {"text": result["text"]}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #résumé:
 @app.post("/summarize/")
 async def summarize_text(data: dict):

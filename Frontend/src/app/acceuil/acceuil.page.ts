@@ -19,11 +19,13 @@ import { LoadingController } from '@ionic/angular';  // <-- Import LoadingContro
   styleUrls: ['./acceuil.page.scss'],
 })
 export class AcceuilPage {
+  uploadedFileName: string = '';
   transcribedText: string = '';
   uploadedFile: File | null = null;
   mediaUrl: string = '';
   isLoading: boolean = false;  // Flag to track the loading state
   loadingMessage: string = 'Converting...';  // Message during conversion
+ 
   login() {
     this.router.navigate(['/login']);
   }
@@ -72,14 +74,19 @@ export class AcceuilPage {
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
+    
     if (input.files && input.files.length > 0) {
-      this.uploadedFile = input.files[0];
-      this.mediaUrl = '';
-      console.log('File selected:', this.uploadedFile.name);
-    }else {
-        this.uploadedFile = null; // S'assurer que la valeur est bien mise à jour
-      }
+      const file = input.files[0];
+      this.uploadedFile = file;
+      this.uploadedFileName = file.name; // Stocke le nom du fichier
+      this.mediaUrl = ''; // Efface l'URL si un fichier est sélectionné
+  
+      console.log('Fichier sélectionné :', this.uploadedFileName);
+    } else {
+      this.uploadedFile = null;
+      this.uploadedFileName = ''; // Efface le nom s'il n'y a pas de fichier
     }
+  }
 
   // Vérifier si un fichier a été uploadé ou si une URL est fournie
 
