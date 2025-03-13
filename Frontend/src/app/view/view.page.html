@@ -40,15 +40,12 @@
                 <small>23.03.2021</small>
             </article>
 
-            <!-- Bouton pour résumer le texte -->
-            <a (click)="summarizeText(transcribedText)">
-              <ion-img src="assets/icon/3.png"></ion-img>
-              <span>Summarize</span>
-            </a>
+            
 
             <!-- ✅ Affichage du résumé SEULEMENT si showSummary est true -->
+            
             <div *ngIf="showSummary" class="summary-box">
-              
+              <h2>Summary: </h2>   
               <p>{{ summarizedText }}</p>
             </div>
         </section>

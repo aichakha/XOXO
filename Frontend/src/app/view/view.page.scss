@@ -196,6 +196,7 @@ ion-img {
   transform: translateY(-10px);
   transition: all 0.3s;
   pointer-events: none;
+  cursor: pointer;
 }
 
 // Affichage du menu quand il est actif

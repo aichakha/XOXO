@@ -5,7 +5,7 @@ import axios from 'axios';
 export class SummarizeService {
   async summarizeText(text: string): Promise<string> {
     try {
-      const response = await axios.post('http://localhost:5000/summarize', {
+      const response = await axios.post('http://localhost:8001/summarize', {
         text,
       });
 

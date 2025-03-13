@@ -5,7 +5,7 @@ import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/stan
 import { IonicModule } from '@ionic/angular';
 import { Router,ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-
+import { LoadingController } from '@ionic/angular'; 
 
 @Component({
   selector: 'app-view',
@@ -23,21 +23,17 @@ export class ViewPage implements OnInit {
   isLoading: boolean = true;
   summarizedText: string = '';
   errorMessage: string = '';
-  constructor(private router: Router, private route: ActivatedRoute, private http: HttpClient) {}
+  
+  loadingMessage: string = 'Converting...'; 
+  constructor(private router: Router, private route: ActivatedRoute, private http: HttpClient,  private loadingCtrl: LoadingController,private loadingController: LoadingController) {}
 
   showSummary: boolean = false; // ✅ Zone de texte cachée par défaut
-    ngOnInit() {
+  ngOnInit() {
     this.route.queryParams.subscribe({
       next: (params) => {
         this.transcribedText = params['text'] || 'Aucun texte transcrit';
-        // ✅ Si le texte transcrit est présent, générer un résumé
-        if (this.transcribedText) {
-          this.summarizeText(this.transcribedText);
-        } else {
-          this.isLoading = false;
-        }
+        // Ne pas appeler summarizeText ici pour que le résumé soit généré uniquement sur demande
         this.isLoading = false;
-
       },
       error: (error: any) => {
         this.errorMessage = 'Erreur lors de la récupération du texte.';
@@ -45,26 +41,41 @@ export class ViewPage implements OnInit {
       }
     });
   }
+  
     // ✅ Fonction pour envoyer le texte au backend et obtenir un résumé
     summarizeText(text: string) {
       console.log('👉 Summarizing text:', text); // ✅ Vérifie que la fonction est appelée
       this.showSummary = false; // ✅ Cache la zone avant de résumer
-      
-      this.http.post<any>('http://localhost:8001/summarize/', { text }).subscribe({
-        next: (response: any) => {
-          console.log('✅ Summary received:', response); // ✅ Vérifie la réponse
-          this.summarizedText = response.summary;
-          this.isLoading = false;
-
-          this.showSummary = true; // ✅ Affiche la zone de texte après le résumé
-        },
-        error: (error) => {
-          console.error('❌ Error generating summary:', error); // ✅ Affiche l'erreur dans la console
-          this.errorMessage = 'Erreur lors de la génération du résumé.';
-          this.isLoading = false;
-        }
+    
+      this.isLoading = true;
+      this.loadingMessage = 'Converting...';
+    
+      // Afficher le loader
+      this.presentLoading().then((loading) => {
+        // Appel HTTP pour obtenir le résumé
+        this.http.post<any>('http://localhost:8001/summarize/', { text }).subscribe({
+          next: (response: any) => {
+            console.log('✅ Summary received:', response); // ✅ Vérifie la réponse
+            this.summarizedText = response.summary;
+            this.isLoading = false;
+    
+            this.showSummary = true; // ✅ Affiche la zone de texte après le résumé
+    
+            // Fermer le loader après avoir reçu le résumé
+            loading.dismiss();
+          },
+          error: (error) => {
+            console.error('❌ Error generating summary:', error); // ✅ Affiche l'erreur dans la console
+            this.errorMessage = 'Erreur lors de la génération du résumé.';
+            this.isLoading = false;
+    
+            // Fermer le loader en cas d'erreur
+            loading.dismiss();
+          }
+        });
       });
     }
+    
 
     //Pour le résumé
 
@@ -100,4 +111,20 @@ export class ViewPage implements OnInit {
       this.dropdownOpen = false;
     }
   }
+
+  // Show full-page loading spinner
+  async presentLoading() {
+    const loading = await this.loadingCtrl.create({
+      message: 'Summarizing...',  // Message personnalisé
+      spinner: 'crescent',  // Type de spinner (tu peux changer si tu veux)
+      cssClass: 'full-page-loading',  // Classe CSS pour personnaliser le style du spinner
+      backdropDismiss: false,  // Empêche la fermeture quand on clique en dehors
+    });
+  
+    await loading.present();  // Affiche le loader
+    return loading;  // Retourne l'instance du loader pour pouvoir le fermer plus tard
+  }
+  
+
+
 }
