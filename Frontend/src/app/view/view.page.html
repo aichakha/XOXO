@@ -25,7 +25,7 @@
         </div>
     </header>
 
-    <main>
+    
         <section class="content">
           <h2>Text from your audio: </h2>
           <article class="card">
@@ -37,7 +37,7 @@
               </div>
             </div>
             <!-- Affiche le texte original jusqu'à ce que le résumé soit généré -->
-            <p>{{ transcribedText }}</p> 
+            <p>{{ translatedText ? translatedText : transcribedText }}</p>>
             <small>23.03.2021</small>
           </article>
         </section>
@@ -45,35 +45,47 @@
         <div class="dropdown">
           <i class="icon-menu" (click)="toggleDropdown($event)">☰</i>
           <div class="dropdown-content" [ngClass]="{ 'open': dropdownOpen }">
-            <a href="assets/icon/1.png">
+            <div class="dropdown-item translate-container" (mouseenter)="showTranslateMenu()" (mouseleave)="hideTranslateMenu()">
+            
               <ion-img src="assets/icon/1.png"></ion-img>
               <span>Translate</span>
-            </a>
-            <!-- Appelle la fonction au clic pour résumer -->
-            <a (click)="summarizeText(transcribedText)">
-              <ion-img src="assets/icon/3.png"></ion-img>
-              <span>Summarize</span>
-            </a>
-            <a href="assets\icon\4.png">
-              <ion-img src="assets/icon/4.png"></ion-img>
-              <span>Edit</span>
-            </a>
-            <a href="assets\icon\5.png">
-              <ion-img src="assets/icon/5.png"></ion-img>
-              <span>Save</span>
-            </a>
-            <a href="assets\icon\2.png">
-              <ion-img src="assets/icon/2.png"></ion-img>
-              <span>Download</span>
-            </a>
-            <a href="assets\icon\6.png">
-              <ion-img src="assets/icon/6.png"></ion-img>
-              <span>Share</span>
-            </a>
+              
+            <div class="submenu" [ngClass]="{ 'show': translateMenuOpen }" >
+            <ul>
+              <li (click)="translateText(transcribedText,'en')">English</li>
+              <li (click)="translateText(transcribedText,'fr')">French</li>
+              <li (click)="translateText(transcribedText,'es')">Spanish</li>
+              <li (click)="translateText(transcribedText,'de')">German</li>
+            </ul>
           </div>
         </div>
-      </main>
       
+              <a (click)="summarizeText(transcribedText)">
+                <ion-img src="assets/icon/3.png"></ion-img>
+                <span>Summarize</span>
+              </a>
+              <a href="assets\icon\4.png">
+                <ion-img src="assets/icon/4.png"></ion-img>
+                <span>Edit</span>
+              </a>
+              <a href="assets\icon\5.png">
+                <ion-img src="assets/icon/5.png"></ion-img>
+                <span>Save</span>
+              </a>
+              <a href="assets\icon\2.png">
+                <ion-img src="assets/icon/2.png"></ion-img>
+                <span>Download</span>
+              </a>
+              <a href="assets\icon\6.png">
+                <ion-img src="assets/icon/6.png"></ion-img>
+                <span>Share</span>
+              </a>
+            
+          </div>
+        </div>
+        
+  
+
 
     <footer>
         <p>© 2025 Recapify Inc. All rights reserved.</p>

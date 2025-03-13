@@ -110,7 +110,11 @@ async def summarize_text(data: dict):
 async def translate_text(data: dict):
     text = data.get("text")
     src_lang = data.get("src_lang", "en")
-    tgt_lang = data.get("tgt_lang", "fr")
+    allowed_languages = ["fr", "es", "de", "it", "pt", "nl", "pl", "ru", "ja", "zh", "ko"]
+    tgt_lang = data.get("tgt_lang", "fr")  # Par défaut, "fr"
+
+    if tgt_lang not in allowed_languages:
+        tgt_lang = "fr"  # Remettre "fr" si la langue n'est pas valide
 
     if not text:
         raise HTTPException(status_code=400, detail="Aucun texte fourni.")
