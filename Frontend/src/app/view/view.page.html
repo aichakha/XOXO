@@ -27,60 +27,53 @@
 
     <main>
         <section class="content">
-            <h2>Text from your audio: </h2>
-            <article class="card">
-                <div class="user-info">
-                    <div class="user-avatar"></div>
-                    <div class="user-name">
-                        <strong>Name</strong>
-                        <small>username</small>
-                    </div>
-                </div>
-                <p>{{ transcribedText }}</p>
-                <small>23.03.2021</small>
-            </article>
-
-            
-
-            <!-- ✅ Affichage du résumé SEULEMENT si showSummary est true -->
-            
-            <div *ngIf="showSummary" class="summary-box">
-              <h2>Summary: </h2>   
-              <p>{{ summarizedText }}</p>
+          <h2>Text from your audio: </h2>
+          <article class="card">
+            <div class="user-info">
+              <div class="user-avatar"></div>
+              <div class="user-name">
+                <strong>Name</strong>
+                <small>username</small>
+              </div>
             </div>
+            <!-- Affiche le texte original jusqu'à ce que le résumé soit généré -->
+            <p>{{ transcribedText }}</p> 
+            <small>23.03.2021</small>
+          </article>
         </section>
-
+      
         <div class="dropdown">
-            <i class="icon-menu" (click)="toggleDropdown($event)">☰</i>
-            <div class="dropdown-content" [ngClass]="{ 'open': dropdownOpen }">
-                <a href="assets/icon/1.png">
-                <ion-img src="assets/icon/1.png"></ion-img>
-                <span>Translate</span>
-                </a>
-                <!-- ✅ Appelle la fonction au clic -->
-                <a (click)="summarizeText(transcribedText)">
-                  <ion-img src="assets/icon/3.png"></ion-img>
-                  <span>Summarize</span>
-              </a>
-                <a href="assets\icon\4.png">
-                <ion-img src="assets/icon/4.png"></ion-img>
-                <span>Edit</span>
-                </a>
-                <a href="assets\icon\5.png">
-                <ion-img src="assets/icon/5.png"></ion-img>
-                <span>Save</span>
-                </a>
-                <a href="assets\icon\2.png">
-                <ion-img src="assets/icon/2.png"></ion-img>
-                <span>Download</span>
-                </a>
-                <a href="assets\icon\6.png">
-                <ion-img src="assets/icon/6.png"></ion-img>
-                <span>Share</span>
-                </a>
-            </div>
+          <i class="icon-menu" (click)="toggleDropdown($event)">☰</i>
+          <div class="dropdown-content" [ngClass]="{ 'open': dropdownOpen }">
+            <a href="assets/icon/1.png">
+              <ion-img src="assets/icon/1.png"></ion-img>
+              <span>Translate</span>
+            </a>
+            <!-- Appelle la fonction au clic pour résumer -->
+            <a (click)="summarizeText(transcribedText)">
+              <ion-img src="assets/icon/3.png"></ion-img>
+              <span>Summarize</span>
+            </a>
+            <a href="assets\icon\4.png">
+              <ion-img src="assets/icon/4.png"></ion-img>
+              <span>Edit</span>
+            </a>
+            <a href="assets\icon\5.png">
+              <ion-img src="assets/icon/5.png"></ion-img>
+              <span>Save</span>
+            </a>
+            <a href="assets\icon\2.png">
+              <ion-img src="assets/icon/2.png"></ion-img>
+              <span>Download</span>
+            </a>
+            <a href="assets\icon\6.png">
+              <ion-img src="assets/icon/6.png"></ion-img>
+              <span>Share</span>
+            </a>
+          </div>
         </div>
-    </main>
+      </main>
+      
 
     <footer>
         <p>© 2025 Recapify Inc. All rights reserved.</p>

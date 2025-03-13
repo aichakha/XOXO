@@ -44,28 +44,25 @@ export class ViewPage implements OnInit {
   
     // ✅ Fonction pour envoyer le texte au backend et obtenir un résumé
     summarizeText(text: string) {
-      console.log('👉 Summarizing text:', text); // ✅ Vérifie que la fonction est appelée
-      this.showSummary = false; // ✅ Cache la zone avant de résumer
-    
-      this.isLoading = true;
-      this.loadingMessage = 'Converting...';
+      console.log('👉 Summarizing text:', text); // Vérifie que la fonction est appelée
+      
+      this.isLoading = true; // Indique que le processus est en cours
+      this.loadingMessage = 'Converting...'; // Message de chargement
     
       // Afficher le loader
       this.presentLoading().then((loading) => {
         // Appel HTTP pour obtenir le résumé
         this.http.post<any>('http://localhost:8001/summarize/', { text }).subscribe({
           next: (response: any) => {
-            console.log('✅ Summary received:', response); // ✅ Vérifie la réponse
-            this.summarizedText = response.summary;
+            console.log('✅ Summary received:', response); // Vérifie la réponse
+            this.transcribedText = response.summary;  // Remplacer le texte brut par le résumé
             this.isLoading = false;
-    
-            this.showSummary = true; // ✅ Affiche la zone de texte après le résumé
     
             // Fermer le loader après avoir reçu le résumé
             loading.dismiss();
           },
           error: (error) => {
-            console.error('❌ Error generating summary:', error); // ✅ Affiche l'erreur dans la console
+            console.error('❌ Error generating summary:', error); // Affiche l'erreur dans la console
             this.errorMessage = 'Erreur lors de la génération du résumé.';
             this.isLoading = false;
     
@@ -75,6 +72,8 @@ export class ViewPage implements OnInit {
         });
       });
     }
+    
+    
     
 
     //Pour le résumé
