@@ -1,12 +1,11 @@
-import { Controller, Post, UploadedFile, UseInterceptors, BadRequestException, Body, InternalServerErrorException  } from '@nestjs/common';
+import { BadRequestException, Body, Controller, InternalServerErrorException, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Express } from 'express'; // Correct type for file uploaded
-import { AIService } from './ai.service';
-import * as path from 'path';
-import { UploadAudioDto } from './dto/upload-audio.dto';
 import { diskStorage } from 'multer';
+import * as path from 'path';
 import { extname } from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import { AIService } from './ai.service';
+import { UploadAudioDto } from './dto/upload-audio.dto';
 @Controller('ai')
 export class AIController {
   constructor(private readonly aiService: AIService) {}

@@ -8,6 +8,7 @@ from summarize import Summarizer
 from fastapi.middleware.cors import CORSMiddleware
 from file import convert_audio
 from translate import translate_marian
+
 app = FastAPI()
 
 # 🔒 Configurer CORS
@@ -23,10 +24,10 @@ app.add_middleware(
 model = whisper.load_model("base")
 summarizer = Summarizer()
 
-
 @app.post("/transcribe/")
 async def transcribe_audio(
-    file: UploadFile = File(...), 
+    file: UploadFile = File(...),
+    url: str = Form(None)
 ):
     try:
         # Si un fichier est téléchargé
@@ -43,6 +44,27 @@ async def transcribe_audio(
 
             audio_path = converted_path  # Utiliser le fichier converti
 
+        # Si une URL est fournie
+        elif url:
+            # Télécharger le fichier depuis l'URL
+            temp_file_path = "temp_downloaded_audio"
+            try:
+                response = requests.get(url)
+                if response.status_code == 200:
+                    with open(temp_file_path, "wb") as f:
+                        f.write(response.content)
+                    
+                    # Convertir le fichier téléchargé en MP3
+                    converted_path = convertir_fichier_en_mp3(temp_file_path)
+                    if converted_path is None:
+                        return {"error": "Échec de la conversion du fichier en MP3."}
+                    
+                    audio_path = converted_path  # Utiliser le fichier converti
+                else:
+                    return {"error": "Impossible de télécharger le fichier depuis l'URL."}
+            except Exception as e:
+                return {"error": f"Erreur lors du téléchargement du fichier: {str(e)}"}
+
         else:
             return {"error": "Aucun fichier ou URL fourni."}
 
@@ -57,7 +79,7 @@ async def transcribe_audio(
     except Exception as e:
         return {"error": f"Une erreur est survenue: {str(e)}"}
 
-@app.post("/transcrib/")
+@app.post("/transcribe")
 async def transcribe(file: UploadFile = File(...)):
     file_path = f"temp_{file.filename}"
 
@@ -74,7 +96,6 @@ async def transcribe(file: UploadFile = File(...)):
 
     return {"text": result["text"]}
 
-
 #résumé:
 @app.post("/summarize/")
 async def summarize_text(data: dict):
@@ -84,29 +105,12 @@ async def summarize_text(data: dict):
     
     summary = summarizer.summarize_text(text)
     return {"summary": summary}
-
-from fastapi import FastAPI, HTTPException
-from typing import Dict
-import random
-
-app = FastAPI()
-
-# Assurez-vous que la fonction est bien importée
-try:
-    from translate import translate_marian  # Remplace par le bon module
-except ImportError:
-    raise ImportError("Erreur : La fonction translate_marian n'est pas trouvée.")
-
+#traduction:
 @app.post("/translate/")
-async def translate_text(data: Dict):
+async def translate_text(data: dict):
     text = data.get("text")
     src_lang = data.get("src_lang", "en")
-
-    allowed_languages = ["fr", "es", "de", "it", "pt", "nl", "pl", "ru", "ja", "zh", "ko"]
-    tgt_lang = data.get("tgt_lang", "fr")  
-
-    if tgt_lang not in allowed_languages:
-        tgt_lang = "fr"  # Langue par défaut
+    tgt_lang = data.get("tgt_lang", "fr")
 
     if not text:
         raise HTTPException(status_code=400, detail="Aucun texte fourni.")
@@ -120,3 +124,5 @@ async def translate_text(data: Dict):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)
+
+
