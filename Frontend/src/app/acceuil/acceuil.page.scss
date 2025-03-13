@@ -174,24 +174,26 @@ $font-size-base: 16px; // Taille de base de la police
   animation-delay: 0.5s; /* Delay before rotation starts */
 }
 
-.container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: linear-gradient(to bottom, #8a72cf, #7b60c6); // Ajuste les couleurs ici
-}
-// Styles de base
 body {
   font-family: $font-family;
+  font-size: $font-size-base;
   margin: 0;
   padding: 0;
-  font-size: $font-size-base;
-  background: #a38cd6;
   height: 100vh;
-  @include flex-center;
+  width: 100vw;
+  background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), 
+  url('/assets/icon/about-img.png') no-repeat center center;
+  background-size: 100% 100%; // S'assure que l'image occupe toute la fenêtre sans distorsion
 }
 
+.container {
+  @include flex-center;
+  height: 100vh;
+  width: 100vw;
+  background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), 
+   url('/assets/icon/footer-mobile-bg.png') no-repeat center center;
+  background-size: 100% 100%; // Ajuste aussi cette image sur toute la fenêtre
+}
 .container {
   @include flex-center;
   flex-direction: column;
@@ -200,7 +202,19 @@ body {
   margin: 0;
 
 }
+.icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px; // Espacement entre l'icône et le nom du fichier
+}
 
+.file-name {
+  font-size: 14px;
+  color: #333;
+  font-weight: bold;
+  white-space: nowrap; // Évite que le texte passe à la ligne
+}
 
 // Barre de navigation
 .navbar {
@@ -276,72 +290,64 @@ body {
   }
 }
 
-// Section de téléchargement
+// Upload Section
 .upload-section {
-  @include flex-center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   flex-grow: 1;
   width: 100%;
   padding: 20px;
 
-  .upload-box {
-    text-align: center;
-    background-color: rgb(235, 231, 231);
-    padding: 2rem;
+}
+// Déclaration des variables de couleur en haut du fichier
+$primary-color: #4A90E2;  // Couleur principale du bouton
+$text-color: #333;        // Couleur du texte
+$button-text-color: white; // Couleur du texte des boutons
+
+.upload-box {
+  background: rgba(255, 255, 255, 0.9); // Rend la boîte légèrement transparente
+  padding: 30px;
+  border-radius: 30px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+
+  .icon img {
+    width: 60px;
+    cursor: pointer;
+  }
+
+  input[type="file"] {
+    display: none;
+  }
+
+  .upload-text {
+    font-weight: bold;
+    margin: 10px 0;
+    color: $text-color; // Utilisation de la variable correctement définie
+  }
+
+  .input-link {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
     border-radius: 20px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    max-width: 500px;
-    width: 90%;
-    position: relative;
+    margin-top: 10px;
+  }
 
-    .icon img {
-      height: 50px; // Taille de l'icône de téléchargement
-      margin-bottom: 10px;
-    }
+  ion-button {
+    width: 100%;
+    background: $primary-color;
+    color: $button-text-color; // Utilisation de la variable correctement définie
+    border-radius: 10px;
+    margin-top: 15px;
 
-    .upload-text {
-      font-size: 18px;
-      margin: 10px 0;
-      color: #333;
-    }
-
-    .input-link {
-      padding: 10px;
-      width: 100%;
-      max-width: 300px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-      font-size: $font-size-base;
-
-      &:focus {
-        outline: none;
-        border-color: $primary-color;
-      }
-    }
-
-    .convert-button {
-      padding: 10px 20px;
-      background-color: $primary-color;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: $font-size-base;
-      transition: background-color 0.3s ease;
-
-      &:hover {
-        background-color: darken($primary-color, 10%);
-      }
+    &:disabled {
+      background: gray;
     }
   }
-}
-ion-button {
-  --background: #a38cd6;
-  --border-radius: 10px;
-  --color: white;
-  border: none;
-  width: 100%;
-  font-size: 1rem;
 }
 
 // Pied de page
@@ -351,11 +357,36 @@ footer {
   background-color: rgba(255, 255, 255, 0.8); // Fond semi-transparent
   width: 100%;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
+  
+  position: fixed;
+  bottom: 0;
 
   p {
     margin: 0;
     color: #333;
     font-size: 14px;
+  }
+}
+
+// Responsive (Mobile)
+@media screen and (max-width: 480px) {
+  .navbar {
+    flex-direction: column;
+    padding: 10px;
+
+    nav ul {
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .auth-buttons {
+      flex-direction: column;
+      gap: 5px;
+    }
+  }
+
+  .upload-box {
+    width: 95%;
   }
 }
