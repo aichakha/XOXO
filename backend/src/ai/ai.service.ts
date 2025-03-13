@@ -77,7 +77,7 @@ export class AIService {
   
     try {
       console.log("📤 Envoi du fichier audio à Whisper...");
-      const response = await axios.post('http://localhost:8001/transcribe', form, {
+      const response = await axios.post('http://localhost:8001/transcrib/', form, {
         headers: { ...form.getHeaders() },
       });
   

@@ -14,28 +14,27 @@ $dark-text: #333;
 }
 
 // Styles généraux
-* {
+*{
+
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   font-family: Arial, sans-serif;
 }
 
-
-
-  body {
-    min-height: 100vh;
-    width: 100%;
-    background: linear-gradient(to bottom, #a38cd6, #6a5acd) !important; // Dégradé du violet clair au foncé
-    background-repeat: no-repeat;
-    background-attachment: fixed; // Empêche le scrolling du fond
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-  }
-
-
+body {
+  min-height: 100vh;
+  width: 100%;
+  background: linear-gradient(to bottom, #a38cd6, #6a5acd) !important; // Dégradé du violet clair au foncé
+  background-repeat: no-repeat;
+  background-attachment: fixed; // Empêche le scrolling du fond
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  overflow-x: hidden; // Désactive le défilement horizontal
+  overflow-y: auto; // Active le défilement vertical
+}
 
 // Barre de navigation
 .navbar {
@@ -46,7 +45,6 @@ $dark-text: #333;
   padding: 10px 20px;
   background-color: rgba(255, 255, 255, 0.8); // Fond semi-transparent
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-
   margin-bottom: 20px;
 
   .logo img {
@@ -105,22 +103,25 @@ $dark-text: #333;
 
 // Contenu principal
 main {
-
   display: flex;
+  flex-direction: column;
+  align-items: center;
   padding: 4rem 2rem;
   gap: 2rem;
   margin-top: 60px; // Pour éviter le chevauchement avec la navbar
+  margin-bottom: 80px; // Ajoute une marge en bas pour éviter le chevauchement avec le footer
+  width: 100%;
+  max-width: 800px; // Limite la largeur du contenu
 }
 
 .content {
   width: 100%;
-  max-width: 800px;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 15px;
-  position: absolute;
-  top: 120px;
+  padding-bottom: 10px;
 }
+
 .summary-box {
   border: 1px solid #ccc;
   padding: 12px;
@@ -128,7 +129,6 @@ main {
   border-radius: 8px;
   margin-top: 12px;
 }
-
 
 // Carte utilisateur
 .card {
@@ -152,7 +152,6 @@ main {
   border-radius: 50%;
 }
 
-
 // Icône menu ☰ (plus grande et bien placée)
 .icon-menu {
   position: absolute;
@@ -167,6 +166,7 @@ main {
 .icon-menu:hover {
   transform: scale(1.2); // Effet au survol
 }
+
 ion-img {
   width: 65px;  // Set the desired small width
   height: 26px; // Set the desired small height
@@ -196,7 +196,6 @@ ion-img {
   transform: translateY(-10px);
   transition: all 0.3s;
   pointer-events: none;
-  cursor: pointer;
 }
 
 // Affichage du menu quand il est actif
@@ -219,20 +218,14 @@ ion-img {
   background: #f3f4f6;
 }
 
-
-
-
-
 // Pied de page
 footer {
   text-align: center;
   padding: 1rem;
   background: rgba(255, 255, 255, 0.8);
   width: 100%;
-  position: fixed;
-  bottom: 0;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); // Ombre pour un effet visuel
+  margin-top: auto; // Pousse le footer en bas de la page
   p {
     margin: 0;
     color: $dark-text;

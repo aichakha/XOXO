@@ -66,8 +66,9 @@ export class AIController {
       try {
         // Étape 1 : Télécharger l'audio
         const filePath = await this.aiService.processUrl(body.url);
-    
+        console.log(`✅ Fichier téléchargé avec succès: ${filePath}`);
         // Étape 2 : Envoyer le fichier à Whisper
+        console.log("📤 Envoi du fichier à Whisper...");
         const transcription = await this.aiService.sendToWhisper(filePath);
     
         console.log("📝 Transcription obtenue:", transcription);
