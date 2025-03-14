@@ -2,49 +2,137 @@
   <ion-header class="navbar">
     <div class="logo">
       <div id="logo">
-
         <ion-buttons slot="start">
           <a (click)="Home()">
             <ion-img src="assets/icon/Logo2.png" style="height: 50px; width: auto;"></ion-img>
           </a>
         </ion-buttons>
-        </div>
+      </div>
     </div>
     <nav>
       <ul>
         <li><a (click)="Home()">Home</a></li>
-
         <li><a (click)="History()">History</a></li>
-        
         <li><a (click)="Contact()">Contact</a></li>
-
       </ul>
     </nav>
     <div class="auth-buttons">
       <button class="sign-in" (click)="login()">LOG IN</button>
       <button class="join-now" (click)="signup()">JOIN NOW</button>
     </div>
+  </ion-header>
 
-</ion-header>
-
-<ion-content [fullscreen]="true">
-  <div class="contact-container">
-    <div class="contact-card">
-      <h2>Contact</h2>
-
-      <div class="input-group">
-        <ion-input placeholder="First Name*" class="input"></ion-input>
-        <ion-input placeholder="Last Name*" class="input"></ion-input>
+  <ion-content [fullscreen]="true">
+    <div class="steps-container">
+      <div class="step-card">
+        <h2>STEP 1</h2>
+        <h3>Import a Video/Audio</h3>
+        <p>Choose a YouTube video or a local file (MP4, MP3, WAV).
+          Interface to paste a link or upload a file.</p>
       </div>
-
-      <ion-input placeholder="Email*" class="input"></ion-input>
-      <ion-input placeholder="Phone Number*" class="input"></ion-input>
-      <ion-textarea placeholder="Your message..." class="textarea"></ion-textarea>
-
-      <ion-button expand="full" class="send-button">Send Message</ion-button>
+      
+      <div class="step-card">
+        <h2>STEP 2</h2>
+        <h3>Summary Generation</h3>
+        <p>Explanation of the NLP process (T5, Whisper, etc.).
+          Available options: short summary, detailed, structured…</p>
+      </div>
+      
+      <div class="step-card">
+        <h2>STEP 3</h2>
+        <h3>Customization & Annotation</h3>
+        <p>Add notes and mark favorites.</p>
+      </div>
+      <div class="step-card">
+        <h2>STEP 4</h2>
+        <h3>Add notes and mark favorites.</h3>
+        <p>Download as PDF, send via email, or share a link.</p>
+      </div>
     </div>
-  </div>
-  <footer>
-    <p>© 2025 Recapify Inc. All rights reserved.</p>
-  </footer>
-</ion-content>
+    
+    <footer>
+      <p>© 2025 Recapify Inc. All rights reserved.</p>
+    </footer>
+  </ion-content>
+
+  <style>
+    /* Container for the steps */
+    .steps-container {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr); /* Two columns */
+      gap: 20px;
+      justify-content: center;
+      align-items: center; /* Vertically center content */
+      padding: 20px;
+      margin-top: 120px;
+      max-width: 1200px; /* Restrict maximum width for large screens */
+      margin-left: auto;
+      margin-right: auto; /* Center the container */
+    }
+  
+    /* Individual step card */
+    .step-card {
+      background: white;
+      padding: 30px;
+      border-radius: 20px; /* Slightly more rounded corners for a modern look */
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1); /* Softer, larger shadow */
+      text-align: left; /* Align text to the left */
+      width: 100%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer; /* Show pointer cursor on hover */
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start; /* Align items to the left */
+      justify-content: flex-start;
+    }
+  
+    /* Hover effect */
+    .step-card:hover {
+      transform: translateY(-8px); /* Slightly stronger hover effect */
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2); /* Slightly stronger shadow on hover */
+    }
+  
+    /* Titles and headers */
+    .step-card h2 {
+      color: #6c63ff;
+      font-size: 17px;
+      margin-bottom: 15px;
+      font-weight: 600; /* Bold title */
+      text-align: left; /* Align title to the left */
+      width: 100%;
+    }
+  
+    .step-card h3 {
+      font-size: 22px;
+      font-weight: 500;
+      margin-bottom: 15px;
+      color: #333; /* Darker subtitle color */
+      text-align: left; /* Align subtitle to the left */
+      width: 100%;
+    }
+  
+    .step-card p {
+      font-size: 16px;
+      line-height: 1.6;
+      color: #555; /* Softer text color */
+      text-align: left; /* Align text to the left */
+      max-width: 90%; /* Limit width to avoid text stretching */
+      margin: 0 auto;
+    }
+  
+    /* Responsive adjustments for smaller screens */
+    @media (max-width: 900px) {
+      .steps-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+      }
+  
+      .step-card {
+        width: 95%; /* Make cards take up most of the width on smaller screens */
+        margin-bottom: 20px; /* Add space between cards */
+      }
+    }
+  </style>
+  
