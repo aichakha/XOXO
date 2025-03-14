@@ -5,13 +5,7 @@ from pydub import AudioSegment
 SUPPORTED_AUDIO_FORMATS = [".wav", ".aac", ".flac", ".ogg", ".m4a", ".mp4", ".mp3"]
 
 def convert_audio(input_file_path: str, output_format: str = 'mp3') -> str:
-    """
-    Convertit un fichier audio dans le format spécifié (par défaut 'mp3').
-
-    :param input_file_path: Chemin du fichier audio d'entrée
-    :param output_format: Format du fichier de sortie (par défaut 'mp3')
-    :return: Chemin du fichier converti
-    """
+   
     try:
         # Vérification de l'extension du fichier
         _, ext = os.path.splitext(input_file_path)

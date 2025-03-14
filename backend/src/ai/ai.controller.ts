@@ -1,12 +1,11 @@
-import { Controller, Post, UploadedFile, UseInterceptors, BadRequestException, Body, InternalServerErrorException  } from '@nestjs/common';
+import { BadRequestException, Body, Controller, InternalServerErrorException, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Express } from 'express'; // Correct type for file uploaded
-import { AIService } from './ai.service';
-import * as path from 'path';
-import { UploadAudioDto } from './dto/upload-audio.dto';
 import { diskStorage } from 'multer';
+import * as path from 'path';
 import { extname } from 'path';
 import { v4 as uuidv4 } from 'uuid';
+import { AIService } from './ai.service';
+import { UploadAudioDto } from './dto/upload-audio.dto';
 @Controller('ai')
 export class AIController {
   constructor(private readonly aiService: AIService) {}
@@ -66,8 +65,9 @@ export class AIController {
       try {
         // Étape 1 : Télécharger l'audio
         const filePath = await this.aiService.processUrl(body.url);
-    
+        console.log(`✅ Fichier téléchargé avec succès: ${filePath}`);
         // Étape 2 : Envoyer le fichier à Whisper
+        console.log("📤 Envoi du fichier à Whisper...");
         const transcription = await this.aiService.sendToWhisper(filePath);
     
         console.log("📝 Transcription obtenue:", transcription);

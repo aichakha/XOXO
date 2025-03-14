@@ -7,6 +7,7 @@ import requests
 from summarize import Summarizer
 from fastapi.middleware.cors import CORSMiddleware
 from file import convert_audio
+from translate import translate_marian
 
 app = FastAPI()
 
@@ -22,7 +23,6 @@ app.add_middleware(
 # 🚀 Charger les modèles
 model = whisper.load_model("base")
 summarizer = Summarizer()
-
 
 @app.post("/transcribe/")
 async def transcribe_audio(
@@ -95,6 +95,7 @@ async def transcribe(file: UploadFile = File(...)):
     print(f"📝 Transcription obtenue: {result['text']}")
 
     return {"text": result["text"]}
+
 #résumé:
 @app.post("/summarize/")
 async def summarize_text(data: dict):
@@ -104,7 +105,32 @@ async def summarize_text(data: dict):
     
     summary = summarizer.summarize_text(text)
     return {"summary": summary}
+#traduction:
+@app.post("/translate/")
+async def translate_text(data: dict):
+    text = data.get("text")
+    src_lang = data.get("src_lang", "").lower()
+    tgt_lang = data.get("tgt_lang", "").lower()  # Assurer que c'est bien une chaîne en minuscules
+    
+    allowed_languages = ["fr", "es", "de", "it", "pt", "nl", "pl", "ru", "ja", "zh", "ko"]
+
+    # Vérifier si le texte est fourni
+    if not text:
+        raise HTTPException(status_code=400, detail="Aucun texte fourni.")
+
+    # Vérifier si la langue cible est supportée
+    if tgt_lang not in allowed_languages:
+        raise HTTPException(status_code=400, detail=f"Langue cible non supportée: {tgt_lang}. Langues supportées: {allowed_languages}")
+
+    try:
+        # Traduire avec Marian
+        translation = translate_marian(text, src_lang, tgt_lang)
+        return {"translation": translation}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erreur lors de la traduction: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8001)
+
+
