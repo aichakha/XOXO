@@ -28,7 +28,7 @@
 
         <section class="content">
           <h2>Text from your audio: </h2>
-          <button (click)="resetText()">Reset</button>
+
           <article class="card">
             <div class="user-info">
               <div class="user-avatar"></div>
@@ -53,10 +53,10 @@
 
             <div class="submenu" [ngClass]="{ 'show': translateMenuOpen }" >
             <ul>
-              <li (click)=" translateText(transcribedText,'en')">English</li>
-              <li (click)=" translateText(transcribedText,'fr')">French</li>
-              <li (click)=" translateText(transcribedText,'es')">Spanish</li>
-              <li (click)=" translateText(transcribedText,'de')">German</li>
+              <li (click)=" translateAndReset(transcribedText,'en')">English</li>
+              <li (click)=" translateAndReset(transcribedText,'fr')">French</li>
+              <li (click)=" translateAndReset(transcribedText,'es')">Spanish</li>
+              <li (click)=" translateAndReset(transcribedText,'de')">German</li>
             </ul>
           </div>
         </div>
