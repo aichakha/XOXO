@@ -21,6 +21,7 @@ export class HistoryPage implements OnInit {
   clips = [
     { name: 'Name', username: 'username', text: 'There\'s no other program...', date: '22.03.2021' },
     { name: 'Name', username: 'username', text: 'There\'s no other program...', date: '22.03.2021' },
+    { name: 'Name', username: 'username', text: 'There\'s no other program...', date: '22.03.2021' },
     { name: 'Name', username: 'username', text: 'There\'s no other program...', date: '22.03.2021' }
   ];
   filteredClips = [...this.clips];
