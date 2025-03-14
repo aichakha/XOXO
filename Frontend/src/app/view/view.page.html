@@ -25,9 +25,10 @@
         </div>
     </header>
 
-    
+
         <section class="content">
           <h2>Text from your audio: </h2>
+          <button (click)="resetText()">Reset</button>
           <article class="card">
             <div class="user-info">
               <div class="user-avatar"></div>
@@ -37,29 +38,29 @@
               </div>
             </div>
             <!-- Affiche le texte original jusqu'à ce que le résumé soit généré -->
-            <p>{{ translatedText ? translatedText : transcribedText }}</p>>
+            <p>{{ translatedText ? translatedText : transcribedText }}</p>
             <small>23.03.2021</small>
           </article>
         </section>
-      
+
         <div class="dropdown">
           <i class="icon-menu" (click)="toggleDropdown($event)">☰</i>
           <div class="dropdown-content" [ngClass]="{ 'open': dropdownOpen }">
             <div class="dropdown-item translate-container" (mouseenter)="showTranslateMenu()" (mouseleave)="hideTranslateMenu()">
-            
+              <a href="assets\icon\1.png"></a>
               <ion-img src="assets/icon/1.png"></ion-img>
               <span>Translate</span>
-              
+
             <div class="submenu" [ngClass]="{ 'show': translateMenuOpen }" >
             <ul>
-              <li (click)="translateText(transcribedText,'en')">English</li>
-              <li (click)="translateText(transcribedText,'fr')">French</li>
-              <li (click)="translateText(transcribedText,'es')">Spanish</li>
-              <li (click)="translateText(transcribedText,'de')">German</li>
+              <li (click)=" translateText(transcribedText,'en')">English</li>
+              <li (click)=" translateText(transcribedText,'fr')">French</li>
+              <li (click)=" translateText(transcribedText,'es')">Spanish</li>
+              <li (click)=" translateText(transcribedText,'de')">German</li>
             </ul>
           </div>
         </div>
-      
+
               <a (click)="summarizeText(transcribedText)">
                 <ion-img src="assets/icon/3.png"></ion-img>
                 <span>Summarize</span>
@@ -80,11 +81,11 @@
                 <ion-img src="assets/icon/6.png"></ion-img>
                 <span>Share</span>
               </a>
-            
+
           </div>
         </div>
-        
-  
+
+
 
 
     <footer>

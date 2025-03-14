@@ -39,7 +39,7 @@ export class ViewPage implements OnInit {
   ];
 
   selectedLanguage: string = 'fr'; // Langue cible par défaut
-
+  detectedLanguage: string = 'en';
 
 
   constructor(private router: Router,
@@ -63,17 +63,36 @@ export class ViewPage implements OnInit {
       }
     });
   }
+
+  // Fonction pour détecter la langue du texte
+  detectLanguage(text: string) {
+    // Exemple de requête pour une API de détection de langue, par exemple Google Translate API ou un service similaire
+    this.http.post<any>('https://api.detectlanguage.com/0.2/detect', {
+      q: text
+    }).subscribe({
+      next: (response) => {
+        this.detectedLanguage = response.data.detections[0].language; // Récupérer la langue détectée
+        console.log('Detected language:', this.detectedLanguage);
+      },
+      error: (error) => {
+        console.error('Error detecting language:', error);
+        this.detectedLanguage = 'en'; // Si l'API échoue, utiliser l'anglais par défaut
+      }
+    });
+  }
+
+
   async PresentLoading() {
     const loading = await this.loadingCtrl.create({
       message: this.loadingMessage,  // ✅ Utilisation du message dynamique
       spinner: 'crescent',  // ✅ Spinner Ionic
       backdropDismiss: false,  // ✅ Empêche la fermeture en cliquant dehors
     });
-  
+
     await loading.present();  // ✅ Affichage du loader
     return loading;  // ✅ Retourne l'instance pour pouvoir fermer avec `loading.dismiss()`
   }
-  
+
 
 
 // Ferme le sous-menu Translate
@@ -117,19 +136,22 @@ showTranslateMenu() {
       });
     }
 
+originalText: string = ''; // 🔹 Contient toujours le texte source
 // ✅ Fonction pour traduire le texte
 translateText(text: string, targetLang: string) {
   console.log('👉 Translating text:', text, 'to:', targetLang);
   if (!text || !targetLang) return;
+  this.originalText = text; // 🔹 Sauvegarde le texte original
 
   this.isLoading = true;
   this.loadingMessage = 'Translating...';
     // Show loading spinner
-  this.presentLoading().then((loading) => {
-    this.http.post<any>('http://localhost:8001/translate', {
-      text: text,
-      srcLang: 'en', // Langue source (modifiable si nécessaire)
-      tgtLang: targetLang,
+  this.presentLoading1().then((loading) => {
+    this.http.post<any>('http://localhost:8001/translate/', {
+      text: this.originalText,
+
+      src_lang: this.detectedLanguage, // 🔹 Changer "srcLang" en "src_lang"
+      tgt_lang: targetLang
     }).subscribe({
       next: (response) => {
         console.log('✅ Translation received:', response);
@@ -145,6 +167,33 @@ translateText(text: string, targetLang: string) {
       }
     });
   });
+}
+translateAndReset(text: string, targetLang: string) {
+  // 1. Réinitialiser au texte original
+  this.translatedText = null;  // Effacer la traduction
+  this.transcribedText = this.originalText;  // Restaurer le texte original
+
+  console.log('Text has been reset to original:', this.transcribedText);
+
+  // 2. Traduire ensuite
+  this.translateText(this.transcribedText, targetLang);
+}
+
+async presentLoading1() {
+  const loading = await this.loadingCtrl.create({
+    message: 'Translating...',  // Message personnalisé
+    spinner: 'crescent',  // Type de spinner (tu peux changer si tu veux)
+    cssClass: 'full-page-loading',  // Classe CSS pour personnaliser le style du spinner
+    backdropDismiss: false,  // Empêche la fermeture quand on clique en dehors
+  });
+
+  await loading.present();  // Affiche le loader
+  return loading;  // Retourne l'instance du loader pour pouvoir le fermer plus tard
+}
+resetText() {
+  this.translatedText = null; // Effacer le texte traduit
+  this.transcribedText = this.originalText; // Réinitialiser au texte original
+  console.log('Text has been reset to original:', this.transcribedText);
 }
 
 

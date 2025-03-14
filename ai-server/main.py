@@ -109,17 +109,21 @@ async def summarize_text(data: dict):
 @app.post("/translate/")
 async def translate_text(data: dict):
     text = data.get("text")
-    src_lang = data.get("src_lang", "en")
+    src_lang = data.get("src_lang", "").lower()
+    tgt_lang = data.get("tgt_lang", "").lower()  # Assurer que c'est bien une chaîne en minuscules
+    
     allowed_languages = ["fr", "es", "de", "it", "pt", "nl", "pl", "ru", "ja", "zh", "ko"]
-    tgt_lang = data.get("tgt_lang", "fr")  # Par défaut, "fr"
 
-    if tgt_lang not in allowed_languages:
-        tgt_lang = "fr"  # Remettre "fr" si la langue n'est pas valide
-
+    # Vérifier si le texte est fourni
     if not text:
         raise HTTPException(status_code=400, detail="Aucun texte fourni.")
 
+    # Vérifier si la langue cible est supportée
+    if tgt_lang not in allowed_languages:
+        raise HTTPException(status_code=400, detail=f"Langue cible non supportée: {tgt_lang}. Langues supportées: {allowed_languages}")
+
     try:
+        # Traduire avec Marian
         translation = translate_marian(text, src_lang, tgt_lang)
         return {"translation": translation}
     except Exception as e:
