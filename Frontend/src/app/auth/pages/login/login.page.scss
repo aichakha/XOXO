@@ -1,8 +1,8 @@
 /* Styling for ion-content */
 ion-content {
   --background: none;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0)),
-              url("/assets/background/3094352.jpg") no-repeat right center;
+  background: linear-gradient(to right, #000000b3, #00000000),
+              url("/assets/background/3094352R.png") no-repeat right center;
   background-size: contain;
   display: flex;
   justify-content: center; /* Center the content horizontally */
@@ -41,7 +41,7 @@ ion-content {
 .image-container {
   width: 50%;
   height: 100vh;
-  background: url("/assets/background/3094352.jpg") no-repeat right center;
+  background: url("/assets/background/3094352R.png") no-repeat right center;
   background-size: contain;
   flex-shrink: 0; /* Prevent the image from shrinking */
 }
@@ -59,7 +59,7 @@ ion-content {
 
 /* Button styling */
 ion-button {
-  --background: rgba(27, 207, 153, 0.719);
+  --background: #9893f4;
   --border-radius: 10px;
   --color: white;
   width: 100%;
