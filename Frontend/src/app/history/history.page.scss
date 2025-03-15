@@ -5,12 +5,19 @@ $font-family: Arial, sans-serif; // Police de caractères
 $font-size-base: 16px; // Taille de base de la police
 
 ion-content {
-  --background: linear-gradient(to bottom, #a38cd6, #6a5acd);
+ --background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), 
+  url('/assets/icon/about-img.png') no-repeat center center;
+  background-size: 100% 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 200vh;
+  height: 100vh;
   position: relative;
+  
+  height: 100vh;
+  width: 100vw;
+  background-image: linear-gradient(to right top, #b499ff, #c1acff, #cfc0ff, #ddd3ff, #ebe6ff, #ebe6ff, #ebe6ff, #ebe6ff, #ddd3ff, #cfc0ff, #c1acff, #b499ff);
+  background-size: 100% 100%; // Ajuste aussi cette image sur toute la fenêtre
 }
 
 // Mixins
@@ -101,7 +108,7 @@ body {
       transition: background 0.3s ease;
 
       &.logout {
-        background: $primary-color;
+        background: #9893f4;
         color: white;
 
         &:hover {
@@ -165,7 +172,8 @@ ion-card {
   }
 
   ion-card-header {
-    background: $primary-color;
+    background-image: linear-gradient(to right top, #c1acff, #b499ff);
+    
     color: white;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
@@ -254,7 +262,7 @@ ion-card {
 
   ion-button {
 
-    --background: #a38cd6;
+    --background: #9893f4;
     color: white;
     border-radius: 5px;
     padding: 10px 20px;
