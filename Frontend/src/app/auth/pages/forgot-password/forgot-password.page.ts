@@ -32,10 +32,13 @@ export class ForgotPasswordPage {
       },
       error: (err) => console.error('Erreur de réinitialisation du mot de passe :', err)
     });
-    
+
   }
   backlogin() {
     this.router.navigate(['/login']); // Assurez-vous d'avoir cette route définie
+  }
+  Home() {
+    this.router.navigate(['/acceuil']);
   }
 }
 

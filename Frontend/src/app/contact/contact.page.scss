@@ -6,7 +6,7 @@ $font-size-base: 16px; // Taille de base de la police
 $text-color: #333;
 
 ion-content {
-  --background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), 
+  --background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)),
   url('/assets/icon/about-img.png') no-repeat center center;
   background-size: 100% 100%;
   display: flex;
@@ -14,7 +14,7 @@ ion-content {
   align-items: center;
   height: 100vh;
   position: relative;
-  
+
   height: 100vh;
   width: 100vw;
   background-image: linear-gradient(to right top, #b499ff, #c1acff, #cfc0ff, #ddd3ff, #ebe6ff, #ebe6ff, #ebe6ff, #ebe6ff, #ddd3ff, #cfc0ff, #c1acff, #b499ff);
@@ -43,7 +43,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  
+
 }
 
 // Navbar
@@ -70,6 +70,9 @@ body {
     width: auto;
   }
 }
+
+.h2{
+  color: #9893f4;}
 
 nav ul {
   list-style: none;
@@ -113,10 +116,10 @@ nav ul {
     }
   }
   .join-now {
-    background: $primary-color;
+    background: #9893f4;
     color: white;
     &:hover {
-      background: darken($primary-color, 10%);
+      background:#9893f4;
     }
   }
 }

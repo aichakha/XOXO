@@ -59,5 +59,8 @@ export class LoginPage {
   goBack() {
     this.router.navigate(['/acceuil']); // Replace with actual route
   }
+  Home() {
+    this.router.navigate(['/acceuil']);
+  }
 
 }
