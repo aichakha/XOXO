@@ -79,3 +79,14 @@ ion-button {
   }
 
 }
+
+a {
+  color: #6a5acd;
+  font-weight: bold;
+  text-decoration: none;
+  transition: 0.3s;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

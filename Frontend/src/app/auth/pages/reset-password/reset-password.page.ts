@@ -25,7 +25,7 @@ export class ResetPasswordPage {
   showConfirmPassword = false;
 
   constructor(private authService: AuthService, private route: ActivatedRoute, private router: Router) {
-    
+
   }
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
@@ -65,5 +65,8 @@ export class ResetPasswordPage {
         alert('Error: Unable to reset password. Please try again.');
       },
     });
+  }
+  Home() {
+    this.router.navigate(['/acceuil']);
   }
 }

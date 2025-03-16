@@ -35,7 +35,9 @@ export class ViewPage implements OnInit {
     { code: 'es', name: 'Spanish' },
     { code: 'de', name: 'German' },
     { code: 'it', name: 'Italian' },
-    { code: 'pt', name: 'Portuguese' }
+    { code: 'pt', name: 'Portuguese'
+
+    }
   ];
 
   selectedLanguage: string = 'fr'; // Langue cible par défaut
@@ -168,17 +170,27 @@ translateText(text: string, targetLang: string) {
     });
   });
 }
+isFirstTranslation: boolean = true;
+
 translateAndReset(text: string, targetLang: string) {
-  // 1. Réinitialiser au texte original
-  this.translatedText = null;  // Effacer la traduction
-  this.transcribedText = this.originalText;  // Restaurer le texte original
+  if (!this.originalText) {
+    this.originalText = this.transcribedText; // Sauvegarder une seule fois le texte transcrit (Whisper)
+  }
+  if (this.isFirstTranslation) {
+    this.isFirstTranslation = false;  // Désactiver l'indicateur après la première traduction
+  } else {
+    // Réinitialiser le texte traduit et garder le texte transcrit (original)
+    this.translatedText = null;  // Effacer la traduction uniquement si ce n'est pas la première fois
+  }
 
-  console.log('Text has been reset to original:', this.transcribedText);
+  // Toujours revenir au texte transcrit (de Whisper), pas au texte traduit
+  this.transcribedText = this.originalText;
 
-  // 2. Traduire ensuite
+  console.log('Text has been reset to transcribed (original):', this.transcribedText);
+
+  // Traduire ensuite avec le texte transcrit
   this.translateText(this.transcribedText, targetLang);
 }
-
 async presentLoading1() {
   const loading = await this.loadingCtrl.create({
     message: 'Translating...',  // Message personnalisé
@@ -210,6 +222,7 @@ resetText() {
   History() {
     this.router.navigate(['/history']);
   }
+
 
   logout() {
     // Déconnexion de l'utilisateur (peut être améliorée avec JWT plus tard)

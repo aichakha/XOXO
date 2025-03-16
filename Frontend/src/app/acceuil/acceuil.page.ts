@@ -25,7 +25,7 @@ export class AcceuilPage {
   mediaUrl: string = '';
   isLoading: boolean = false;  // Flag to track the loading state
   loadingMessage: string = 'Converting...';  // Message during conversion
- 
+
   login() {
     this.router.navigate(['/login']);
   }
@@ -52,6 +52,7 @@ export class AcceuilPage {
       this.userName = JSON.parse(user).name;
     }
   }
+  
 
   view() {
     if (this.transcribedText) {
@@ -60,6 +61,7 @@ export class AcceuilPage {
       alert("Aucun fichier ou lien n'a été fourni !");
     }
   }
+
 
   Home() {
     this.router.navigate(['/acceuil']);
@@ -74,13 +76,13 @@ export class AcceuilPage {
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
-    
+
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
       this.uploadedFile = file;
       this.uploadedFileName = file.name; // Stocke le nom du fichier
       this.mediaUrl = ''; // Efface l'URL si un fichier est sélectionné
-  
+
       console.log('Fichier sélectionné :', this.uploadedFileName);
     } else {
       this.uploadedFile = null;
@@ -124,13 +126,13 @@ export class AcceuilPage {
       alert('Please select a file or enter a URL before continuing.');
       return;
     }
-  
+
     this.isLoading = true;
-    this.loadingMessage = 'Converting...';  
-  
+    this.loadingMessage = 'Converting...';
+
     let formData = new FormData();
     let apiUrl = '';
-  
+
     if (this.uploadedFile) {
       apiUrl = 'http://localhost:3000/ai/transcribe';  // 🔹 Envoi du fichier
       formData.append('file', this.uploadedFile);
@@ -158,7 +160,7 @@ export class AcceuilPage {
           loading.dismiss();
         }
       });
-    
+
       // Mise à jour du message après un délai
       setTimeout(() => {
         this.loadingMessage = 'Almost done!';
@@ -193,9 +195,9 @@ export class AcceuilPage {
       }
     });
     }
-  
-    
+
+
   }
-  
-  
+
+
 }

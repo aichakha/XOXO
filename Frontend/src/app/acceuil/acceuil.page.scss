@@ -191,8 +191,7 @@ body {
   @include flex-center;
   height: 100vh;
   width: 100vw;
-  background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), 
-   url('/assets/icon/footer-mobile-bg.png') no-repeat center center;
+  background-image: linear-gradient(to right top, #b499ff, #c1acff, #cfc0ff, #ddd3ff, #ebe6ff, #ebe6ff, #ebe6ff, #ebe6ff, #ddd3ff, #cfc0ff, #c1acff, #b499ff);
   background-size: 100% 100%; // Ajuste aussi cette image sur toute la fenêtre
 }
 .container {
@@ -224,7 +223,7 @@ body {
   align-items: center;
   width: 100%;
   padding: 10px 20px;
-  background-color: rgba(255, 255, 255, 0.8); // Fond semi-transparent
+  background-color: #ffffffcc; // Fond semi-transparent
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   margin-bottom: 20px;
@@ -280,7 +279,7 @@ body {
       }
 
       &.join-now {
-        background: $primary-color;
+        background:#9893f4;
         color: white;
 
         &:hover {

@@ -24,11 +24,14 @@ export class SignupPage {
       next: () => this.router.navigate(['/acceuil']),
       error: err => console.error('Signup error:', err),
     });
-    
-    
+
+
   }
   backlogin() {
     this.router.navigate(['/login']); // Assurez-vous d'avoir cette route définie
+  }
+  Home() {
+    this.router.navigate(['/acceuil']);
   }
 }
 

@@ -25,7 +25,7 @@ $dark-text: #333;
 body {
   min-height: 100vh;
   width: 100%;
-  background: linear-gradient(to bottom, #a38cd6, #6a5acd) !important; // Dégradé du violet clair au foncé
+  background-image: linear-gradient(to right top, #b499ff, #c1acff, #cfc0ff, #ddd3ff, #ebe6ff, #ebe6ff, #ebe6ff, #ebe6ff, #ddd3ff, #cfc0ff, #c1acff, #b499ff);
   background-repeat: no-repeat;
   background-attachment: fixed; // Empêche le scrolling du fond
   display: flex;
@@ -90,7 +90,7 @@ body {
       transition: background 0.3s ease;
 
       &.logout {
-        background: $primary-color;
+        background: #9893f4;
         color: white;
 
         &:hover {
@@ -260,12 +260,17 @@ ion-img {
 footer {
   text-align: center;
   padding: 1rem;
-  background: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.8); // Fond semi-transparent
   width: 100%;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); // Ombre pour un effet visuel
-  margin-top: auto; // Pousse le footer en bas de la page
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+
+  position: fixed;
+  bottom: 0;
+  left: 0;
+
   p {
     margin: 0;
-    color: $dark-text;
+    color: #333;
+    font-size: 14px;
   }
 }
