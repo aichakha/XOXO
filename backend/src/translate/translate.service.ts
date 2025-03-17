@@ -1,25 +1,27 @@
-import { Injectable } from '@nestjs/common';
-import { MarianMTModel, MarianTokenizer } from '@xenova/transformers';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import axios from 'axios';
 
 @Injectable()
 export class TranslationService {
-  private model;
-  private tokenizer;
-
-  async initializeModel(srcLang: string, tgtLang: string) {
-    const modelName = `Helsinki-NLP/opus-mt-${srcLang}-${tgtLang}`;
-    this.tokenizer = await MarianTokenizer.from_pretrained(modelName);
-    this.model = await MarianMTModel.from_pretrained(modelName);
+  translate(text: string, srcLang: string, tgtLang: string) {
+    throw new Error('Method not implemented.');
   }
+  async translateText(text: string, srcLang: string, tgtLang: string): Promise<string> {
+    try {
+      const response = await axios.post('http://localhost:8001/translate', {
+        text,
+        src_lang: srcLang,
+        tgt_lang: tgtLang,
+      });
 
-  async translate(text: string, srcLang: string, tgtLang: string): Promise<string> {
-    if (!this.model || !this.tokenizer) {
-      await this.initializeModel(srcLang, tgtLang);
+      if (response.data && response.data.translation) {
+        return response.data.translation;
+      }
+
+      throw new InternalServerErrorException('Invalid response from translation service');
+    } catch (error) {
+      console.error('Error while translating text:', error);
+      throw new InternalServerErrorException('Error while translating text');
     }
-
-    const encodedText = await this.tokenizer(text, { return_tensors: 'pt', padding: true, truncation: true });
-    const output = await this.model.generate(encodedText.input_ids);
-    const translatedText = await this.tokenizer.decode(output[0], { skip_special_tokens: true });
-    return translatedText;
   }
 }
