@@ -6,7 +6,8 @@ import { IonicModule } from '@ionic/angular';
 import { Router,ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { LoadingController } from '@ionic/angular';
-
+import { ToastController } from '@ionic/angular';
+import jsPDF from 'jspdf';
 @Component({
   selector: 'app-view',
   standalone: true,
@@ -19,14 +20,18 @@ import { LoadingController } from '@ionic/angular';
   styleUrls: ['./view.page.scss'],
 })
 export class ViewPage implements OnInit {
-
-  transcribedText: string = '';
+  transcribedText: string = 'This is a sample transcribed text.';
+  downloadMenuOpen = false;
+  isEditing: boolean = false;
   translatedText: string | null = null;
   isLoading: boolean = true;
   summarizedText: string = '';
   errorMessage: string = '';
   translateMenuOpen = false;
   translateMenuPosition = { x: 0, y: 0 };
+  recipientEmail: string = '';
+  senderEmail: string = '';
+  emailMessage: string = '';
 
   loadingMessage: string = 'Converting...';
 
@@ -48,7 +53,8 @@ export class ViewPage implements OnInit {
      private route: ActivatedRoute,
      private http: HttpClient,
      private loadingCtrl: LoadingController,
-     private loadingController: LoadingController
+     private loadingController: LoadingController,
+     private toastController: ToastController ,// Injecting ToastController
     ) {}
 
   showSummary: boolean = false; // ✅ Zone de texte cachée par défaut
@@ -258,8 +264,108 @@ resetText() {
     return loading;  // Retourne l'instance du loader pour pouvoir le fermer plus tard
   }
 
+  // Opens the email modal
+openModal() {
+  document.getElementById("emailModal")!.style.display = "block";
+}
 
+// Closes the email modal
+closeModal() {
+  document.getElementById("emailModal")!.style.display = "none";
+}
 
+// Sends the email using mailto
+sendEmail() {
+  if (!this.recipientEmail || !this.senderEmail) {
+    alert("Please fill in both email fields.");
+    return;
+  }
 
+  const mailtoLink = `mailto:${this.recipientEmail}?subject=Sharing a File&body=${encodeURIComponent(this.emailMessage)}%0D%0A%0D%0ASent from ${this.senderEmail}`;
+  window.location.href = mailtoLink;
+
+  // Close the modal after sending
+  this.closeModal();
+}
+
+// Function to copy text when the button is clicked
+async copyText() {
+  const textToCopy = this.translatedText || this.transcribedText;
+
+  try {
+    // Copy the text to clipboard using Clipboard API
+    await navigator.clipboard.writeText(textToCopy);
+
+    // Show toast notification after successfully copying text
+    const toast = await this.toastController.create({
+      message: 'Text copied to clipboard!',
+      duration: 1000,   // Duration in milliseconds (Toast disappears after 2 seconds)
+      position: 'bottom', // Position of the toast
+      cssClass: 'custom-toast' // Optional: Add a custom class for further styling if needed
+    });
+
+    toast.present();
+  } catch (error) {
+    // Handle error if copying fails (optional)
+    console.error('Failed to copy text', error);
+
+    const toast = await this.toastController.create({
+      message: 'Failed to copy text.',
+      duration: 1000,   // Duration of the toast (2 seconds)
+      position: 'top', // Position of the toast
+    });
+
+    toast.present();
+  }
+}
+// Fonction pour masquer le menu de téléchargement
+hideDownloadMenu() {
+  this.downloadMenuOpen = false;
+}
+// Fonction pour afficher le menu de téléchargement
+showDownloadMenu() {
+  this.downloadMenuOpen = true;
+}
+
+toggleEditMode() {
+  this.isEditing = !this.isEditing; // Bascule entre édition et affichage normal
+}
+toggleDownloadMenu(event: Event) {
+  event.stopPropagation();
+  this.downloadMenuOpen = !this.downloadMenuOpen;
+}
+
+@HostListener('document:click', ['$event'])
+closeDownloadMenu(event: MouseEvent) {
+  const clickedInside = (event.target as HTMLElement).closest('.download-menu');
+  if (!clickedInside) {
+    this.downloadMenuOpen = false;
+  }
+}
+
+downloadFile(format: 'pdf' | 'txt') {
+  const content = this.transcribedText || 'No content available';
+
+  if (format === 'txt') {
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'transcription.txt';
+    document.body.appendChild(a);
+    a.click();
+
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  } else if (format === 'pdf') {
+    const doc = new jsPDF();
+    doc.text(content, 10, 10);
+    doc.save('transcription.pdf');
+  }
+
+  this.downloadMenuOpen = false;
+}
 
 }
+

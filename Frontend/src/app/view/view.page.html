@@ -6,6 +6,26 @@
     <title>Recapify</title>
     <link rel="stylesheet" href="styles.css">
 </head>
+<!-- Email Share Modal (Hidden by Default) -->
+<div id="emailModal" class="modal" style="display: none;">
+  <div class="modal-content">
+    <span class="close" (click)="closeModal()">&times;</span>
+    <h2>Share via Email</h2>
+    
+    <label for="recipientEmail">Send to:</label>
+    <input type="email" id="recipientEmail" placeholder="Recipient's email" [(ngModel)]="recipientEmail">
+
+    <label for="senderEmail">Your Email:</label>
+    <input type="email" id="senderEmail" placeholder="Your email" [(ngModel)]="senderEmail">
+
+    <label for="message">Message:</label>
+    <textarea id="message" placeholder="Enter your message" [(ngModel)]="emailMessage"></textarea>
+
+    <button (click)="sendEmail()">Send</button>
+  </div>
+</div>
+
+
 <body>
     <header class="navbar">
         <div class="logo">
@@ -36,9 +56,15 @@
                 <strong>Name</strong>
                 <small>username</small>
               </div>
+              <button class="copy-btn" (click)="copyText()">
+                <ion-img src="assets/icon/copy.png" style="height: 20px; width: 20px;"></ion-img>
+              </button>
             </div>
-            <!-- Affiche le texte original jusqu'à ce que le résumé soit généré -->
-            <p>{{ translatedText ? translatedText : transcribedText }}</p>
+            <textarea *ngIf="isEditing" [(ngModel)]="transcribedText" class="edit-area"></textarea>
+
+<!-- Sinon, affiche le texte normalement -->
+<p *ngIf="!isEditing">{{ translatedText ? translatedText : transcribedText }}</p>
+
             <small>23.03.2021</small>
           </article>
         </section>
@@ -65,22 +91,34 @@
                 <ion-img src="assets/icon/3.png"></ion-img>
                 <span>Summarize</span>
               </a>
-              <a href="assets\icon\4.png">
+              <a (click)="toggleEditMode()">
                 <ion-img src="assets/icon/4.png"></ion-img>
                 <span>Edit</span>
-              </a>
+            </a>
+
               <a href="assets\icon\5.png">
                 <ion-img src="assets/icon/5.png"></ion-img>
                 <span>Save</span>
               </a>
-              <a href="assets\icon\2.png">
-                <ion-img src="assets/icon/2.png"></ion-img>
-                <span>Download</span>
-              </a>
-              <a href="assets\icon\6.png">
+              
+<div class="dropdown-item download-container" 
+(mouseenter)="showDownloadMenu()" 
+(mouseleave)="hideDownloadMenu()">
+<ion-img src="assets/icon/2.png"></ion-img>
+<span>Download</span>
+
+<div class="submenu" [ngClass]="{ 'show': downloadMenuOpen }">
+<ul>
+ <li (click)="downloadFile('txt')">Download .txt</li>
+ <li (click)="downloadFile('pdf')">Download PDF</li>
+</ul>
+</div>
+</div>
+              <a (click)="openModal()">
                 <ion-img src="assets/icon/6.png"></ion-img>
                 <span>Share</span>
               </a>
+              
 
           </div>
         </div>
