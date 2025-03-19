@@ -328,7 +328,7 @@ button {
 }
 
 button:hover {
-  background-color: #5a4db6;
+  background-color:transparent;
 }
 
 .copy-btn {
@@ -336,8 +336,8 @@ button:hover {
   border: none;
   cursor: pointer;
   position: absolute;
-  right: 10px;
-  top: 10px;
+  left: 710px;
+  top: 25px;
   
 }
 .card {
@@ -350,15 +350,20 @@ button:hover {
   text-align: center;
 }
 .edit-area {
-  width: 100px; /* Ajuste la largeur à celle du conteneur parent */
-  max-width: 1000px; /* Définit une largeur maximale */
-  height: auto; /* Permet d'ajuster la hauteur en fonction du texte */
-  font-size: 16px;
-  border: 1px solid #ccc;
+  width: 100%;  // Prend toute la largeur du parent
+  height: auto; // Ajuste la hauteur en fonction du texte
+  min-height: 50px; // Pour éviter qu'elle soit trop petite
+  max-width: 100%; // Empêche le débordement
+  font-size: inherit; // Garde la même taille de police que le texte affiché
+  font-family: inherit; // Garde la même police
   padding: 10px;
+  border: 1px solid #ccc;
   border-radius: 5px;
-  resize: vertical; /* Permet d'ajuster la hauteur si nécessaire */
+  resize: none; // Désactive le redimensionnement manuel
+  overflow: hidden; // Empêche le défilement interne
+  white-space: pre-wrap; // Assure le retour à la ligne automatique
 }
+
 .download-container {
   position: relative;
 }

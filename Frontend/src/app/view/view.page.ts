@@ -366,6 +366,12 @@ downloadFile(format: 'pdf' | 'txt') {
 
   this.downloadMenuOpen = false;
 }
-
+adjustTextareaHeight() {
+  const textarea = document.querySelector('.edit-area') as HTMLTextAreaElement;
+  if (textarea) {
+    textarea.style.height = 'auto'; // Réinitialise la hauteur
+    textarea.style.height = textarea.scrollHeight + 'px'; // Ajuste la hauteur
+  }
 }
 
+}
