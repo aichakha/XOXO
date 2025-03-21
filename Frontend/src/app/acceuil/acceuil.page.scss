@@ -1,3 +1,7 @@
+
+@use "sass:color";
+@use "sass:map";
+@use "sass:meta";
 // Variables
 $primary-color: #6a5acd; // Couleur principale (violet)
 $secondary-color: #a38cd6; // Couleur secondaire (violet clair)
@@ -135,7 +139,7 @@ $font-size-base: 16px; // Taille de base de la police
 
 .full-page-loading .loading-spinner.bounce {
   animation: bounceRotate 1.5s ease-in-out infinite;
-  
+
 }
 
 /* Easing rotation */
@@ -182,7 +186,7 @@ body {
   padding: 0;
   height: 100vh;
   width: 100vw;
-  background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)), 
+  background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)),
   url('/assets/icon/about-img.png') no-repeat center center;
   background-size: 100% 100%; // S'assure que l'image occupe toute la fenêtre sans distorsion
 }
@@ -357,7 +361,7 @@ footer {
   background-color: rgba(255, 255, 255, 0.8); // Fond semi-transparent
   width: 100%;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-  
+
   position: fixed;
   bottom: 0;
 

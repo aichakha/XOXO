@@ -1,3 +1,4 @@
+//devenue How it works page
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -14,51 +15,28 @@ import { Router } from '@angular/router';
 })
 export class ContactPage implements OnInit {
 
-  firstName: string = '';
-  lastName: string = '';
-  email: string = '';
-  phone: string = '';
-  message: string = '';
 
-  constructor(private alertController: AlertController, private router: Router) {} // Injection correcte de Router
 
-  async sendMessage() {
-    if (!this.firstName || !this.lastName || !this.email || !this.phone || !this.message) {
-      this.showAlert('Error', 'Please fill in all fields.');
-      return;
-    }
+  uploadedFileName: string = '';
+  uploadedFile: File | null = null;
+  mediaUrl: string = '';
 
-    console.log('Message Sent:', {
-      firstName: this.firstName,
-      lastName: this.lastName,
-      email: this.email,
-      phone: this.phone,
-      message: this.message
-    });
+  constructor( private router: Router) {} // Injection correcte de Router
 
-    this.showAlert('Success', 'Your message has been sent successfully!');
-    this.resetForm();
-  }
-
-  resetForm() {
-    this.firstName = '';
-    this.lastName = '';
-    this.email = '';
-    this.phone = '';
-    this.message = '';
-  }
-
-  async showAlert(header: string, message: string) {
-    const alert = await this.alertController.create({
-      header,
-      message,
-      buttons: ['OK'],
-    });
-    await alert.present();
-  }
 
   Home() {
-    this.router.navigate(['/acceuil']); // Navigation fonctionnelle
+    // Réinitialiser les fichiers uploadés et les champs
+    this.uploadedFile = null;
+    this.uploadedFileName = '';
+    this.mediaUrl = '';
+
+    // Réinitialiser l'input file (pour éviter qu'il garde l'ancien fichier)
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = ''; // Réinitialisation de l'élément HTML input file
+    }
+
+    this.router.navigate(['/acceuil']);
   }
 
   Contact() {

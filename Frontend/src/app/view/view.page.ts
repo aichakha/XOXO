@@ -32,6 +32,11 @@ export class ViewPage implements OnInit {
   recipientEmail: string = '';
   senderEmail: string = '';
   emailMessage: string = '';
+  selectedLanguage: string = 'fr'; // Langue cible par défaut
+  detectedLanguage: string = 'en';
+  uploadedFileName: string | null = null;
+  mediaUrl: string="";
+  uploadedFile:string="";
 
   loadingMessage: string = 'Converting...';
 
@@ -45,8 +50,8 @@ export class ViewPage implements OnInit {
     }
   ];
 
-  selectedLanguage: string = 'fr'; // Langue cible par défaut
-  detectedLanguage: string = 'en';
+
+
 
 
   constructor(private router: Router,
@@ -215,13 +220,24 @@ resetText() {
 }
 
 
-    //Pour le résumé
+  
 
   Contact() {
     this.router.navigate(['/contact']);
   }
 
   Home() {
+    // Réinitialiser les fichiers uploadés et les champs
+    this.uploadedFile = '';
+    this.uploadedFileName = "";
+    this.mediaUrl = '';
+
+    // Réinitialiser l'input file (pour éviter qu'il garde l'ancien fichier)
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = ''; // Réinitialisation de l'élément HTML input file
+    }
+
     this.router.navigate(['/acceuil']);
   }
 

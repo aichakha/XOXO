@@ -52,7 +52,7 @@ export class AcceuilPage {
       this.userName = JSON.parse(user).name;
     }
   }
-  
+
 
   view() {
     if (this.transcribedText) {
@@ -64,6 +64,17 @@ export class AcceuilPage {
 
 
   Home() {
+    // Réinitialiser les fichiers uploadés et les champs
+    this.uploadedFile = null;
+    this.uploadedFileName = '';
+    this.mediaUrl = '';
+
+    // Réinitialiser l'input file (pour éviter qu'il garde l'ancien fichier)
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = ''; // Réinitialisation de l'élément HTML input file
+    }
+
     this.router.navigate(['/acceuil']);
   }
   History() {

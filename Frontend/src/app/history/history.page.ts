@@ -27,7 +27,10 @@ export class HistoryPage implements OnInit {
   filteredClips = [...this.clips];
 
   constructor(private router: Router) {}
+  uploadedFileName: string = '';
 
+  uploadedFile: File | null = null;
+  mediaUrl: string = '';
   ngOnInit() {
     const user = localStorage.getItem('user');
     if (user) {
@@ -51,6 +54,17 @@ export class HistoryPage implements OnInit {
   }
 
   Home() {
+    // Réinitialiser les fichiers uploadés et les champs
+    this.uploadedFile = null;
+    this.uploadedFileName = '';
+    this.mediaUrl = '';
+
+    // Réinitialiser l'input file (pour éviter qu'il garde l'ancien fichier)
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = ''; // Réinitialisation de l'élément HTML input file
+    }
+
     this.router.navigate(['/acceuil']);
   }
   History() {
