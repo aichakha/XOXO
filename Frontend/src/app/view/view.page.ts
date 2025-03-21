@@ -47,6 +47,7 @@ export class ViewPage implements OnInit {
 
   selectedLanguage: string = 'fr'; // Langue cible par défaut
   detectedLanguage: string = 'en';
+showCopyButton: any;
 
 
   constructor(private router: Router,

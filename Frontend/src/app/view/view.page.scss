@@ -216,7 +216,7 @@ ion-img {
   flex-direction: column;
 }
 .dropdown-content a {
-  padding: 12px;
+  padding: 5px;
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -327,23 +327,33 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  background-color:transparent;
-}
+
 
 .copy-btn {
   background: none;
   border: none;
   cursor: pointer;
   position: absolute;
-  left: 710px;
-  top: 25px;
+  right: 10px;
+  top: 10px;
+  left: 650px;
   
+
+
+
+&:hover {
+  color: #007bff;
+  transform: scale(1.1);
+}
+
+&:active {
+  transform: scale(0.9);
+}
 }
 .card {
   position: relative;
-  /* Add other styles for the card */
-}.custom-toast {
+}/* Add other styles for the card */
+.custom-toast {
   border-radius: 10px;
   font-size: 14px;
   padding: 10px;
