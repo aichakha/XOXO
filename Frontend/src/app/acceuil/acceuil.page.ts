@@ -6,6 +6,7 @@ import { IonicModule } from '@ionic/angular';
 import { AuthService } from '../auth/services/auth.service';
 import { HttpClient } from '@angular/common/http'; // Import HttpClient
 import { LoadingController } from '@ionic/angular';  // <-- Import LoadingController
+import { Observable, Subscribable } from 'rxjs';
 
 @Component({
   selector: 'app-acceuil',
@@ -25,6 +26,7 @@ export class AcceuilPage {
   mediaUrl: string = '';
   isLoading: boolean = false;  // Flag to track the loading state
   loadingMessage: string = 'Converting...';  // Message during conversion
+  username$: Observable<unknown> | Subscribable<unknown> | Promise<unknown> | undefined;
 
   login() {
     this.router.navigate(['/login']);

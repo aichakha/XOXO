@@ -8,6 +8,7 @@ import { ResetPasswordPage } from './auth/pages/reset-password/reset-password.pa
 import { HistoryPage } from './history/history.page';
 
 import { ContactPage } from './contact/contact.page';
+import { AuthGuard } from './auth/auth.guard';
 
 
 export const routes: Routes = [
@@ -41,9 +42,10 @@ export const routes: Routes = [
   {
     path: 'contact',
     loadComponent: () => import('./contact/contact.page').then( m => m.ContactPage)
-  },  {
+  },
+  {
     path: 'view',
-    loadComponent: () => import('./view/view.page').then( m => m.ViewPage)
+    loadComponent: () => import('./view/view.page').then( m => m.ViewPage),canActivate: [AuthGuard]
   },
 
 
