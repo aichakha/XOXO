@@ -50,8 +50,7 @@ export class ViewPage implements OnInit {
     }
   ];
 
-
-
+showCopyButton: any;
 
 
   constructor(private router: Router,
@@ -220,7 +219,7 @@ resetText() {
 }
 
 
-  
+
 
   Contact() {
     this.router.navigate(['/contact']);

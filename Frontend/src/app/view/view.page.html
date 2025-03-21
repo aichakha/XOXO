@@ -56,13 +56,13 @@
                 <strong>Name</strong>
                 <small>username</small>
               </div>
-              <button class="copy-btn" (click)="copyText()">
-                <ion-img src="assets/icon/copy.png" style="height: 20px; width: 20px;"></ion-img>
-              </button>
+              
             </div>
             <textarea *ngIf="isEditing" [(ngModel)]="transcribedText" class="edit-area" (input)="adjustTextareaHeight()"> </textarea>
 
-
+            <button class="copy-btn" (click)="copyText()">
+              <ion-img src="assets/icon/copy.png" style="height: 20px; width: 20px;"></ion-img>
+            </button>
 <!-- Sinon, affiche le texte normalement -->
 <p *ngIf="!isEditing">{{ translatedText ? translatedText : transcribedText }}</p>
 
