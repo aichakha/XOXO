@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component ,OnInit,ChangeDetectorRef} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
@@ -7,7 +7,7 @@ import { AuthService } from '../auth/services/auth.service';
 import { HttpClient } from '@angular/common/http'; // Import HttpClient
 import { LoadingController } from '@ionic/angular';  // <-- Import LoadingController
 import { Observable, Subscribable } from 'rxjs';
-
+import { AlertController } from '@ionic/angular';
 @Component({
   selector: 'app-acceuil',
   standalone: true,
@@ -27,20 +27,55 @@ export class AcceuilPage {
   isLoading: boolean = false;  // Flag to track the loading state
   loadingMessage: string = 'Converting...';  // Message during conversion
   username$: Observable<unknown> | Subscribable<unknown> | Promise<unknown> | undefined;
+  user: any = null;
 
   login() {
     this.router.navigate(['/login']);
   }
   userName: string = '';
 
-  constructor(private router: Router, private authService: AuthService,private http: HttpClient,  private loadingCtrl: LoadingController,private loadingController: LoadingController
+  constructor(private router: Router,
+              private cdr: ChangeDetectorRef ,
+              private authService: AuthService,
+              private http: HttpClient,
+              private loadingCtrl: LoadingController,
+              private loadingController: LoadingController,
+              private alertCtrl: AlertController
 
   ) {}
 
+  ngOnInit() {
+      setTimeout(() => {
+      console.log('Initializing Acceuil Page...');
+
+      // Vérifier et nettoyer les anciens tokens invalides
+      if (!this.authService.isAuthenticated()) {
+        console.log('User not authenticated at startup. Ensuring token is removed.');
+        localStorage.removeItem('token');
+      }
+      console.log('Checking authentication after delay:', this.authService.isAuthenticated());
+      }, 500);
+      this.authService.userLoggedIn.subscribe(() => {
+      console.log('Navbar loaded, user:', this.user); // Vérification
+      this.user = this.user ;
+      this.loadUser();
+      this.cdr.detectChanges();});
+  }
+
+  loadUser() {
+    this.user = this.authService.getUser();
+    console.log('Navbar loaded, user:', this.user); // Vérification
+    this.cdr.detectChanges(); // ✅ Force la mise à jour de l'affichage
+
+
+  }
+
+
   logout() {
-    // Déconnexion de l'utilisateur (peut être améliorée avec JWT plus tard)
-    localStorage.removeItem('user');
+    this.authService.logout();
+    this.user = null;
     this.router.navigate(['/login']);
+    this.cdr.detectChanges();
   }
   signup() {
     // Déconnexion de l'utilisateur (peut être améliorée avec JWT plus tard)
@@ -48,12 +83,12 @@ export class AcceuilPage {
     this.router.navigate(['signup']);
   }
 
-  ngOnInit() {
+  /*ngOnInit() {
     const user = localStorage.getItem('user');
     if (user) {
       this.userName = JSON.parse(user).name;
     }
-  }
+  }*/
 
 
   view() {
@@ -135,7 +170,17 @@ export class AcceuilPage {
   }
 
   async convertToText() {
+    console.log('Checking authentication:', this.authService.isAuthenticated());
+    if (!this.authService.isAuthenticated()) {
+      console.log('User not authenticated, showing popup...');
+      this.showAuthPopup();
+      return;
+    }
+
+    console.log('User is authenticated, starting transcription...');
     if (!this.canConvert()) {
+
+
       alert('Please select a file or enter a URL before continuing.');
       return;
     }
@@ -210,6 +255,43 @@ export class AcceuilPage {
     }
 
 
+  }
+  async showAuthPopup() {
+    console.log('Displaying authentication popup...');
+
+    setTimeout(async () => {
+      const alert = await this.alertCtrl.create({
+        header: 'Access Restricted',
+        message: 'You have to be logged in to have access',
+        buttons: [
+          {
+            text: 'Log In',
+            handler: () => {
+              console.log('Redirecting to Login...');
+              window.location.href = '/login';
+            }
+          },
+          {
+            text: 'Sign Up',
+            handler: () => {
+              console.log('Redirecting to Sign Up...');
+              window.location.href = '/signup';
+            }
+          },
+          {
+            text: 'Cancel',
+            role: 'cancel',
+            handler: () => {
+              console.log('Popup closed');
+            }
+          }
+        ]
+      });
+
+      console.log('Alert created, now presenting...');
+      await alert.present();
+      console.log('Alert should be visible now!');
+    }, 500); // Adds a slight delay (500ms) to ensure rendering
   }
 
 

@@ -16,6 +16,9 @@
         <li><a (click)="Contact()">How It Works</a></li>
       </ul>
     </nav>
+      <div *ngIf="user">
+    <p> {{ user.name }}</p>
+  </div>
     <div class="auth-buttons">
       <button class="sign-in" (click)="login()">LOG IN</button>
       <button class="join-now" (click)="signup()">JOIN NOW</button>

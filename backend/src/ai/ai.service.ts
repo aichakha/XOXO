@@ -29,8 +29,8 @@ export class AIService {
         throw new InternalServerErrorException('La transcription n\'a pas été générée.');
       }
     } catch (error) {
-      console.error("🚨 Erreur de transcription:", error.message);
-      throw new InternalServerErrorException(`Erreur de transcription: ${error.message}`);
+      console.error("🚨 Erreur de transcription:", (error as any).message);
+      throw new InternalServerErrorException(`Erreur de transcription: ${(error as any).message}`);
     }
   }
 
@@ -62,8 +62,8 @@ export class AIService {
       console.log(`✅ Audio téléchargé et enregistré sous : ${outputPath}`);
       return outputPath;
     } catch (error) {
-      console.error("🚨 Erreur lors du téléchargement avec yt-dlp:", error.message);
-      throw new Error(`Erreur yt-dlp: ${error.message}`);
+      console.error("🚨 Erreur lors du téléchargement avec yt-dlp:", (error as any).message);
+      throw new Error(`Erreur yt-dlp: ${(error as any).message}`);
     }
   }
 
@@ -84,15 +84,15 @@ export class AIService {
       console.log("✅ Réponse de Whisper:", response.data);
       return response.data.text;
     } catch (error) {
-      console.error("🚨 Erreur de transcription:", error.message);
-      throw new InternalServerErrorException(`Erreur de transcription: ${error.message}`);
+      console.error("🚨 Erreur de transcription:", (error as any).message);
+      throw new InternalServerErrorException(`Erreur de transcription: ${(error as any).message}`);
     }finally {
       // 🔥 Supprime le fichier après envoi
       try {
         fs.unlinkSync(mp3Path);
         console.log(`🗑️ Fichier supprimé : ${mp3Path}`);
       } catch (err) {
-        console.error("⚠️ Impossible de supprimer le fichier :", err.message);
+        console.error("⚠️ Impossible de supprimer le fichier :", (err as any).message);
       }
 
   }

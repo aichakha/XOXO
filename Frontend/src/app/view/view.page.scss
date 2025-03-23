@@ -160,11 +160,12 @@ main {
   position: absolute;
   top: 5px;
   right: 26px;
-  font-size: 22px; // Augmente la taille ici
+  font-size: 29px; // Augmente la taille ici
   cursor: pointer;
   color: #0a0a0a;
   transition: transform 0.2s ease;
 }
+
 
 .icon-menu:hover {
   transform: scale(1.2); // Effet au survol
@@ -337,25 +338,35 @@ button {
   border: none;
   cursor: pointer;
   position: absolute;
-
-  left: 710px;
-  top: 25px;
-  right: 10px;
-  top: 10px;
   left: 650px;
+  top: 10px;
+
+  &:hover {
+    color: #007bff;
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
+.card {
+  position: relative;
 }
 
 
-
+.button-class {
 &:hover {
   color: #007bff;
   transform: scale(1.1);
 }
 
+
 &:active {
   transform: scale(0.9);
 }
-
+}
 .card {
   position: relative;
 }/* Add other styles for the card */

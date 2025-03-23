@@ -19,11 +19,30 @@ import { IonicModule } from '@ionic/angular';
 export class LoginPage {
   email = '';
   password = '';
+
   rememberMe = false; // ✅ Ajout de rememberMe
   errorMessage = '';
   isLoading = false; // ✅ Ajout de isLoading
 
   constructor(private authService: AuthService, private router: Router) {}
+  onLogin() {
+    // Simuler une connexion API (remplace par ton appel réel à l'API)
+    const mockApiResponse = {
+      token: 'fake-jwt-token',
+      user: { id: 1, name: 'John Doe', email: this.email }
+    };
+
+    // Stocker les informations de connexion
+    this.authService.setToken(mockApiResponse.token);
+    this.authService.setUser(mockApiResponse.user);
+
+    console.log('User logged in:', mockApiResponse.user);
+    console.log('LocalStorage user:', localStorage.getItem('user')); // Vérification
+
+    // Rediriger vers la page d'accueil
+    this.router.navigate(['/home']);
+  }
+
 
   login() {
     this.isLoading = true; // ✅ Activation du spinner de chargement

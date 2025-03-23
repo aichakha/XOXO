@@ -3,9 +3,26 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { JwtService } from '@nestjs/jwt';
+import { LoginDto } from './dto/login.dto';
+
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService,private jwtService: JwtService) {}
+  private users: { id: string; name: string; email: string; password: string }[] = [
+    { id: '1', name: 'John Doe', email: 'johndoe@example.com', password: 'password123' },
+    { id: '2', name: 'Jane Smith', email: 'janesmith@example.com', password: 'securePass' }
+  ];
+  constructor(private prisma: PrismaService,
+    private jwtService: JwtService) {}
+  verifyToken(token: string) {
+    try {
+      return this.jwtService.verify(token);
+    } catch (error) {
+      throw new UnauthorizedException('Token invalide');
+    }
+  }
+
+ 
+
 
   async signUp(name: string, email: string, password: string) {
     const existingUser = await this.prisma.user.findUnique({ where: { email } });
@@ -28,10 +45,12 @@ export class AuthService {
     if (!passwordMatch) throw new UnauthorizedException('Invalid credentials');
     const payload = { email: user.email, sub: user.id };
     const token = this.jwtService.sign(payload);
+    const last4Digits = user.email.split('@')[0];
     return { 
       message: 'Login successful', 
       userId: user.id, 
-      token 
+      token ,
+      username:last4Digits 
     };
   }
 
