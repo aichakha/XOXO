@@ -29,13 +29,13 @@
 <body>
     <header class="navbar">
         <div class="logo">
-            <a href="#" (click)="Home()">
+            <a href="#" (click)="Homeuser()">
               <ion-img src="assets/icon/Logo2.png" style="height: 50px; width: auto;"></ion-img>
             </a>
         </div>
         <nav>
             <ul>
-                <li><a (click)="Home()">Home</a></li>
+                <li><a (click)="Homeuser()">Home</a></li>
                 <li><a (click)="History()">History</a></li>
                 <li><a (click)="Contact()">How It Works</a></li>
             </ul>
@@ -56,7 +56,7 @@
                 <strong>Name</strong>
                 <small>username</small>
               </div>
-              
+
             </div>
             <textarea *ngIf="isEditing" [(ngModel)]="transcribedText" class="edit-area" (input)="adjustTextareaHeight()"> </textarea>
 

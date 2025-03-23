@@ -44,30 +44,48 @@ export class LoginPage {
   }
 
 
-  login() {
+  /*login() {
     this.isLoading = true; // ✅ Activation du spinner de chargement
 
-    this.authService.login({ email: this.email, password: this.password }).subscribe({
+    this.authService.login(this.email, this.password).subscribe({
       next: (response) => {
-        console.log('Login successful', response);
+        console.log('✅ Login successful:', response);
         this.authService.setToken(response.token);
 
         // ✅ Stocker le token si "Remember Me" est activé
         if (this.rememberMe) {
           localStorage.setItem('authToken', response.token);
+          localStorage.setItem('username', response.username);
         }
 
         (document.activeElement as HTMLElement)?.blur();
-        this.router.navigate(['/acceuil']);
+        this.router.navigate(['/acceuil-user']); // 🔹 Redirection vers la page des utilisateurs connectés
       },
       error: (error) => {
-        this.errorMessage = 'Login failed: ' + (error.error.message || 'Unknown error');
+        console.error('🚨 Login failed:', error);
+        this.errorMessage = 'Login failed: ' + (error.error?.message || 'Unknown error');
       },
       complete: () => {
         this.isLoading = false; // ✅ Désactivation du spinner
       }
     });
-  }
+  }*/
+    login() {
+      this.authService.login(this.email, this.password).subscribe({
+        next: (response) => {
+          console.log('✅ Login successful:', response);
+          localStorage.setItem('authToken', response.token);
+          localStorage.setItem('username', response.username);
+
+          this.router.navigate(['/acceuil-user']); // 🔹 Rediriger après connexion
+        },
+        error: (error) => {
+          console.error('🚨 Login failed:', error);
+        }
+      });
+    }
+
+
 
   forgotPassword() {
     this.router.navigate(['/forgot-password']);

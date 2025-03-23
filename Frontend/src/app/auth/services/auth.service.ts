@@ -1,8 +1,11 @@
-import { Injectable,EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Observable, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
+import { BehaviorSubject } from 'rxjs';
+import { Router } from '@angular/router';
+
 
 
 @Injectable({
@@ -10,23 +13,30 @@ import { jwtDecode } from 'jwt-decode';
 })
 export class AuthService {
   private apiUrl = environment.apiUrl + '/auth';
-  userLoggedIn = new EventEmitter<void>();
 
-  constructor(private http: HttpClient) {}
+  private isAuthenticated = new BehaviorSubject<boolean>(false);
+  isAuthenticated$ = this.isAuthenticated.asObservable();
+  private last4Digits = new BehaviorSubject<string | null>(null);
+  username$ = new BehaviorSubject<string | null>(null);
+
+  constructor(private http: HttpClient,private router: Router) {}
 
   signUp(userData: { name: string; email: string; password: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/signup`, userData);
   }
 
-  login(credentials: { email: string; password: string }): Observable<any> {
-    return this.http.post<{
-      user: any; token: string
-}>(`${this.apiUrl}/login`, credentials).pipe(
-    tap(response => {
-      this.setToken(response.token);
-      this.setUser(response.user);  // Enregistre le nom de l'utilisateur
-    })
-);}
+  login(email: string, password: string): Observable<{ token: string,  username: string  }> {
+    return this.http.post<{ token: string, username: string  }>(`${this.apiUrl}/login`, { email, password })
+      .pipe( // Optionnel: Ajout d'un log pour debug
+        tap(response =>{
+          localStorage.setItem('authToken', response.token); // Stocker le token
+          localStorage.setItem('username', response.username); // Stocker les 4 derniers chiffres
+          this.username$.next(response.username); // Stocker les 4 derniers chiffres
+          this.isAuthenticated.next(true); // Met à jour l'état d'authentification
+          this.router.navigate(['/acceuil-user']); })// 🔹 Redirection vers la page des utilisateurs connectés
+      );
+    }
+
 
   forgotPassword(email: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/forgot-password`, { email });
@@ -74,40 +84,23 @@ export class AuthService {
   }
 
   // ✅ Vérifie si l'utilisateur est authentifié
-  isAuthenticated(): boolean {
-    const token = localStorage.getItem('token');
-
-    if (!token) {
-      console.log('No token found. User is NOT authenticated.');
-      return false;
-    }
-
-    // Vérifier si le token est un vrai JWT et non juste une chaîne aléatoire
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-
-      // Vérifier la date d'expiration du token
-      const isExpired = payload.exp * 1000 < Date.now();
-
-      if (isExpired) {
-        console.log('Token expired. User is NOT authenticated.');
-        localStorage.removeItem('token'); // Supprime le token expiré
-        return false;
-      }
-
-      console.log('Valid token found. User is authenticated.');
-      return true;
-    } catch (e) {
-      console.log('Invalid token format. User is NOT authenticated.');
-      return false;
-    }
+  isLoggedIn(): boolean {
+    const token = localStorage.getItem('authToken'); // Récupérer le token stocké
+    return !!token; // Retourne true si le token existe, sinon false
   }
-
+  //recuperer le username
+  getLast4Digits(): string | null {
+    return localStorage.getItem('last4Digits');
+  }
 
   // ✅ Suppression du token lors de la déconnexion
   logout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('authToken');
     localStorage.removeItem('decodedToken');
-    localStorage.removeItem('user');
+    localStorage.removeItem('username');
+    this.isAuthenticated.next(false);
+    this.last4Digits.next(null);
+    this.router.navigate(['/acceuil']);
   }
 }

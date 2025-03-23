@@ -18,7 +18,7 @@ export const routes: Routes = [
   { path: 'signup', component: SignupPage },
   { path: 'forgot-password', component: ForgotPasswordPage },
   { path: 'history', component: HistoryPage },
-
+  { path: 'acceuil-user', loadComponent: () => import('./acceuil-user/acceuil-user.page').then(m => m.AcceuilUserPage) },
   { path: 'reset-password',component: ResetPasswordPage },
   { path: 'contact',component: ContactPage },
   {
@@ -45,8 +45,13 @@ export const routes: Routes = [
   },
   {
     path: 'view',
-    loadComponent: () => import('./view/view.page').then( m => m.ViewPage),canActivate: [AuthGuard]
+    loadComponent: () => import('./view/view.page').then( m => m.ViewPage)
   },
+  {
+    path: 'acceuil-user',
+    loadComponent: () => import('./acceuil-user/acceuil-user.page').then( m => m.AcceuilUserPage)
+  },
+
 
 
 

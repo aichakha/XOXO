@@ -26,8 +26,8 @@ export class AcceuilPage {
   mediaUrl: string = '';
   isLoading: boolean = false;  // Flag to track the loading state
   loadingMessage: string = 'Converting...';  // Message during conversion
-  username$: Observable<unknown> | Subscribable<unknown> | Promise<unknown> | undefined;
-  user: any = null;
+  isAuthenticated = false;
+  last4Digits: string | null = null;
 
   login() {
     this.router.navigate(['/login']);
@@ -42,40 +42,21 @@ export class AcceuilPage {
               private loadingController: LoadingController,
               private alertCtrl: AlertController
 
-  ) {}
-
-  ngOnInit() {
-      setTimeout(() => {
-      console.log('Initializing Acceuil Page...');
-
-      // Vérifier et nettoyer les anciens tokens invalides
-      if (!this.authService.isAuthenticated()) {
-        console.log('User not authenticated at startup. Ensuring token is removed.');
-        localStorage.removeItem('token');
-      }
-      console.log('Checking authentication after delay:', this.authService.isAuthenticated());
-      }, 500);
-      this.authService.userLoggedIn.subscribe(() => {
-      console.log('Navbar loaded, user:', this.user); // Vérification
-      this.user = this.user ;
-      this.loadUser();
-      this.cdr.detectChanges();});
-  }
-
-  loadUser() {
-    this.user = this.authService.getUser();
-    console.log('Navbar loaded, user:', this.user); // Vérification
-    this.cdr.detectChanges(); // ✅ Force la mise à jour de l'affichage
-
+  ) {
+    this.authService.isAuthenticated$.subscribe(auth => this.isAuthenticated = auth);
+    this.authService.username$.subscribe(digits => this.last4Digits = digits);
 
   }
+
+
+
 
 
   logout() {
     this.authService.logout();
-    this.user = null;
+
     this.router.navigate(['/login']);
-    this.cdr.detectChanges();
+
   }
   signup() {
     // Déconnexion de l'utilisateur (peut être améliorée avec JWT plus tard)
@@ -83,12 +64,17 @@ export class AcceuilPage {
     this.router.navigate(['signup']);
   }
 
-  /*ngOnInit() {
+  ngOnInit() {
+    this.isAuthenticated = this.authService.isLoggedIn(); // Vérifier l'authentification au chargement
+    this.authService.isAuthenticated$.subscribe(auth => {
+      this.isAuthenticated = auth;
+      console.log('🔍 Statut Auth:', this.isAuthenticated);
+    });
     const user = localStorage.getItem('user');
     if (user) {
       this.userName = JSON.parse(user).name;
     }
-  }*/
+  }
 
 
   view() {
@@ -147,11 +133,6 @@ export class AcceuilPage {
     }
   }
 
-
-
-
-
-
   // Show full-page loading spinner
   async presentLoading() {
     const loading = await this.loadingCtrl.create({
@@ -169,92 +150,19 @@ export class AcceuilPage {
     return !!this.uploadedFile || (!!this.mediaUrl && this.mediaUrl.trim().length > 0);
   }
 
-  async convertToText() {
-    console.log('Checking authentication:', this.authService.isAuthenticated());
-    if (!this.authService.isAuthenticated()) {
-      console.log('User not authenticated, showing popup...');
-      this.showAuthPopup();
-      return;
-    }
-
-    console.log('User is authenticated, starting transcription...');
+  convertToText() {
     if (!this.canConvert()) {
-
-
       alert('Please select a file or enter a URL before continuing.');
       return;
     }
-
-    this.isLoading = true;
-    this.loadingMessage = 'Converting...';
-
-    let formData = new FormData();
-    let apiUrl = '';
-
-    if (this.uploadedFile) {
-      apiUrl = 'http://localhost:3000/ai/transcribe';  // 🔹 Envoi du fichier
-      formData.append('file', this.uploadedFile);
-      console.log('📤 Envoi du fichier:', this.uploadedFile.name);
-
-      const loading = await this.loadingController.create({
-        spinner: 'crescent',
-        message: this.loadingMessage,
-        cssClass: 'full-page-loading',
-      });
-      await loading.present();
-
-      this.http.post<any>(apiUrl, formData).subscribe({
-        next: (response) => {
-          console.log('✅ Réponse reçue:', response);
-          this.transcribedText = response.text;
-          this.router.navigate(['/view'], { queryParams: { text: this.transcribedText } });
-          this.isLoading = false;
-          loading.dismiss();
-        },
-        error: (error) => {
-          console.error('🚨 Erreur de transcription:', error);
-          alert('Erreur lors de la transcription. Vérifiez le fichier ou l\'URL.');
-          this.isLoading = false;
-          loading.dismiss();
-        }
-      });
-
-      // Mise à jour du message après un délai
-      setTimeout(() => {
-        this.loadingMessage = 'Almost done!';
-      }, 2000);
-
-    } else if (this.mediaUrl.trim()) {
-      apiUrl = 'http://localhost:3000/ai/process';  // 🔹 Envoi de l'URL
-      const requestBody = { url: this.mediaUrl };
-      console.log('🌍 Envoi de l\'URL:', this.mediaUrl);
-
-      const loading = await this.loadingController.create({
-        spinner: 'crescent',
-        message: this.loadingMessage,
-        cssClass: 'full-page-loading',
-      });
-      await loading.present();
-
-      this.http.post<any>(apiUrl, requestBody, { headers: { 'Content-Type': 'application/json' } })
-    .subscribe({
-      next: (response) => {
-        console.log('✅ Réponse reçue:', response);
-        this.transcribedText = response.text;
-        this.router.navigate(['/view'], { queryParams: { text: this.transcribedText } });
-        this.isLoading = false;
-        loading.dismiss();
-      },
-      error: (error) => {
-        console.error('🚨 Erreur de transcription:', error);
-        alert('Erreur lors de la transcription. Vérifiez le fichier ou l\'URL.');
-        this.isLoading = false;
-        loading.dismiss();
-      }
-    });
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      // L'utilisateur n'est pas connecté, afficher la popup
+      this.showAuthPopup();
+    } else {
+      // L'utilisateur est connecté, aller vers la page de transcription
+      this.router.navigate(['/view']);
     }
-
-
   }
   async showAuthPopup() {
     console.log('Displaying authentication popup...');

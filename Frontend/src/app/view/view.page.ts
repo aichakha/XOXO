@@ -37,6 +37,7 @@ export class ViewPage implements OnInit {
   uploadedFileName: string | null = null;
   mediaUrl: string="";
   uploadedFile:string="";
+ 
 
   loadingMessage: string = 'Converting...';
 
@@ -113,6 +114,18 @@ hideTranslateMenu() {
 }
 showTranslateMenu() {
   this.translateMenuOpen = true;
+}
+Homeuser() {
+  this.uploadedFile = '';
+  this.uploadedFileName = '';
+  this.mediaUrl = '';
+
+  // Réinitialiser l'input file (pour éviter qu'il garde l'ancien fichier)
+  const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+  if (fileInput) {
+    fileInput.value = ''; // Réinitialisation de l'élément HTML input file
+  }
+  this.router.navigate(['/acceuil-user']);
 }
 
 
