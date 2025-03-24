@@ -42,6 +42,23 @@
 
       <ion-button [disabled]="!canConvert()" (click)="showAuthPopup()">CONVERT TO TEXT</ion-button>
     </div>
+    <!-- POPUP FLIP -->
+<div class="popup-overlay" *ngIf="showPopup" (click)="closePopup()"></div>
+
+<div class="popup-card" *ngIf="showPopup">
+  <div class="card-inner">
+    <div class="card-front">
+      <h3>Access Restricted</h3>
+      <p>You must be logged in to access this feature.</p>
+    </div>
+    <div class="card-back">
+      <button class="bouton"(click)="redirectToLogin()">Log In</button>
+      <button class="bouton" (click)="redirectToSignup()">Sign Up</button>
+      <button class="bouton" (click)="closePopup()">Cancel</button>
+    </div>
+  </div>
+</div>
+
   </main>
 
   <footer>

@@ -8,6 +8,8 @@ import { HttpClient } from '@angular/common/http'; // Import HttpClient
 import { LoadingController } from '@ionic/angular';  // <-- Import LoadingController
 import { Observable, Subscribable } from 'rxjs';
 import { AlertController } from '@ionic/angular';
+import { ModalController } from '@ionic/angular';
+
 @Component({
   selector: 'app-acceuil',
   standalone: true,
@@ -28,6 +30,8 @@ export class AcceuilPage {
   loadingMessage: string = 'Converting...';  // Message during conversion
   isAuthenticated = false;
   last4Digits: string | null = null;
+  showPopup = false;
+
 
   login() {
     this.router.navigate(['/login']);
@@ -40,7 +44,8 @@ export class AcceuilPage {
               private http: HttpClient,
               private loadingCtrl: LoadingController,
               private loadingController: LoadingController,
-              private alertCtrl: AlertController
+              private alertCtrl: AlertController,
+              private modalCtrl: ModalController,
 
   ) {
     this.authService.isAuthenticated$.subscribe(auth => this.isAuthenticated = auth);
@@ -164,43 +169,35 @@ export class AcceuilPage {
       this.router.navigate(['/view']);
     }
   }
-  async showAuthPopup() {
-    console.log('Displaying authentication popup...');
+  isFlipped = false;
 
-    setTimeout(async () => {
-      const alert = await this.alertCtrl.create({
-        header: 'Access Restricted',
-        message: 'You have to be logged in to have access',
-        buttons: [
-          {
-            text: 'Log In',
-            handler: () => {
-              console.log('Redirecting to Login...');
-              window.location.href = '/login';
-            }
-          },
-          {
-            text: 'Sign Up',
-            handler: () => {
-              console.log('Redirecting to Sign Up...');
-              window.location.href = '/signup';
-            }
-          },
-          {
-            text: 'Cancel',
-            role: 'cancel',
-            handler: () => {
-              console.log('Popup closed');
-            }
-          }
-        ]
-      });
 
-      console.log('Alert created, now presenting...');
-      await alert.present();
-      console.log('Alert should be visible now!');
-    }, 500); // Adds a slight delay (500ms) to ensure rendering
+
+  flipCard() {
+    this.isFlipped = !this.isFlipped;
   }
+
+  showAuthPopup() {
+    this.showPopup = true;
+    console.log('Popup affichée.');
+  }
+
+  closePopup() {
+    this.showPopup = false;
+    console.log('Popup fermée.');
+  }
+
+  redirectToLogin() {
+    this.closePopup();
+    this.router.navigate(['/login']);
+  }
+
+  redirectToSignup() {
+    this.closePopup();
+    this.router.navigate(['/signup']);
+  }
+
+
 
 
 }
