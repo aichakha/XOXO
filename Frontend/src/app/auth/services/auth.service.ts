@@ -25,17 +25,33 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/signup`, userData);
   }
 
-  login(email: string, password: string): Observable<{ token: string,  username: string  }> {
-    return this.http.post<{ token: string, username: string  }>(`${this.apiUrl}/login`, { email, password })
-      .pipe( // Optionnel: Ajout d'un log pour debug
-        tap(response =>{
-          localStorage.setItem('authToken', response.token); // Stocker le token
-          localStorage.setItem('username', response.username); // Stocker les 4 derniers chiffres
-          this.username$.next(response.username); // Stocker les 4 derniers chiffres
-          this.isAuthenticated.next(true); // Met à jour l'état d'authentification
-          this.router.navigate(['/acceuil-user']); })// 🔹 Redirection vers la page des utilisateurs connectés
-      );
-    }
+  login(email: string, password: string): Observable<{ token: string, username: string }> {
+    return this.http.post<{ token: string, username: string }>(`${this.apiUrl}/login`, { email, password }).pipe(
+      tap(response => {
+        console.log('✅ Réponse serveur:', response);
+
+        if (response.token) {
+          console.log('✅ Login successful:', response);
+
+          // 🔹 Stocker le token JWT
+          localStorage.setItem('token', response.token);
+
+          // 🔹 Stocker le nom d'utilisateur (ou 4 derniers chiffres)
+          localStorage.setItem('username', response.username);
+          this.username$.next(response.username);
+
+          // 🔹 Mettre à jour l'état d'authentification
+          this.isAuthenticated.next(true);
+
+          // 🔹 Redirection vers la page d'accueil utilisateur
+          this.router.navigate(['/acceuil-user']);
+        } else {
+          console.error('🚨 Aucun token reçu.');
+        }
+      })
+    );
+  }
+
 
 
   forgotPassword(email: string): Observable<any> {
@@ -65,8 +81,9 @@ export class AuthService {
 
   // ✅ Récupération du token encodé
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return localStorage.getItem('token'); // Récupère le token JWT
   }
+
   getUser(): any {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;

@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
 import { LoadingController } from '@ionic/angular';
-import { HttpClient } from '@angular/common/http'; // Import HttpClient
+import { HttpClient, HttpHeaders } from '@angular/common/http'; // Import HttpClient
 
 @Component({
   selector: 'app-acceuil-user',
@@ -72,8 +72,10 @@ export class AcceuilUserPage implements OnInit {
   Contact() {
     this.router.navigate(['/contact']);
   }
+
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
+
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
       this.uploadedFile = file;
@@ -85,8 +87,11 @@ export class AcceuilUserPage implements OnInit {
       this.uploadedFile = null;
       this.uploadedFileName = ''; // Efface le nom s'il n'y a pas de fichier
     }
-
   }
+
+  // Vérifier si un fichier a été uploadé ou si une URL est fournie
+
+
   canConvert(): boolean {
     return !!this.uploadedFile || (!!this.mediaUrl && this.mediaUrl.trim().length > 0);
   }
@@ -124,9 +129,16 @@ export class AcceuilUserPage implements OnInit {
       });
       await loading.present();
 
-      const headers = {
-        Authorization: `Bearer ${this.authService.getToken()}`,
-      };
+      const token = this.authService.getToken();
+      if (!token) {
+        alert('Erreur : Token non disponible. Connectez-vous.');
+        return;
+      }
+
+      const headers = new HttpHeaders({
+        Authorization: `Bearer ${token}`
+      });
+
 
       this.http.post<{ text: string }>(apiUrl, formData, { headers }).subscribe({
         next: (response) => {
@@ -158,6 +170,7 @@ export class AcceuilUserPage implements OnInit {
         cssClass: 'full-page-loading',
       });
       await loading.present();
+
 
       const headers = {
         'Content-Type': 'application/json',
