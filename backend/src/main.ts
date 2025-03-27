@@ -11,11 +11,13 @@ async function bootstrap() {
   app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
   app.use('/uploads', express.static(path.join(__dirname, '..', 'uploads')));
   app.enableCors({
-    origin: '*', // Autorise uniquement ton frontend
+    origin:  ['http://localhost', 'http://10.0.2.2'], // Autorise uniquement ton frontend
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
   });
-  await app.listen(process.env.PORT ?? 3000);
+  //await app.listen(process.env.PORT ?? 3000);
+  await app.listen(3000, '0.0.0.0');
+
   
 }
 bootstrap();
