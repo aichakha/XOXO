@@ -1,8 +1,7 @@
 /* Styling for ion-content */
 ion-content {
   --background: none;
-  background: linear-gradient(to right, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0)), 
-  url("/assets/background/6333213R.png") no-repeat right center;
+  background: linear-gradient(to right, #000000b3, #00000000);
   background-size: contain;
   display: flex;
   align-items: center;
@@ -18,14 +17,45 @@ ion-content {
   max-width:480px;
   height: 450px;
   background: #fff;
-  padding: 2.3rem;
+ 
   border-radius: 30px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
   max-height: 80vh;
   overflow: hidden;
+  opacity: 0.9;
   margin: 50px; /* Ensure the container is centered */
 }
+@media (max-width: 768px) {
+  .form-container {
+    padding: 1rem;
+    max-width: 90%;
+    max-height: 90vh;
+    margin-top: 20px;
+    width: 120%;
+    margin-left: 20px;
+  }}
+
+@media (width: 768px) {
+    .form-container {
+      padding: 1rem;
+      max-width: 90%;
+      max-height: 90vh;
+      margin-top: 40px;
+      width: 80%;
+      opacity: 0.8;
+      margin-left: 20px;
+    }}
+    @media (width: 820px) {
+      .form-container {
+        padding: 1rem;
+        max-width: 90%;
+        max-height: 90vh;
+        margin-top: 40px;
+        width: 80%;
+        opacity: 0.8;
+        margin-left: 20px;
+      }}
 
 h2 {
   font-size: 1.5rem;
@@ -68,7 +98,7 @@ ion-button {
   --color: white;
   --border-radius: 10px;
   font-size: 1.1rem;
-  padding-left: 60px;
+
   transition: 0.3s ease-in-out;
   width: 100%; /* Ensure button spans full width */
 
@@ -80,4 +110,37 @@ ion-button {
     opacity: 0.6;
     pointer-events: none;
   }
+}
+
+.background-image {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 30%; /* Réduire la taille sur les grands écrans */
+  height: auto;
+  //opacity: 0.8;
+  pointer-events: none; /* Empêche l’image d'interférer avec les clics */
+  z-index: -1;
+  mix-blend-mode: multiply;
+}
+
+/* Ajustement pour les écrans de petite taille (mobile) */
+@media (max-width: 768px) {
+  .background-image {
+    width: 85%;
+    opacity: 0.6;
+    margin-left: 100px; ;
+  }
+
+ 
+}
+
+@media (width: 768px) {
+  .background-image {
+    width: 67%;
+    //opacity: 0.6;
+    margin-left: 100px; 
+  }
+
+ 
 }

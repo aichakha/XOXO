@@ -1,11 +1,12 @@
 <ion-content class="ion-padding">
   <div class="form-container">
-    <h2>Create Account</h2>
-    <p>Sign up and have your reservation</p>
+    <a (click)="Home()">
+      <ion-img src="assets/icon/Logo2.png" style="height: 50px; width: auto; margin-top: 30px; margin-bottom: 30px;"></ion-img>
+    </a>
 
     <!-- Full Name Input -->
     <ion-item>
-      <ion-icon name="person-outline" slot="start"></ion-icon>
+      
       <ion-input
         [(ngModel)]="user.name"
         placeholder="Full Name"
@@ -15,7 +16,7 @@
 
     <!-- Email Input -->
     <ion-item>
-      <ion-icon name="mail-outline" slot="start"></ion-icon>
+      
       <ion-input
         [(ngModel)]="user.email"
         type="email"
@@ -26,7 +27,7 @@
 
     <!-- Password Input -->
     <ion-item>
-      <ion-icon name="lock-closed-outline" slot="start"></ion-icon>
+     
       <ion-input
         [(ngModel)]="user.password"
         type="password"
@@ -50,4 +51,5 @@
       <a (click)="backlogin()">Login</a>
     </p>
   </div>
+  <ion-img src="assets/background/signup.png" class="background-image"></ion-img>
 </ion-content>
