@@ -57,6 +57,7 @@ isAuthenticated = false;
 username: string | null = null;
 
 
+
   constructor(private router: Router,
      private route: ActivatedRoute,
      private http: HttpClient,
@@ -83,6 +84,20 @@ username: string | null = null;
         this.isLoading = false;
       }
     });
+  }
+  Home() {
+    // Réinitialiser les fichiers uploadés et les champs
+    this.uploadedFile = '';
+    this.uploadedFileName = '';
+    this.mediaUrl = '';
+
+    // Réinitialiser l'input file (pour éviter qu'il garde l'ancien fichier)
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = ''; // Réinitialisation de l'élément HTML input file
+    }
+
+    this.router.navigate(['/acceuil']);
   }
 
   // Fonction pour détecter la langue du texte
@@ -246,7 +261,7 @@ resetText() {
     this.router.navigate(['/contact']);
   }
 
-  
+
 
   History() {
     this.router.navigate(['/history']);

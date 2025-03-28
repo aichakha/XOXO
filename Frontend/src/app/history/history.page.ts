@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
+import { AuthService } from '../auth/services/auth.service';
 
 @Component({
   selector: 'app-history',
@@ -26,12 +27,19 @@ export class HistoryPage implements OnInit {
   ];
   filteredClips = [...this.clips];
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {}
   uploadedFileName: string = '';
 
   uploadedFile: File | null = null;
   mediaUrl: string = '';
+  isAuthenticated = false;
+  username: string | null = null;
   ngOnInit() {
+
+    this.isAuthenticated = this.authService.isLoggedIn();
+    console.log('🔐 Authenticated:', this.isAuthenticated);
+    this.authService.username$.subscribe(digits => this.username = digits);
+    this.username = localStorage.getItem('username');
     const user = localStorage.getItem('user');
     if (user) {
       this.userName = JSON.parse(user).name;
@@ -53,6 +61,18 @@ export class HistoryPage implements OnInit {
     this.router.navigate(['/contact']);
   }
 
+  Homeuser() {
+    this.uploadedFile = null;
+    this.uploadedFileName = '';
+    this.mediaUrl = '';
+
+    // Réinitialiser l'input file (pour éviter qu'il garde l'ancien fichier)
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = ''; // Réinitialisation de l'élément HTML input file
+    }
+    this.router.navigate(['/acceuil-user']);
+  }
   Home() {
     // Réinitialiser les fichiers uploadés et les champs
     this.uploadedFile = null;
@@ -71,10 +91,12 @@ export class HistoryPage implements OnInit {
     this.router.navigate(['/history']);
   }
   logout() {
-    // Déconnexion de l'utilisateur (peut être améliorée avec JWT plus tard)
-    localStorage.removeItem('user');
-    this.router.navigate(['/login']);
+    this.authService.logout();
+    this.isAuthenticated = false;
+    this.username = null;
+    this.router.navigate(['/']); // Redirection après déconnexion
   }
+
   signup() {
     // Déconnexion de l'utilisateur (peut être améliorée avec JWT plus tard)
 

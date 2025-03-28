@@ -8,7 +8,7 @@ import { ResetPasswordPage } from './auth/pages/reset-password/reset-password.pa
 import { HistoryPage } from './history/history.page';
 
 import { ContactPage } from './contact/contact.page';
-import { AuthGuard } from './auth/auth.guard';
+
 
 
 export const routes: Routes = [
@@ -19,6 +19,7 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordPage },
   { path: 'history', component: HistoryPage },
   { path: 'acceuil-user', loadComponent: () => import('./acceuil-user/acceuil-user.page').then(m => m.AcceuilUserPage) },
+
   { path: 'reset-password',component: ResetPasswordPage },
   { path: 'contact',component: ContactPage },
   {
@@ -51,6 +52,8 @@ export const routes: Routes = [
     path: 'acceuil-user',
     loadComponent: () => import('./acceuil-user/acceuil-user.page').then( m => m.AcceuilUserPage)
   },
+  
+
 
 
 

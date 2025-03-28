@@ -9,27 +9,32 @@
         </ion-buttons>
       </div>
     </div>
-  
+
     <nav>
       <ul>
-        <li><a (click)="Home()">Home</a></li>
+        <li><a (click)="isAuthenticated ? Homeuser() : Home()">Home</a></li>
         <li><a (click)="History()">History</a></li>
         <li><a (click)="Contact()">How It Works</a></li>
       </ul>
     </nav>
-  
+
     <div class="auth-buttons">
-      <button class="logout" (click)="logout()">LOGOUT</button>
+      <ng-container *ngIf="isAuthenticated; else loggedOut">
+        <span class="username">{{ username }}</span>
+        <button class="logout" (click)="logout()">LOG OUT</button>
+      </ng-container>
+
+      <ng-template #loggedOut>
+        <button class="sign-in" (click)="login()">LOG IN</button>
+        <button class="join-now" (click)="signup()">JOIN NOW</button>
+      </ng-template>
     </div>
   </ion-header>
-  
+
   <ion-content class="history-page">
-    <div class="search-container">
-      <ion-searchbar [(ngModel)]="searchTerm" (ionInput)="filterClips()"></ion-searchbar>
-    </div>
-  
-    <div class="content-container">
-      <!-- Liste des notes -->
+    <!-- ✅ Si l'utilisateur est connecté -->
+    <div *ngIf="isAuthenticated; else loggedOutContent" class="content-container">
+      <!-- ✅ Liste des notes complètes -->
       <div class="clips-container">
         <ion-card *ngFor="let clip of filteredClips" (click)="selectClip(clip)">
           <ion-card-header>
@@ -44,8 +49,8 @@
           </ion-footer>
         </ion-card>
       </div>
-  
-      <!-- Panneau latéral des détails de la note -->
+
+      <!-- ✅ Panneau latéral des détails -->
       <div class="note-details" *ngIf="selectedClip">
         <h2>{{ selectedClip.name }}</h2>
         <h4>{{ selectedClip.username }}</h4>
@@ -53,16 +58,35 @@
         <small>{{ selectedClip.date }}</small>
         <ion-button (click)="closeDetails()">Close</ion-button>
       </div>
+
+      <!-- ✅ Bouton "Show more" -->
+      <div class="load-more-container">
+        <ion-button (click)="loadMore()">Show more</ion-button>
+      </div>
     </div>
-  
-    <div class="load-more-container">
-      <ion-button (click)="loadMore()">Show more</ion-button>
-    </div>
-    
+
+    <!-- ✅ Si l'utilisateur n'est PAS connecté -->
+    <ng-template #loggedOutContent>
+      <div class="content-container">
+        <!-- ✅ Clip démo -->
+        <div class="clips-container">
+          <ion-card>
+            <ion-card-header>
+              <ion-card-title>Sample Clip</ion-card-title>
+              <ion-card-subtitle>Guest User</ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content>
+              History where you can store your transcribed, summarized and translated text...
+              Don't hesitate to start using our app.
+            </ion-card-content>
+          </ion-card>
+        </div>
+      </div>
+    </ng-template>
   </ion-content>
-  <footer>
+
+  <!-- ✅ Footer -->
+  <footer class="footer">
     <p>© 2025 Recapify Inc. All rights reserved.</p>
   </footer>
-  
-  </div>
-  
+</div>

@@ -11,15 +11,23 @@
     </div>
     <nav>
       <ul>
-        <li><a (click)="Home()">Home</a></li>
+        <li><a (click)="isAuthenticated ? Homeuser() : Home()">Home</a></li>
         <li><a (click)="History()">History</a></li>
         <li><a (click)="Contact()">How It Works</a></li>
       </ul>
     </nav>
     <div class="auth-buttons">
-      <button class="sign-in" (click)="login()">LOG IN</button>
-      <button class="join-now" (click)="signup()">JOIN NOW</button>
+      <ng-container *ngIf="isAuthenticated; else loggedOut">
+        <span class="username">{{ username }}</span>
+        <button class="logout" (click)="logout()">LOG OUT</button>
+      </ng-container>
+
+      <ng-template #loggedOut>
+        <button class="sign-in" (click)="login()">LOG IN</button>
+        <button class="join-now" (click)="signup()">JOIN NOW</button>
+      </ng-template>
     </div>
+
   </ion-header>
 
   <ion-content [fullscreen]="true">

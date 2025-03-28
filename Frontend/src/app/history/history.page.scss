@@ -288,4 +288,68 @@ footer {
     color: #333;
     font-size: 14px;
   }
-}
+  .content-container {
+    padding: 16px;
+  }
+
+  .clips-container {
+    display: flex;
+    justify-content: center; /* ✅ Centre horizontalement */
+    align-items: center; /* ✅ Centre verticalement */
+    flex-wrap: wrap; /* ✅ Permet aux clips de passer à la ligne si nécessaire */
+    gap: 20px;
+    padding: 20px;
+  }
+
+  ion-card {
+    width: 90%; /* ✅ Largeur adaptable */
+    max-width: 400px; /* ✅ Limite la largeur du clip */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* ✅ Ombre douce */
+    border-radius: 12px; /* ✅ Coins arrondis */
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+
+  ion-card:hover {
+    transform: translateY(-5px); /* ✅ Effet de survol */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+
+  ion-card-header {
+    background-color: #f4f4f4;
+    padding: 16px;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+  }
+
+  ion-card-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  ion-card-subtitle {
+    font-size: 14px;
+    color: #666;
+  }
+
+  ion-card-content {
+    padding: 16px;
+    font-size: 16px;
+    color: #444;
+  }
+
+  ion-footer {
+    padding: 12px;
+    background-color: #fafafa;
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    font-size: 14px;
+    color: #888;
+    text-align: right;
+  }
+
+  }
+
+
+
+
