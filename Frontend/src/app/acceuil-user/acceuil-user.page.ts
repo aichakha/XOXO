@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
+import { IonContent, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { AuthService } from '../auth/services/auth.service';
 import { Router } from '@angular/router';
 import { IonicModule } from '@ionic/angular';
@@ -16,7 +16,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http'; // Import HttpCl
   styleUrls: ['./acceuil-user.page.scss'],
   standalone: true,
   imports: [
-      IonHeader,
+
       CommonModule,
       FormsModule,
       IonicModule]
