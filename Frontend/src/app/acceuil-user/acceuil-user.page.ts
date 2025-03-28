@@ -1,59 +1,70 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit,ViewChild, ElementRef, AfterViewInit, NgZone, ChangeDetectorRef  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { AuthService } from '../auth/services/auth.service';
 import { Router } from '@angular/router';
-import { IonicModule } from '@ionic/angular';
-import { AlertController } from '@ionic/angular';
-import { LoadingController } from '@ionic/angular';
+import { IonRouterOutlet } from '@ionic/angular';
+import { IonicModule, AlertController, LoadingController } from '@ionic/angular';
+
 import { HttpClient, HttpHeaders } from '@angular/common/http'; // Import HttpClient
 
 @Component({
   selector: 'app-acceuil-user',
-
   templateUrl: './acceuil-user.page.html',
   styleUrls: ['./acceuil-user.page.scss'],
   standalone: true,
   imports: [
-
       CommonModule,
       FormsModule,
-      IonicModule]
+      IonicModule
+    ]
+
 })
-export class AcceuilUserPage implements OnInit {
+export class AcceuilUserPage implements OnInit,AfterViewInit {
+  @ViewChild('fileInput') fileInputRef!: ElementRef<HTMLInputElement>;
+
   isAuthenticated = false;
   username: string | null = null;
-
-
-
-  constructor(private router: Router, private authService: AuthService,              private loadingCtrl: LoadingController,
-                private loadingController: LoadingController,
-                private alertCtrl: AlertController,
-                private http: HttpClient) { }
   uploadedFileName: string = '';
   uploadedFile: File | null = null;
   mediaUrl: string = '';
   isLoading: boolean = false;  // Flag to track the loading state
   loadingMessage: string = 'Converting...';  // Message during conversion
   transcribedText: string = '';
+ 
+
+
+  constructor(   
+    private router: Router,
+    private authService: AuthService,
+    private loadingCtrl: LoadingController,
+    private alertCtrl: AlertController,
+    private cdr: ChangeDetectorRef,
+    private ngZone: NgZone,
+    private http: HttpClient,
+   ) { }
+
+
   ngOnInit() {
     this.isAuthenticated = this.authService.isLoggedIn();
     console.log('🔐 Authenticated:', this.isAuthenticated);
     this.authService.username$.subscribe(digits => this.username = digits);
     this.username = localStorage.getItem('username');
   }
+  ngAfterViewInit() {
+    console.log('fileInput chargé ?', this.fileInputRef.nativeElement);
+  }
+
+
   logout() {
     this.authService.logout();
     localStorage.removeItem('authToken');
     localStorage.removeItem('username');
-    this.router.navigate(['/login']);}
-    triggerFileInput() {
-      const fileInput = document.getElementById('fileInput') as HTMLInputElement;
-      if (fileInput) {
-        fileInput.click();
-      }
-    }
+    this.router.navigate(['/login']);
+  }
+
+
   Homeuser() {
     this.uploadedFile = null;
     this.uploadedFileName = '';
@@ -73,23 +84,40 @@ export class AcceuilUserPage implements OnInit {
     this.router.navigate(['/contact']);
   }
 
+  triggerFileInput() {
+    setTimeout(() => {
+      if (this.fileInputRef && this.fileInputRef.nativeElement) {
+        console.log('fileInput déclenché');
+        this.fileInputRef.nativeElement.click();
+      }
+    }, 300);
+  }
+
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
 
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
       this.uploadedFile = file;
-      this.uploadedFileName = file.name; // Stocke le nom du fichier
-      this.mediaUrl = ''; // Efface l'URL si un fichier est sélectionné
+      this.uploadedFileName = file.name;
+      this.mediaUrl = '';
 
-      console.log('Fichier sélectionné :', this.uploadedFileName);
+      this.ngZone.run(() => {
+        this.uploadedFile = file;
+        this.uploadedFileName = file.name;
+        this.mediaUrl = '';
+        console.log('Fichier sélectionné :', this.uploadedFileName);
+        this.cdr.detectChanges();
+      });
+
+      input.value = '';
     } else {
       this.uploadedFile = null;
-      this.uploadedFileName = ''; // Efface le nom s'il n'y a pas de fichier
+      this.uploadedFileName = '';
     }
   }
 
-  // Vérifier si un fichier a été uploadé ou si une URL est fournie
+
 
 
   canConvert(): boolean {
@@ -122,7 +150,7 @@ export class AcceuilUserPage implements OnInit {
       apiUrl = 'http://localhost:3000/ai/transcribe';
       formData.append('file', this.uploadedFile);
 
-      const loading = await this.loadingController.create({
+      const loading = await this.loadingCtrl.create({
         spinner: 'crescent',
         message: this.loadingMessage,
         cssClass: 'full-page-loading',
@@ -164,7 +192,7 @@ export class AcceuilUserPage implements OnInit {
       apiUrl = 'http://localhost:3000/ai/process';
       const requestBody = { url: this.mediaUrl };
 
-      const loading = await this.loadingController.create({
+      const loading = await this.loadingCtrl.create({
         spinner: 'crescent',
         message: this.loadingMessage,
         cssClass: 'full-page-loading',

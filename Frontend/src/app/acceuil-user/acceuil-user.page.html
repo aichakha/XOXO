@@ -29,11 +29,10 @@
         <div class="icon" (click)="triggerFileInput()">
           <img src="assets/icon/icon.png" />
         </div>
-        <span *ngIf="uploadedFileName" class="file-name">{{ uploadedFileName }}</span>
+        <input type="file" #fileInput accept="audio/*, video/*" (change)="onFileSelected($event)" hidden>
+        <p *ngIf="uploadedFileName">{{ uploadedFileName }}</p>
       </div>
-      <!--label for="fileInput" class="visually-hidden">Upload File</--label-->
-
-      <input type="file" id="fileInput" accept="audio/*, video/*"  (change)="onFileSelected($event)">
+     
       <p class="upload-text">CLICK TO ADD YOUR CLIP</p>
       <p>OR</p>
       <input type="text" placeholder="INSERT LINK TO THE MEDIA" class="input-link" [(ngModel)]="mediaUrl" (ngModelChange)="uploadedFile = null">
@@ -41,14 +40,6 @@
       <ion-button [disabled]="!canConvert() " (click)="convertToText()">CONVERT TO TEXT</ion-button>
     </div>
   </main>
-
-
-
-
-
-
-
-
 
   <footer>
     <p>© 2025 Recapify Inc. All rights reserved.</p>

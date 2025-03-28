@@ -40,6 +40,7 @@
                 <li><a (click)="Contact()">How It Works</a></li>
             </ul>
         </nav>
+        <span *ngIf="username">{{ username }}</span>
         <div class="auth-buttons">
           <button class="logout" (click)="logout()">LOGOUT</button>
         </div>

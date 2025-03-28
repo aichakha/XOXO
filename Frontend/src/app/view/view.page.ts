@@ -7,6 +7,7 @@ import { Router,ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { LoadingController } from '@ionic/angular';
 import { ToastController } from '@ionic/angular';
+import { AuthService } from '../auth/services/auth.service';
 import jsPDF from 'jspdf';
 @Component({
   selector: 'app-view',
@@ -37,7 +38,7 @@ export class ViewPage implements OnInit {
   uploadedFileName: string | null = null;
   mediaUrl: string="";
   uploadedFile:string="";
- 
+
 
   loadingMessage: string = 'Converting...';
 
@@ -52,6 +53,8 @@ export class ViewPage implements OnInit {
   ];
 
 showCopyButton: any;
+isAuthenticated = false;
+username: string | null = null;
 
 
   constructor(private router: Router,
@@ -59,11 +62,16 @@ showCopyButton: any;
      private http: HttpClient,
      private loadingCtrl: LoadingController,
      private loadingController: LoadingController,
-     private toastController: ToastController ,// Injecting ToastController
+    private toastController: ToastController, // Injecting ToastController
+    private authService: AuthService // Injecting AuthService
     ) {}
 
   showSummary: boolean = false; // ✅ Zone de texte cachée par défaut
   ngOnInit() {
+    this.isAuthenticated = this.authService.isLoggedIn();
+    console.log('🔐 Authenticated:', this.isAuthenticated);
+    this.authService.username$.subscribe((digits) => this.username = digits);
+    this.username = localStorage.getItem('username');
     this.route.queryParams.subscribe({
       next: (params) => {
         this.transcribedText = params['text'] || 'No transcribed text available';
@@ -238,20 +246,7 @@ resetText() {
     this.router.navigate(['/contact']);
   }
 
-  Home() {
-    // Réinitialiser les fichiers uploadés et les champs
-    this.uploadedFile = '';
-    this.uploadedFileName = "";
-    this.mediaUrl = '';
-
-    // Réinitialiser l'input file (pour éviter qu'il garde l'ancien fichier)
-    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
-    if (fileInput) {
-      fileInput.value = ''; // Réinitialisation de l'élément HTML input file
-    }
-
-    this.router.navigate(['/acceuil']);
-  }
+  
 
   History() {
     this.router.navigate(['/history']);

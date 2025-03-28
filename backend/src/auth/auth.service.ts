@@ -29,7 +29,9 @@ export class AuthService {
     if (existingUser) throw new BadRequestException('Email already exists');
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    return this.prisma.user.create({ data: { name, email, password: hashedPassword } });
+    return this.prisma.user.create({ data: { name, email, password: hashedPassword } }
+    );
+
   }
 
   async login(email: string, password: string) {

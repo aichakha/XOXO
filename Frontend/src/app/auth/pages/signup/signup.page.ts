@@ -21,7 +21,7 @@ export class SignupPage {
 
   signup() {
     this.authService.signUp(this.user).subscribe({
-      next: () => this.router.navigate(['/acceuil']),
+      next: () => this.router.navigate(['/acceuil-user']),
       error: err => console.error('Signup error:', err),
     });
 
@@ -31,7 +31,7 @@ export class SignupPage {
     this.router.navigate(['/login']); // Assurez-vous d'avoir cette route définie
   }
   Home() {
-    this.router.navigate(['/acceuil']);
+    this.router.navigate(['/acceuil-user']);
   }
 }
 

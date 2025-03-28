@@ -75,7 +75,7 @@ export class LoginPage {
         next: (response) => {
           console.log('✅ Login successful:', response);
           localStorage.setItem('authToken', response.token);
-          localStorage.setItem('username', response.username);
+          localStorage.setItem('name', response.username);
 
           this.router.navigate(['/acceuil-user']); // 🔹 Rediriger après connexion
         },
