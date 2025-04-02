@@ -9,6 +9,8 @@ import { LoadingController } from '@ionic/angular';
 import { ToastController } from '@ionic/angular';
 import { AuthService } from '../auth/services/auth.service';
 import jsPDF from 'jspdf';
+import { firstValueFrom } from 'rxjs';
+import { SavedTextService } from '../auth/services/saved-text.service';
 @Component({
   selector: 'app-view',
   standalone: true,
@@ -61,6 +63,7 @@ username: string | null = null;
   constructor(private router: Router,
      private route: ActivatedRoute,
      private http: HttpClient,
+     private savedTextService: SavedTextService,
      private loadingCtrl: LoadingController,
      private loadingController: LoadingController,
     private toastController: ToastController, // Injecting ToastController
@@ -431,6 +434,72 @@ adjustTextareaHeight() {
   if (textarea) {
     textarea.style.height = 'auto'; // Réinitialise la hauteur
     textarea.style.height = textarea.scrollHeight + 'px'; // Ajuste la hauteur
+  }
+}
+
+async saveCurrentText() {
+  const content = this.translatedText || this.transcribedText;
+  
+  // Vérifiez que le content n'est pas vide
+  if (!content) {
+    const toast = await this.toastController.create({
+      message: 'No text to save!',
+      duration: 2000,
+      color: 'danger'
+    });
+    await toast.present();
+    return;
+  }
+
+  const userId = this.authService.getUserId();
+  if (!userId) {
+    const toast = await this.toastController.create({
+      message: 'Please login to save texts',
+      duration: 2000,
+      color: 'danger'
+    });
+    await toast.present();
+    return;
+  }
+
+  const loading = await this.loadingController.create({
+    message: 'Saving...'
+  });
+  await loading.present();
+
+  try {
+    // Envoyez explicitement userId et content comme objet
+    await firstValueFrom(this.savedTextService.saveText({
+      userId: userId,
+      content: content
+    }));
+    
+    const toast = await this.toastController.create({
+      message: 'Text saved successfully!',
+      duration: 2000,
+      color: 'success'
+    });
+    await toast.present();
+    
+    this.router.navigate(['/history']);
+  } catch (error: unknown) {
+    console.error('Save error:', error);
+    
+    let errorMessage = 'Failed to save text';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    } else if (typeof error === 'string') {
+      errorMessage = error;
+    }
+
+    const toast = await this.toastController.create({
+      message: errorMessage,
+      duration: 3000,
+      color: 'danger'
+    });
+    await toast.present();
+  } finally {
+    await loading.dismiss();
   }
 }
 

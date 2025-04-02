@@ -32,20 +32,26 @@
   </ion-header>
 
   <ion-content class="history-page">
+    <div class="search-container">
+      <ion-searchbar ></ion-searchbar>
+    </div>
     <!-- ✅ Si l'utilisateur est connecté -->
     <div *ngIf="isAuthenticated; else loggedOutContent" class="content-container">
       <!-- ✅ Liste des notes complètes -->
       <div class="clips-container">
         <ion-card *ngFor="let clip of filteredClips" (click)="selectClip(clip)">
           <ion-card-header>
-            <ion-card-title>{{ clip.name }}</ion-card-title>
-            <ion-card-subtitle>{{ clip.username }}</ion-card-subtitle>
+            <ion-card-title>Saved Text</ion-card-title>
+            <ion-card-subtitle>{{ clip.createdAt | date }}</ion-card-subtitle>
           </ion-card-header>
           <ion-card-content>
-            {{ clip.text }}
+            {{ clip.content }}
           </ion-card-content>
           <ion-footer>
-            <small>{{ clip.date }}</small>
+            <small>{{ clip.createdAt | date:'medium' }}</small>
+            <ion-button (click)="deleteText(clip.id, $event)" color="danger">
+              Delete
+            </ion-button>
           </ion-footer>
         </ion-card>
       </div>
