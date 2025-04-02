@@ -307,6 +307,7 @@ footer {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* ✅ Ombre douce */
     border-radius: 12px; /* ✅ Coins arrondis */
     transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    display: flex;
   }
 
   ion-card:hover {
@@ -346,6 +347,7 @@ footer {
     font-size: 14px;
     color: #888;
     text-align: right;
+    display: flex;
   }
 
   }

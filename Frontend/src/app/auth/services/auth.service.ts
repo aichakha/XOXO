@@ -25,8 +25,8 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/signup`, userData);
   }
 
-  login(email: string, password: string): Observable<{ token: string, username: string }> {
-    return this.http.post<{ token: string, username: string }>(`${this.apiUrl}/login`, { email, password }).pipe(
+  login(email: string, password: string): Observable<{ token: string, username: string, userId: string }> {
+    return this.http.post<{ token: string, username: string, userId: string }>(`${this.apiUrl}/login`, { email, password }).pipe(
       tap(response => {
         console.log('✅ Réponse serveur:', response);
 
@@ -39,7 +39,7 @@ export class AuthService {
           // 🔹 Stocker le nom d'utilisateur (ou 4 derniers chiffres)
           localStorage.setItem('username', response.username);
           this.username$.next(response.username);
-
+          localStorage.setItem('userId', response.userId); 
           // 🔹 Mettre à jour l'état d'authentification
           this.isAuthenticated.next(true);
 
@@ -120,4 +120,21 @@ export class AuthService {
     this.last4Digits.next(null);
     this.router.navigate(['/acceuil']);
   }
+
+  getUserId(): string {
+    const token = localStorage.getItem('token');  // Utiliser le token et non 'user'
+  
+    if (!token) return '';
+  
+    try {
+      const decodedToken: any = jwtDecode(token);  // Décoder le JWT
+      console.log("Decoded Token:", decodedToken);  // Debug
+      return decodedToken.sub || '';  // Retourner l'ID utilisateur ou une valeur par défaut
+    } catch (error) {
+      console.error("Erreur lors du décodage du token:", error);
+      return '';
+    }
+  }
+  
+
 }

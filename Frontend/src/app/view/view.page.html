@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recapify</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="view.page.scss">
 </head>
 <!-- Email Share Modal (Hidden by Default) -->
 <div id="emailModal" class="modal" style="display: none;">
@@ -98,7 +98,7 @@
                 <span>Edit</span>
             </a>
 
-              <a href="assets\icon\5.png">
+            <a (click)="saveCurrentText()">
                 <ion-img src="assets/icon/5.png"></ion-img>
                 <span>Save</span>
               </a>
