@@ -6,6 +6,15 @@ import { IonicModule, LoadingController, ToastController } from '@ionic/angular'
 import { AuthService } from '../auth/services/auth.service';
 import { SavedTextService } from '../auth/services/saved-text.service';
 import { lastValueFrom } from 'rxjs';
+import { FormGroup, FormBuilder } from '@angular/forms';
+import { debounceTime } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+interface Clip {
+  id: string;
+  title: string;
+  content?: string;
+  createdAt?: string;
+}
 @Component({
   selector: 'app-history',
   standalone: true,
@@ -17,13 +26,23 @@ import { lastValueFrom } from 'rxjs';
   templateUrl: './history.page.html',
   styleUrls: ['./history.page.scss'],
 })
+
+
 export class HistoryPage implements OnInit {
   searchTerm: string = '';
   userName: string = '';
   clips: any[] = [];
   filteredClips = [...this.clips];
-  isLoading = false; 
-  constructor(private router: Router, private authService: AuthService, private savedTextService: SavedTextService,private loadingCtrl: LoadingController,private toastCtrl: ToastController) {}
+  isLoading = false;
+  form = { title: '', content: '' };
+  private autoSaveSubject = new Subject<void>();
+
+  constructor(private router: Router,
+    private authService: AuthService,
+    private savedTextService: SavedTextService,
+    private loadingCtrl: LoadingController,
+    private toastCtrl: ToastController,
+    private fb: FormBuilder) {}
   uploadedFileName: string = '';
 
   uploadedFile: File | null = null;
@@ -31,7 +50,7 @@ export class HistoryPage implements OnInit {
   isAuthenticated = false;
   username: string | null = null;
   async ngOnInit() {
-    
+
     this.isAuthenticated = this.authService.isLoggedIn();
     console.log('🔐 Authenticated:', this.isAuthenticated);
     this.authService.username$.subscribe(digits => this.username = digits);
@@ -44,7 +63,67 @@ export class HistoryPage implements OnInit {
     if (this.isAuthenticated) {
       await this.loadSavedTexts(); // Chargement initial des textes sauvegardés
     }
+       // Appliquer un délai de 1 seconde avant de sauvegarder pour éviter de spammer l'API
+       this.autoSaveSubject.pipe(debounceTime(1000)).subscribe(() => {
+        this.autoSave();
+      });
+
+      // Charger les valeurs actuelles
+      if (this.clips.length > 0) {
+        this.form.title = this.clips[0].title;
+        this.form.content = this.clips[0].content;
+      }
   }
+    // Fonction d'auto-save qui envoie les modifications à l'API
+    async autoSave() {
+      try {
+        if (this.clips.length === 0) return;
+
+        const formValue = this.form;
+        if (formValue.title) {
+          await this.updateTitle(this.clips[0].id, formValue.title);
+        }
+        if (formValue.content) {
+          await this.updateContent(this.clips[0].id, formValue.content);
+        }
+      } catch (error) {
+        console.error('Error during auto-save:', error);
+      }
+    }
+    triggerAutoSave() {
+      this.autoSaveSubject.next();
+    }
+    async updateContent(id: string, newContent: string) {
+      try {
+        const updatedClip = await this.savedTextService.updateSavedText(id, { content: newContent }).toPromise();
+        this.clips = this.clips.map(clip => clip.id === id ? { ...clip, content: updatedClip.content } : clip);
+
+        const toast = await this.toastCtrl.create({
+          message: 'Text updated successfully!',
+          duration: 2000,
+          color: 'success',
+        });
+        await toast.present();
+      } catch (error) {
+        console.error('Error updating content:', error);
+        const toast = await this.toastCtrl.create({
+          message: 'Failed to update content',
+          duration: 2000,
+          color: 'danger',
+        });
+        await toast.present();
+      }
+    }
+    async updateTitle(id: string, newTitle: string) {
+      try {
+        const updatedClip = await this.savedTextService.updateSavedText(id, { title: newTitle }).toPromise();
+        this.clips = this.clips.map(clip => clip.id === id ? { ...clip, title: updatedClip.title } : clip);
+      } catch (error) {
+        console.error('Error updating title:', error);
+      }
+    }
+
+
 
   async loadSavedTexts() {
     this.isLoading = true;
@@ -52,7 +131,7 @@ export class HistoryPage implements OnInit {
       message: 'Loading your history...'
     });
     await loading.present();
-  
+
     try {
       const userId = this.authService.getUserId();
       if (userId) {
@@ -60,7 +139,7 @@ export class HistoryPage implements OnInit {
         const response = await lastValueFrom(
           this.savedTextService.getSavedTexts(userId)
         );
-        
+
         // Vérification de type et fallback
         this.clips = Array.isArray(response) ? response : [];
         this.filteredClips = [...this.clips];
@@ -80,24 +159,24 @@ export class HistoryPage implements OnInit {
       this.isLoading = false;
     }
   }
-  
+
   async deleteText(id: string, event: Event) {
     event.stopPropagation();
-    
+
     try {
       // Remplacement de toPromise() par lastValueFrom
       await lastValueFrom(this.savedTextService.deleteSavedText(id));
-      
+
       // Mise à jour locale sans recharger
       this.clips = this.clips.filter(clip => clip.id !== id);
       this.filteredClips = [...this.clips];
-      
+
       const toast = await this.toastCtrl.create({
         message: 'Text deleted successfully',
         duration: 2000
       });
       await toast.present();
-      
+
     } catch (error) {
       console.error('Error deleting text:', error);
       const toast = await this.toastCtrl.create({
@@ -108,19 +187,19 @@ export class HistoryPage implements OnInit {
       await toast.present();
     }
   }
-  
+
   filterClips() {
     if (!this.searchTerm) {
       this.filteredClips = [...this.clips];
       return;
     }
-    
+
     this.filteredClips = this.clips.filter(clip =>
       clip.content.toLowerCase().includes(this.searchTerm.toLowerCase())
     );
   }
 
-  
+
 
   loadMore() {
     this.clips.push(...this.clips);

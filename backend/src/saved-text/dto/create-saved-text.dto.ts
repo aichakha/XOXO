@@ -1,4 +1,4 @@
-import { IsString, IsNotEmpty } from 'class-validator';
+import { IsString, IsNotEmpty,IsOptional } from 'class-validator';
 
 export class CreateSavedTextDto {
   @IsString()
@@ -8,4 +8,8 @@ export class CreateSavedTextDto {
   @IsString()
   @IsNotEmpty()
   content: string;
+
+  @IsOptional()
+  @IsString()
+  title?: string;  
 }

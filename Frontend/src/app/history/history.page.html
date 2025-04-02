@@ -41,12 +41,26 @@
       <div class="clips-container">
         <ion-card *ngFor="let clip of filteredClips" (click)="selectClip(clip)">
           <ion-card-header>
-            <ion-card-title>Saved Text</ion-card-title>
+            <ion-card-title>
+              <ion-input [(ngModel)]="clip.title"
+              (blur)="updateTitle(clip.id, clip.title)"
+              (keyup.enter)="updateTitle(clip.id, clip.title)"
+              (input)="autoSave()"
+              placeholder="Enter title"
+              class="editable-input">
+              </ion-input>
+            </ion-card-title>
             <ion-card-subtitle>{{ clip.createdAt | date }}</ion-card-subtitle>
           </ion-card-header>
-          <ion-card-content>
-            {{ clip.content }}
-          </ion-card-content>
+          <ion-textarea [(ngModel)]="clip.content"
+          (blur)="updateContent(clip.id, clip.content)"
+          (keyup.enter)="updateContent(clip.id, clip.content)"
+          (input)="autoSave()" 
+          autoGrow="true"
+          placeholder="Enter your text"
+          class="editable-textarea">
+          </ion-textarea>
+
           <ion-footer>
             <small>{{ clip.createdAt | date:'medium' }}</small>
             <ion-button (click)="deleteText(clip.id, $event)" color="danger">

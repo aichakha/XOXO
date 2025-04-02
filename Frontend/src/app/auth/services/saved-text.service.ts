@@ -7,8 +7,8 @@ import { Observable, catchError, throwError } from 'rxjs';
   providedIn: 'root'
 })
 export class SavedTextService {
-  private baseUrl = `${environment.apiUrl}/saved-text`;
-
+  //private baseUrl = `${environment.apiUrl}/saved-text`;
+  private baseUrl = 'http://localhost:3000/saved-text';
   constructor(private http: HttpClient) {}
 
   saveText(data: { userId: string, content: string }): Observable<any> {
@@ -23,6 +23,11 @@ export class SavedTextService {
       catchError(this.handleError)
     );
   }
+
+  updateSavedText(id: string, data: { title?: string; content?: string }): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/${id}`, data);
+  }
+
 
   deleteSavedText(id: string): Observable<any> {
     return this.http.delete(`${this.baseUrl}/${id}`).pipe(

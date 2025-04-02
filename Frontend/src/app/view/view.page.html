@@ -67,7 +67,6 @@
 <!-- Sinon, affiche le texte normalement -->
 <p *ngIf="!isEditing">{{ translatedText ? translatedText : transcribedText }}</p>
 
-            <small>23.03.2021</small>
           </article>
         </section>
 
@@ -94,7 +93,7 @@
         (mouseleave)="hideSummarizeMenu()">
      <ion-img src="assets/icon/3.png"></ion-img>
      <span>Summarize</span>
-   
+
      <div class="submenu" [ngClass]="{ 'show': summarizeMenuOpen }">
        <ul>
          <li (click)="summarizeText(transcribedText, 'large')">Large</li>

@@ -1,21 +1,59 @@
 import { Injectable,NotFoundException  } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UpdateClipDto } from './dto/update-clip.dto';
 
 
 @Injectable()
 export class SavedTextService {
   constructor(private prisma: PrismaService) {}
 
-  async saveText(userId: string, content: string) {
+  async saveText(userId: string, content: string,title?: string) {
     try {
+      const generatedTitle = title || content.split(" ").slice(0, 3).join(" "); // Prend les 3 premiers mots
       return await this.prisma.savedText.create({
-        data: { userId, content },
+        data: { userId, content,title: generatedTitle}
       });
     } catch (error) {
       throw new Error('Failed to save text: ' + error.message);
     }
   }
 
+  /*async update(id: string, updateClipDto: UpdateClipDto) {
+    // Vérifier si l'élément existe avant la mise à jour
+    const existingText = await this.prisma.savedText.findUnique({ where: { id } });
+  
+    if (!existingText) {
+      throw new NotFoundException(`Le texte avec l'ID ${id} n'existe pas.`);
+    }
+  
+  // Mise à jour automatique des données
+  const updatedText = await this.prisma.savedText.update({
+    where: { id },
+    data: {
+      title: updateClipDto.title,
+      content: updateClipDto.content,
+    },
+  });
+
+  // Retourner l'élément mis à jour
+  return updatedText;
+}
+  */
+async updateSavedText(id: string, updateData: { title?: string, content?: string }) {
+  try {
+    return await this.prisma.savedText.update({
+      where: { id },
+      data: updateData,
+    });
+  } catch (error) {
+    throw new Error('Failed to update saved text');
+  }
+}
+
+  
+
+
+  
   async getSavedTexts(userId: string) {
     const texts = await this.prisma.savedText.findMany({
       where: { userId },

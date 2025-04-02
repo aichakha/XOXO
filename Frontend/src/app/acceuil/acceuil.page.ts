@@ -50,13 +50,7 @@ export class AcceuilPage {
   ) {
     this.authService.isAuthenticated$.subscribe(auth => this.isAuthenticated = auth);
     this.authService.username$.subscribe(digits => this.last4Digits = digits);
-
   }
-
-
-
-
-
   logout() {
     this.authService.logout();
 

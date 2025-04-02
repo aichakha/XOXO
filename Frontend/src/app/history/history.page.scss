@@ -135,6 +135,15 @@ body {
   border-radius: 10px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
+.editable-input {
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  width: 100%;
+  outline: none;
+  padding: 5px;
+}
+
 
 // Barre de recherche
 .search-container {
@@ -272,6 +281,16 @@ ion-card {
     padding: 10px 20px;
     transition: background-color 0.3s ease;
   }
+}
+.editable-textarea {
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  width: 100%;
+  min-height: 50px;
+  outline: none;
+  padding: 5px;
+  resize: none;
 }
 
 // Pied de page
