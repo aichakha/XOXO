@@ -38,7 +38,7 @@ export class ViewPage implements OnInit {
   uploadedFileName: string | null = null;
   mediaUrl: string="";
   uploadedFile:string="";
-
+  summarizeMenuOpen = false;
 
   loadingMessage: string = 'Converting...';
 
@@ -153,37 +153,43 @@ Homeuser() {
 
 
 
+showSummarizeMenu() {
+  this.summarizeMenuOpen = true;
+}
+
+hideSummarizeMenu() {
+  this.summarizeMenuOpen = false;
+}
     // ✅ Fonction pour envoyer le texte au backend et obtenir un résumé
-    summarizeText(text: string) {
-      console.log('👉 Summarizing text:', text); // Vérifie que la fonction est appelée
-
-      this.isLoading = true; // Indique que le processus est en cours
-      this.loadingMessage = 'Summarizing...'; // Message de chargement
-
-      // Afficher le loader
+    summarizeText(text: string, type: string) {
+      console.log(`👉 Summarizing text with level: ${type}`);
+    
+      this.isLoading = true;
+      this.loadingMessage = 'Summarizing...';
+    
       this.presentLoading().then((loading) => {
-        // Appel HTTP pour obtenir le résumé
-        this.http.post<any>('http://localhost:8001/summarize/', { text }).subscribe({
+        this.http.post<any>('http://localhost:8001/summarize/', { text, type }).subscribe({
           next: (response: any) => {
-            console.log('✅ Summary received:', response); // Vérifie la réponse
-            this.transcribedText = response.summary;  // Remplacer le texte brut par le résumé
+            console.log('✅ Summary received:', response);
+            if (response && response.summary) {
+              this.transcribedText = response.summary;
+            } else {
+              console.error('⚠️ Invalid response format:', response);
+              this.errorMessage = 'Invalid response from server';
+            }
             this.isLoading = false;
-
-            // Fermer le loader après avoir reçu le résumé
             loading.dismiss();
           },
           error: (error) => {
-            console.error('❌ Error generating summary:', error); // Affiche l'erreur dans la console
+            console.error('❌ Error generating summary:', error);
             this.errorMessage = 'Error generating the summary';
             this.isLoading = false;
-
-            // Fermer le loader en cas d'erreur
             loading.dismiss();
           }
         });
       });
     }
-
+    
 originalText: string = ''; // 🔹 Contient toujours le texte source
 // ✅ Fonction pour traduire le texte
 translateText(text: string, targetLang: string) {
@@ -380,7 +386,6 @@ closeDownloadMenu(event: MouseEvent) {
     this.downloadMenuOpen = false;
   }
 }
-
 downloadFile(format: 'pdf' | 'txt') {
   const content = this.transcribedText || 'No content available';
 
@@ -398,12 +403,29 @@ downloadFile(format: 'pdf' | 'txt') {
     window.URL.revokeObjectURL(url);
   } else if (format === 'pdf') {
     const doc = new jsPDF();
-    doc.text(content, 10, 10);
+    
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.text('Transcription', 105, 15, { align: 'center' });
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(12);
+
+    // Gérer les retours à la ligne
+    const marginLeft = 10;
+    const marginTop = 30;
+    const pageWidth = doc.internal.pageSize.width - 2 * marginLeft;
+    const splitText = doc.splitTextToSize(content, pageWidth);
+
+    doc.text(splitText, marginLeft, marginTop);
+
+    // Télécharger le fichier PDF
     doc.save('transcription.pdf');
   }
 
   this.downloadMenuOpen = false;
 }
+
 adjustTextareaHeight() {
   const textarea = document.querySelector('.edit-area') as HTMLTextAreaElement;
   if (textarea) {

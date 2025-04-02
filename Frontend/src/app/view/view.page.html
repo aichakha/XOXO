@@ -89,10 +89,20 @@
           </div>
         </div>
 
-              <a (click)="summarizeText(transcribedText)">
-                <ion-img src="assets/icon/3.png"></ion-img>
-                <span>Summarize</span>
-              </a>
+        <div class="dropdown-item summarize-container"
+        (mouseenter)="showSummarizeMenu()"
+        (mouseleave)="hideSummarizeMenu()">
+     <ion-img src="assets/icon/3.png"></ion-img>
+     <span>Summarize</span>
+   
+     <div class="submenu" [ngClass]="{ 'show': summarizeMenuOpen }">
+       <ul>
+         <li (click)="summarizeText(transcribedText, 'large')">Large</li>
+         <li (click)="summarizeText(transcribedText, 'medium')">Medium</li>
+         <li (click)="summarizeText(transcribedText, 'small')">Small</li>
+       </ul>
+     </div>
+   </div>
               <a (click)="toggleEditMode()">
                 <ion-img src="assets/icon/4.png"></ion-img>
                 <span>Edit</span>
