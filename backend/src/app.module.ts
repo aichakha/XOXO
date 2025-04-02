@@ -9,9 +9,10 @@ import { AIModule } from './ai/ai.module';
 import { SummarizeController } from './summarize/summarize.controller';
 import { SummarizeService } from './summarize/summarize.service';
 import { SummarizeModule } from './summarize/summarize.module';
+import { SavedTextModule } from './saved-text/saved-text.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule,AIModule,SummarizeModule] ,
+  imports: [PrismaModule, AuthModule,AIModule,SummarizeModule,SavedTextModule] ,
   controllers: [AppController, AuthController,SummarizeController],
   providers: [AppService,PrismaService,SummarizeService],
 })

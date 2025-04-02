@@ -22,4 +22,18 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  savedTexts SavedText[]
+
 }
+
+model SavedText {
+  id          String @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String   
+  content     String   
+  createdAt   DateTime @default(now()) 
+  updatedAt   DateTime @updatedAt
+  user        User?     @relation(fields: [userId], references: [id])
+
+  @@index([userId]) // Ajout d'un index sur userId
+}
+
