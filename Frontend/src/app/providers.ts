@@ -1,8 +1,6 @@
-import { importProvidersFrom } from '@angular/core';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { authInterceptor } from './auth/auth.interceptor';
-
+import { AuthInterceptor } from './auth/auth.interceptor';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
 
 export const appProviders = [
-  provideHttpClient(withInterceptors([authInterceptor]))
+  { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }, // Make sure you're using the correct token here
 ];

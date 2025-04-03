@@ -5,6 +5,7 @@ import * as express from 'express';
 import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import { config } from 'dotenv';
+// In src/main.ts
 
 async function bootstrap() {
   // Créer l'application NestJS avec Express
