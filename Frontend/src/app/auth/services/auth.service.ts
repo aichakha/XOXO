@@ -39,7 +39,7 @@ export class AuthService {
           // 🔹 Stocker le nom d'utilisateur (ou 4 derniers chiffres)
           localStorage.setItem('username', response.username);
           this.username$.next(response.username);
-          localStorage.setItem('userId', response.userId); 
+          localStorage.setItem('userId', response.userId);
           // 🔹 Mettre à jour l'état d'authentification
           this.isAuthenticated.next(true);
 
@@ -102,8 +102,8 @@ export class AuthService {
 
   // ✅ Vérifie si l'utilisateur est authentifié
   isLoggedIn(): boolean {
-    const token = localStorage.getItem('authToken'); // Récupérer le token stocké
-    return !!token; // Retourne true si le token existe, sinon false
+    const token = localStorage.getItem('token'); // Utiliser 'token' au lieu de 'authToken'
+    return !!token;
   }
   //recuperer le username
   getLast4Digits(): string | null {
@@ -113,28 +113,44 @@ export class AuthService {
   // ✅ Suppression du token lors de la déconnexion
   logout() {
     localStorage.removeItem('token');
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('token'); // Supprime seulement 'token'
     localStorage.removeItem('decodedToken');
     localStorage.removeItem('username');
     this.isAuthenticated.next(false);
     this.last4Digits.next(null);
     this.router.navigate(['/acceuil']);
   }
+getUserId(): string {
+  const token = localStorage.getItem('token');  // Utiliser le token et non 'user'
 
-  getUserId(): string {
-    const token = localStorage.getItem('token');  // Utiliser le token et non 'user'
-  
-    if (!token) return '';
-  
-    try {
-      const decodedToken: any = jwtDecode(token);  // Décoder le JWT
-      console.log("Decoded Token:", decodedToken);  // Debug
-      return decodedToken.sub || '';  // Retourner l'ID utilisateur ou une valeur par défaut
-    } catch (error) {
-      console.error("Erreur lors du décodage du token:", error);
-      return '';
-    }
+  if (!token) return '';
+
+  try {
+    const decodedToken: any = jwtDecode(token);  // Décoder le JWT
+    console.log("Decoded Token:", decodedToken);  // Debug
+    return decodedToken.sub || '';  // Retourner l'ID utilisateur ou une valeur par défaut
+  } catch (error) {
+    console.error("Erreur lors du décodage du token:", error);
+    return '';
   }
-  
+}
+
+loginWithGoogle(googleToken: string): Observable<any> {
+  return this.http.post<any>(`${this.apiUrl}/google-login`, { token: googleToken }).pipe(
+    tap(response => {
+      if (response.token) {
+        // Store JWT token
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('username', response.username);
+        this.isAuthenticated.next(true);
+        this.router.navigate(['/acceuil-user']);
+      } else {
+        console.error('No token received from server');
+      }
+    })
+  );
+}
+
 
 }
+

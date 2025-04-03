@@ -32,10 +32,10 @@ export class AcceuilUserPage implements OnInit,AfterViewInit {
   isLoading: boolean = false;  // Flag to track the loading state
   loadingMessage: string = 'Converting...';  // Message during conversion
   transcribedText: string = '';
- 
 
 
-  constructor(   
+
+  constructor(
     private router: Router,
     private authService: AuthService,
     private loadingCtrl: LoadingController,

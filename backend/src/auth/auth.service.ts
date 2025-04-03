@@ -3,93 +3,131 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { JwtService } from '@nestjs/jwt';
-import { LoginDto } from './dto/login.dto';
+import { OAuth2Client } from 'google-auth-library';
 
 @Injectable()
 export class AuthService {
-  private users: { id: string; name: string; email: string; password: string }[] = [
-    { id: '1', name: 'John Doe', email: 'johndoe@example.com', password: 'password123' },
-    { id: '2', name: 'Jane Smith', email: 'janesmith@example.com', password: 'securePass' }
-  ];
-  constructor(private prisma: PrismaService,
-    private jwtService: JwtService) {}
-  verifyToken(token: string) {
+  private client: OAuth2Client;
+
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService
+  ) {
+    if (!process.env.GOOGLE_CLIENT_ID) {
+      throw new Error('❌ GOOGLE_CLIENT_ID non défini dans les variables d’environnement');
+    }
+    this.client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+  }
+
+  // ✅ Vérification du Token Google
+  async verifyToken(token: string) {
     try {
-      return this.jwtService.verify(token);
+      const ticket = await this.client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+
+      console.log('✅ User Info:', ticket.getPayload());
     } catch (error) {
+      console.error('❌ Échec de la vérification du token:', error);
       throw new UnauthorizedException('Token invalide');
     }
   }
 
- 
-
-
+  // ✅ Inscription utilisateur
   async signUp(name: string, email: string, password: string) {
     const existingUser = await this.prisma.user.findUnique({ where: { email } });
-    if (existingUser) throw new BadRequestException('Email already exists');
+    if (existingUser) throw new BadRequestException('Email déjà utilisé');
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    return this.prisma.user.create({ data: { name, email, password: hashedPassword } }
-    );
-
+    return this.prisma.user.create({
+      data: { name, email, password: hashedPassword },
+    });
   }
 
+  // ✅ Connexion utilisateur
   async login(email: string, password: string) {
-    console.log('Login attempt for:', email);
     const user = await this.prisma.user.findUnique({ where: { email } });
-    console.log('User found:', user);
-    if (!user) throw new UnauthorizedException('Invalid credentials');
-   
+    if (!user) throw new UnauthorizedException('Identifiants invalides');
+
     const passwordMatch = await bcrypt.compare(password, user.password);
-    console.log('Password from request:', password);
-    console.log('Hashed password from DB:', user.password);
-    console.log('Password match:', passwordMatch);
-    if (!passwordMatch) throw new UnauthorizedException('Invalid credentials');
-    const payload = { email: user.email, sub: user.id };
-    const token = this.jwtService.sign(payload);
-    const last4Digits = user.email.split('@')[0];
-    return { 
-      message: 'Login successful', 
-      userId: user.id, 
-      token ,
-      username:last4Digits 
+    if (!passwordMatch) throw new UnauthorizedException('Identifiants invalides');
+
+    return {
+      message: 'Connexion réussie',
+      userId: user.id,
+      token: this.jwtService.sign({ email: user.email, sub: user.id }),
+      username: user.name,
     };
   }
 
+  // ✅ Générer un token de réinitialisation
   async forgotPassword(email: string) {
     const user = await this.prisma.user.findUnique({ where: { email } });
-    if (!user) throw new BadRequestException('User not found');
-  
-    const resetToken = randomUUID(); // Génère un token unique
-    await this.prisma.user.update({ where: { email }, data: { resetToken } });
-  
-    return { message: 'Password reset token generated',email, token: resetToken };
-  }
-  
+    if (!user) throw new BadRequestException('Utilisateur non trouvé');
 
-  async resetPassword(email: string, token: string, newPassword: string) {
-    const user = await this.prisma.user.findFirst({ 
-      where: { email, resetToken: token }  // Vérification supplémentaire sur l'email
+    const resetToken = randomUUID();
+    await this.prisma.user.update({
+      where: { email },
+      data: { resetToken },
     });
-  
-    console.log('🔍 User found:', user);
-    if (!user) throw new BadRequestException('Invalid or expired reset token');
-  
-    console.log('🔄 Reset password for user:', user.email);
-    console.log('🔑 Old hashed password:', user.password);
-  
+
+    return { message: 'Token de réinitialisation généré', email, token: resetToken };
+  }
+
+  // ✅ Réinitialisation du mot de passe
+  async resetPassword(email: string, token: string, newPassword: string) {
+    const user = await this.prisma.user.findFirst({
+      where: { email, resetToken: token },
+    });
+
+    if (!user) throw new BadRequestException('Token invalide ou expiré');
+
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    console.log('🔒 New hashed password:', hashedPassword);
-  
     await this.prisma.user.update({
       where: { id: user.id },
       data: { password: hashedPassword, resetToken: null },
-      select: { password: true, updatedAt: true }
     });
-  
-    console.log('✅ Password reset successfully!');
-    return { message: 'Password successfully reset' };
+
+    return { message: 'Mot de passe réinitialisé avec succès' };
   }
-  
-  
+
+  // ✅ Génération du JWT
+  async generateJwt(user: any) {
+    return this.jwtService.sign({ email: user.email, sub: user.id });
+  }
+
+  // ✅ Connexion via Google
+  async googleLogin(token: string) {
+    try {
+      const ticket = await this.client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+
+      const payload = ticket.getPayload();
+      if (!payload || !payload.email || !payload.name) throw new UnauthorizedException('Token Google invalide ou incomplet');
+
+      // Vérifier si l'utilisateur existe
+      let user = await this.prisma.user.findUnique({ where: { email: payload.email } });
+
+      // Si l'utilisateur n'existe pas, le créer
+      if (!user) {
+        user = await this.prisma.user.create({
+          data: {
+            name: payload.name,
+            email: payload.email,
+            password: '', // Pas de mot de passe stocké pour Google
+          },
+        });
+      }
+
+      return {
+        token: await this.generateJwt(user),
+        username: user.name,
+      };
+    } catch (error) {
+      throw new UnauthorizedException('Échec de la connexion Google');
+    }
+  }
 }

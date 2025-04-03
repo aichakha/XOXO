@@ -9,6 +9,8 @@ import { AIModule } from './ai/ai.module';
 import { SummarizeController } from './summarize/summarize.controller';
 import { SummarizeService } from './summarize/summarize.service';
 import { SummarizeModule } from './summarize/summarize.module';
+import { MiddlewareConsumer, NestModule } from '@nestjs/common';
+import { CorsMiddleware } from './cors.middleware';
 import { SavedTextModule } from './saved-text/saved-text.module';
 
 @Module({
@@ -16,4 +18,8 @@ import { SavedTextModule } from './saved-text/saved-text.module';
   controllers: [AppController, AuthController,SummarizeController],
   providers: [AppService,PrismaService,SummarizeService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CorsMiddleware).forRoutes('*');
+  }
+}

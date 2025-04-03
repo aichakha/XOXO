@@ -6,7 +6,6 @@
 
     <!-- Full Name Input -->
     <ion-item>
-      
       <ion-input
         [(ngModel)]="user.name"
         placeholder="Full Name"
@@ -16,7 +15,6 @@
 
     <!-- Email Input -->
     <ion-item>
-      
       <ion-input
         [(ngModel)]="user.email"
         type="email"
@@ -27,7 +25,6 @@
 
     <!-- Password Input -->
     <ion-item>
-     
       <ion-input
         [(ngModel)]="user.password"
         type="password"
@@ -44,6 +41,9 @@
     >
       Sign Up
     </ion-button>
+
+    <!-- Google Sign-In Button Container -->
+    <div id="googleSignInButton" class="google-signin-container"></div>
 
     <!-- Login Link -->
     <p class="back-to-login">

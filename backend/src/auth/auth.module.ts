@@ -1,4 +1,5 @@
-import { Module } from '@nestjs/common';
+// src/auth/auth.module.ts
+import { Module, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -9,6 +10,7 @@ import { JwtStrategy } from './jwt.strategy';
 import { AuthGuard } from './jwt-auth.guard';
 import { SavedTextController } from 'src/saved-text/saved-text.controller';
 import { SavedTextService } from 'src/saved-text/saved-text.service';
+import { CorsMiddleware } from 'src/cors.middleware'; // Assurez-vous que le chemin est correct
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
@@ -21,5 +23,9 @@ import { SavedTextService } from 'src/saved-text/saved-text.service';
   providers: [AuthService,SavedTextService, PrismaService, JwtStrategy, AuthGuard],
   exports: [AuthService, JwtModule],
 })
-export class AuthModule {}
-
+export class AuthModule {
+  // Appliquer le middleware CORS à toutes les routes du contrôleur AuthController
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CorsMiddleware).forRoutes(AuthController);  // Applique à AuthController seulement
+  }
+}
