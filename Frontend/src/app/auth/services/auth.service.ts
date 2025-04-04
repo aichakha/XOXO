@@ -120,18 +120,18 @@ export class AuthService {
     this.last4Digits.next(null);
     this.router.navigate(['/acceuil']);
   }
-getUserId(): string {
-  const token = localStorage.getItem('token');  // Utiliser le token et non 'user'
-
-  if (!token) return '';
-
+// auth.service.ts
+getUserId(): string | null {
+  const token = this.getToken();
+  if (!token) return null;
+  
   try {
-    const decodedToken: any = jwtDecode(token);  // Décoder le JWT
-    console.log("Decoded Token:", decodedToken);  // Debug
-    return decodedToken.sub || '';  // Retourner l'ID utilisateur ou une valeur par défaut
+    const decoded: any = jwtDecode(token); // Utilisez jwt-decode
+    console.log('Decoded Token:', decoded);
+    return decoded.sub; // Ou le champ où vous stockez l'ID utilisateur
   } catch (error) {
-    console.error("Erreur lors du décodage du token:", error);
-    return '';
+    console.error('Error decoding token:', error);
+    return null;
   }
 }
 

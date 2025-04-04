@@ -126,7 +126,12 @@ export class HistoryPage implements OnInit {
         return;
       }
     
-      // Trouver l'index et sauvegarder l'ancien titre AVANT le try
+      const loading = await this.loadingCtrl.create({
+        message: 'Updating title...'
+      });
+      await loading.present();
+    
+      // Trouver l'index et sauvegarder l'ancien titre
       const clipIndex = this.clips.findIndex(c => c.id === id);
       const oldTitle = clipIndex > -1 ? this.clips[clipIndex].title : '';
     
@@ -158,85 +163,121 @@ export class HistoryPage implements OnInit {
       } catch (error) {
         console.error('Error updating title:', error);
         
-        // Revert UI en cas d'erreur (oldTitle est maintenant accessible)
+        // Revert UI en cas d'erreur
         if (clipIndex > -1) {
           this.clips[clipIndex].title = oldTitle;
           this.filteredClips = [...this.clips];
         }
     
+        let errorMessage = 'Échec de la mise à jour du titre';
+        if (error instanceof Error) {
+          errorMessage = error.message.includes('401') 
+            ? 'Session expirée. Veuillez vous reconnecter.'
+            : error.message;
+        }
+    
         const toast = await this.toastCtrl.create({
-          message: 'Échec de la mise à jour du titre',
-          duration: 2000,
+          message: errorMessage,
+          duration: 3000,
           color: 'danger'
         });
         await toast.present();
+    
+        // Déconnexion si token invalide
+        if (errorMessage.includes('401')) {
+          this.authService.logout();
+        }
+      } finally {
+        await loading.dismiss();
       }
     }
 
 
 
-  async loadSavedTexts() {
-    this.isLoading = true;
-    const loading = await this.loadingCtrl.create({
-      message: 'Loading your history...'
-    });
-    await loading.present();
-
-    try {
-      const userId = this.authService.getUserId();
-      if (userId) {
-        // Remplacement de toPromise() par lastValueFrom
+    async loadSavedTexts() {
+      this.isLoading = true;
+      const loading = await this.loadingCtrl.create({
+        message: 'Chargement en cours...'
+      });
+      await loading.present();
+    
+      try {
+        const userId = this.authService.getUserId();
+        if (!userId) {
+          throw new Error('ID utilisateur non disponible');
+        }
+    
         const response = await lastValueFrom(
           this.savedTextService.getSavedTexts(userId)
         );
-
-        // Vérification de type et fallback
+    
+        console.log('API Response:', response); // Debug
         this.clips = Array.isArray(response) ? response : [];
         this.filteredClips = [...this.clips];
+      } catch (error) {
+        console.error('Erreur:', error);
+        const toast = await this.toastCtrl.create({
+          message: 'Échec du chargement. Veuillez vous reconnecter.',
+          duration: 3000,
+          color: 'danger'
+        });
+        await toast.present();
+        this.authService.logout();
+      } finally {
+        loading.dismiss();
+        this.isLoading = false;
       }
-    } catch (error) {
-      console.error('Error loading saved texts:', error);
-      const toast = await this.toastCtrl.create({
-        message: 'Failed to load history',
-        duration: 2000,
-        color: 'danger'
-      });
-      await toast.present();
-      this.clips = [];
-      this.filteredClips = [];
-    } finally {
-      await loading.dismiss();
-      this.isLoading = false;
     }
-  }
 
-  async deleteText(id: string, event: Event) {
-    event.stopPropagation();
-
-    try {
-      // Remplacement de toPromise() par lastValueFrom
-      await lastValueFrom(this.savedTextService.deleteSavedText(id));
-
-      // Mise à jour locale sans recharger
-      this.clips = this.clips.filter(clip => clip.id !== id);
-      this.filteredClips = [...this.clips];
-
-      const toast = await this.toastCtrl.create({
-        message: 'Text deleted successfully',
-        duration: 2000
+    async deleteText(id: string, event: Event) {
+      event.stopPropagation();
+      
+      const loading = await this.loadingCtrl.create({
+        message: 'Deleting...'
       });
-      await toast.present();
-
-    } catch (error) {
-      console.error('Error deleting text:', error);
-      const toast = await this.toastCtrl.create({
-        message: 'Failed to delete text',
-        duration: 2000,
-        color: 'danger'
-      });
-      await toast.present();
+      await loading.present();
+    
+      try {
+        await lastValueFrom(
+          this.savedTextService.deleteSavedText(id)
+        );
+    
+        // Mise à jour locale
+        this.clips = this.clips.filter(clip => clip.id !== id);
+        this.filteredClips = [...this.clips];
+    
+        const toast = await this.toastCtrl.create({
+          message: 'Text deleted successfully',
+          duration: 2000,
+          color: 'success'
+        });
+        await toast.present();
+    
+      } catch (error) {
+        console.error('Error deleting text:', error);
+        
+        let errorMessage = 'Failed to delete text';
+        if (error instanceof Error) {
+          errorMessage = error.message.includes('401') 
+            ? 'Session expired. Please log in again.'
+            : error.message;
+        }
+    
+        const toast = await this.toastCtrl.create({
+          message: errorMessage,
+          duration: 3000,
+          color: 'danger'
+        });
+        await toast.present();
+    
+        // Optionnel : Déconnexion automatique si token invalide
+        if (errorMessage.includes('401')) {
+          this.authService.logout();
+        }
+      } finally {
+        await loading.dismiss();
+      }
     }
-  }
 
   filterClips() {
     if (!this.searchTerm || this.searchTerm.trim() === '') {

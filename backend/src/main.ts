@@ -23,7 +23,7 @@ async function bootstrap() {
   // ✅ Activer CORS globalement avec des paramètres précis
   app.enableCors({
     origin: ['http://localhost:8100'], // Autorise le frontend Ionic
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     allowedHeaders: 'Content-Type, Authorization',
     credentials: true, // Autorise les cookies et authentifications
   });

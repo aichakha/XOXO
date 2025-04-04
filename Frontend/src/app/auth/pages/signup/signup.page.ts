@@ -86,7 +86,7 @@ export class SignupPage implements OnInit {
     this.authService.signUp(this.user).subscribe({
       next: () => {
         console.log('Inscription réussie');
-        this.router.navigate(['/acceuil-user']);
+        this.router.navigate(['/acceuil']);
       },
       error: (err) => {
         console.error('Erreur d\'inscription:', err);

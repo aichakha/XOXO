@@ -45,7 +45,7 @@ async update(
   }
 }
 
-@Patch(':id/favorite')
+/*@Patch(':id/favorite')
 async toggleFavorite(@Param('id') id: string) {
   return this.savedTextService.toggleFavorite(id);
 }
@@ -53,7 +53,7 @@ async toggleFavorite(@Param('id') id: string) {
 @Get(':userId/favorites')
 async getFavorites(@Param('userId') userId: string) {
   return this.savedTextService.getFavorites(userId);
-}
+}*/
 
 
 }

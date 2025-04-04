@@ -99,7 +99,7 @@ async updateSavedText(id: string, updateData: UpdateClipDto) {
     });
   }
 
-  async toggleFavorite(id: string) {
+  /*async toggleFavorite(id: string) {
     const text = await this.prisma.savedText.findUnique({ where: { id } });
   
     if (!text) {
@@ -117,6 +117,6 @@ async updateSavedText(id: string, updateData: UpdateClipDto) {
     return this.prisma.savedText.findMany({
       where: { userId, isFavorite: true },
     });
-  }
+  }*/
     
 }

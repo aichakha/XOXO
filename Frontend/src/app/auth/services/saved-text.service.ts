@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 import { Observable, catchError, throwError } from 'rxjs';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,17 +10,35 @@ import { Observable, catchError, throwError } from 'rxjs';
 export class SavedTextService {
   //private baseUrl = `${environment.apiUrl}/saved-text`;
   private baseUrl = 'http://localhost:3000/saved-text';
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,private authService: AuthService) {}
+
+  private getRequestOptions() {
+    const token = this.authService.getToken();
+    if (!token) {
+      throw new Error('No token available');
+    }
+  
+    return {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }),
+      withCredentials: true // Important pour les cookies
+    };
+  }
 
   saveText(data: { userId: string, content: string }): Observable<any> {
-    console.log('Sending to:', this.baseUrl, 'Data:', data);
-    return this.http.post(this.baseUrl, data).pipe(
+    const options = this.getRequestOptions();
+    console.log('Sending to:', this.baseUrl, 'Data:', data,'Request headers:', options.headers);
+    return this.http.post(this.baseUrl, data, options).pipe(
       catchError(this.handleError)
     );
   }
 
   getSavedTexts(userId: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/${userId}`).pipe(
+    const options = this.getRequestOptions();
+    console.log('Request options:', options); // Debug
+    return this.http.get(`${this.baseUrl}/${userId}`, options).pipe(
       catchError(this.handleError)
     );
   }
@@ -28,7 +47,10 @@ export class SavedTextService {
 
 
   deleteSavedText(id: string): Observable<any> {
-    return this.http.delete(`${this.baseUrl}/${id}`).pipe(
+    const options = this.getRequestOptions(); // Ajout des options d'authentification
+    console.log('Delete request options:', options); // Pour débogage
+    
+    return this.http.delete(`${this.baseUrl}/${id}`, options).pipe(
       catchError(this.handleError)
     );
   }
@@ -45,8 +67,11 @@ export class SavedTextService {
   }
 
   updateSavedText(id: string, data: { title?: string; content?: string }): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/${id}`, data).pipe(
-      catchError(this.handleError) // Ajoutez la gestion d'erreur comme pour les autres méthodes
+    const options = this.getRequestOptions(); // Ajoutez cette ligne
+    console.log('Update request options:', options); // Pour débogage
+    
+    return this.http.patch(`${this.baseUrl}/${id}`, data, options).pipe( // Ajoutez options ici
+      catchError(this.handleError)
     );
   }
 }

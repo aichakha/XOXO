@@ -15,9 +15,7 @@ import { SavedTextModule } from './saved-text/saved-text.module';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [PrismaModule, AuthModule,AIModule,SummarizeModule,SavedTextModule,ConfigModule.forRoot({
-    isGlobal: true, // Permet d'accéder aux variables dans toute l'application
-  }),] ,
+  imports: [PrismaModule, AuthModule,AIModule,SummarizeModule,SavedTextModule] ,
   controllers: [AppController, AuthController,SummarizeController],
   providers: [AppService,PrismaService,SummarizeService],
 })
