@@ -39,14 +39,40 @@ export class SavedTextService {
   return updatedText;
 }
   */
-async updateSavedText(id: string, updateData: { title?: string, content?: string }) {
+async updateSavedText(id: string, updateData: UpdateClipDto) {
   try {
+    // Vérifier d'abord si le texte existe
+    const existingText = await this.prisma.savedText.findUnique({
+      where: { id }
+    });
+
+    if (!existingText) {
+      throw new NotFoundException(`Text with ID ${id} not found`);
+    }
+
+    // Mettre à jour seulement les champs fournis
+    const dataToUpdate: any = {};
+    if (updateData.title !== undefined) {
+      dataToUpdate.title = updateData.title;
+    }
+    if (updateData.content !== undefined) {
+      dataToUpdate.content = updateData.content;
+    }
+
+    // Si aucun champ valide à mettre à jour
+    if (Object.keys(dataToUpdate).length === 0) {
+      throw new Error('No valid fields provided for update');
+    }
+
     return await this.prisma.savedText.update({
       where: { id },
-      data: updateData,
+      data: dataToUpdate,
     });
   } catch (error) {
-    throw new Error('Failed to update saved text');
+    if (error instanceof NotFoundException) {
+      throw error;
+    }
+    throw new Error(`Failed to update saved text: ${error.message}`);
   }
 }
 
@@ -72,4 +98,25 @@ async updateSavedText(id: string, updateData: { title?: string, content?: string
       where: { id },
     });
   }
+
+  async toggleFavorite(id: string) {
+    const text = await this.prisma.savedText.findUnique({ where: { id } });
+  
+    if (!text) {
+      throw new NotFoundException('Text not found');
+    }
+  
+    return this.prisma.savedText.update({
+      where: { id },
+      data: { isFavorite: !text.isFavorite },
+    });
+  }
+  
+  
+  async getFavorites(userId: string) {
+    return this.prisma.savedText.findMany({
+      where: { userId, isFavorite: true },
+    });
+  }
+    
 }

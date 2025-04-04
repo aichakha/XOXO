@@ -33,7 +33,13 @@
 
   <ion-content class="history-page">
     <div class="search-container">
-      <ion-searchbar ></ion-searchbar>
+      <ion-searchbar 
+        [(ngModel)]="searchTerm"
+        (ionInput)="filterClips()"
+        placeholder="Search in your history..."
+        animated
+        debounce="300">
+      </ion-searchbar>
     </div>
     <!-- ✅ Si l'utilisateur est connecté -->
     <div *ngIf="isAuthenticated; else loggedOutContent" class="content-container">
@@ -42,12 +48,10 @@
         <ion-card *ngFor="let clip of filteredClips" (click)="selectClip(clip)">
           <ion-card-header>
             <ion-card-title>
-              <ion-input [(ngModel)]="clip.title"
-              (blur)="updateTitle(clip.id, clip.title)"
-              (keyup.enter)="updateTitle(clip.id, clip.title)"
-              (input)="autoSave()"
-              placeholder="Enter title"
-              class="editable-input">
+              <ion-input 
+                [(ngModel)]="clip.title"
+                (ionChange)="updateTitle(clip.id, clip.title)"
+                placeholder="Modifier le titre">
               </ion-input>
             </ion-card-title>
             <ion-card-subtitle>{{ clip.createdAt | date }}</ion-card-subtitle>
@@ -79,10 +83,7 @@
         <ion-button (click)="closeDetails()">Close</ion-button>
       </div>
 
-      <!-- ✅ Bouton "Show more" -->
-      <div class="load-more-container">
-        <ion-button (click)="loadMore()">Show more</ion-button>
-      </div>
+      
     </div>
 
     <!-- ✅ Si l'utilisateur n'est PAS connecté -->

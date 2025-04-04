@@ -115,11 +115,61 @@ export class HistoryPage implements OnInit {
       }
     }
     async updateTitle(id: string, newTitle: string) {
+      // Validation simple
+      if (!newTitle || newTitle.trim().length === 0) {
+        const toast = await this.toastCtrl.create({
+          message: 'Le titre ne peut pas être vide',
+          duration: 2000,
+          color: 'warning'
+        });
+        await toast.present();
+        return;
+      }
+    
+      // Trouver l'index et sauvegarder l'ancien titre AVANT le try
+      const clipIndex = this.clips.findIndex(c => c.id === id);
+      const oldTitle = clipIndex > -1 ? this.clips[clipIndex].title : '';
+    
       try {
-        const updatedClip = await this.savedTextService.updateSavedText(id, { title: newTitle }).toPromise();
-        this.clips = this.clips.map(clip => clip.id === id ? { ...clip, title: updatedClip.title } : clip);
+        // Mise à jour optimiste de l'UI
+        if (clipIndex > -1) {
+          this.clips[clipIndex].title = newTitle;
+          this.filteredClips = [...this.clips];
+        }
+    
+        // Appel API
+        const updatedClip = await lastValueFrom(
+          this.savedTextService.updateSavedText(id, { title: newTitle })
+        );
+    
+        // Mise à jour avec la réponse du serveur
+        if (clipIndex > -1) {
+          this.clips[clipIndex] = { ...this.clips[clipIndex], ...updatedClip };
+          this.filteredClips = [...this.clips];
+        }
+    
+        const toast = await this.toastCtrl.create({
+          message: 'Titre mis à jour avec succès',
+          duration: 2000,
+          color: 'success'
+        });
+        await toast.present();
+    
       } catch (error) {
         console.error('Error updating title:', error);
+        
+        // Revert UI en cas d'erreur (oldTitle est maintenant accessible)
+        if (clipIndex > -1) {
+          this.clips[clipIndex].title = oldTitle;
+          this.filteredClips = [...this.clips];
+        }
+    
+        const toast = await this.toastCtrl.create({
+          message: 'Échec de la mise à jour du titre',
+          duration: 2000,
+          color: 'danger'
+        });
+        await toast.present();
       }
     }
 
@@ -189,14 +239,17 @@ export class HistoryPage implements OnInit {
   }
 
   filterClips() {
-    if (!this.searchTerm) {
+    if (!this.searchTerm || this.searchTerm.trim() === '') {
       this.filteredClips = [...this.clips];
       return;
     }
-
-    this.filteredClips = this.clips.filter(clip =>
-      clip.content.toLowerCase().includes(this.searchTerm.toLowerCase())
-    );
+    
+    const searchTermLower = this.searchTerm.toLowerCase().trim();
+    
+    this.filteredClips = this.clips.filter(clip => {
+      // Recherche uniquement dans le titre
+      return clip.title?.toLowerCase().includes(searchTermLower) || false;
+    });
   }
 
 

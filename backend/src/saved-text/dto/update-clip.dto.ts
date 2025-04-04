@@ -1,8 +1,13 @@
 import{PartialType }from '@nestjs/mapped-types';
 import { CreateSavedTextDto } from './create-saved-text.dto';
-import { IsOptional, IsString } from 'class-validator';
+import { IsBoolean, IsOptional, IsString } from 'class-validator';
 
 export class UpdateClipDto extends PartialType(CreateSavedTextDto) {
+
+  @IsOptional()
+  @IsBoolean()
+  isFavorite?: boolean;
+  
   @IsOptional()
   @IsString()
   title?: string; 

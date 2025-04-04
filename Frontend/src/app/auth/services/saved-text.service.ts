@@ -24,9 +24,7 @@ export class SavedTextService {
     );
   }
 
-  updateSavedText(id: string, data: { title?: string; content?: string }): Observable<any> {
-    return this.http.patch(`${this.baseUrl}/${id}`, data);
-  }
+ 
 
 
   deleteSavedText(id: string): Observable<any> {
@@ -44,5 +42,11 @@ export class SavedTextService {
       errorMessage = `Server-side error: ${error.status} ${error.message}`;
     }
     return throwError(() => new Error(errorMessage));
+  }
+
+  updateSavedText(id: string, data: { title?: string; content?: string }): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/${id}`, data).pipe(
+      catchError(this.handleError) // Ajoutez la gestion d'erreur comme pour les autres méthodes
+    );
   }
 }
