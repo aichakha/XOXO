@@ -12,9 +12,12 @@ import { SummarizeModule } from './summarize/summarize.module';
 import { MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { CorsMiddleware } from './cors.middleware';
 import { SavedTextModule } from './saved-text/saved-text.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [PrismaModule, AuthModule,AIModule,SummarizeModule,SavedTextModule] ,
+  imports: [PrismaModule, AuthModule,AIModule,SummarizeModule,SavedTextModule,ConfigModule.forRoot({
+    isGlobal: true, // Permet d'accéder aux variables dans toute l'application
+  }),] ,
   controllers: [AppController, AuthController,SummarizeController],
   providers: [AppService,PrismaService,SummarizeService],
 })

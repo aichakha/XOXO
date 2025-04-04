@@ -5,6 +5,8 @@ import * as express from 'express';
 import * as path from 'path';
 import * as bodyParser from 'body-parser';
 import { config } from 'dotenv';
+config();
+console.log('GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID);
 // In src/main.ts
 
 async function bootstrap() {
@@ -31,5 +33,5 @@ async function bootstrap() {
 }
 
 bootstrap();
-config();
+
 console.log('GOOGLE_CLIENT_ID:', process.env.GOOGLE_CLIENT_ID);
