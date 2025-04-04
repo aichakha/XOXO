@@ -9,6 +9,7 @@ import { LoadingController } from '@ionic/angular';  // <-- Import LoadingContro
 import { Observable, Subscribable } from 'rxjs';
 import { AlertController } from '@ionic/angular';
 import { ModalController } from '@ionic/angular';
+import { lastValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-acceuil',
@@ -154,16 +155,28 @@ export class AcceuilPage {
       alert('Please select a file or enter a URL before continuing.');
       return;
     }
+
     const token = localStorage.getItem('authToken');
     if (!token) {
-      // L'utilisateur n'est pas connecté, afficher la popup
+      // L'utilisateur n'est pas connecté, afficher la popup de connexion
       this.showAuthPopup();
-    } else {
-      // L'utilisateur est connecté, aller vers la page de transcription
-      this.router.navigate(['/view']);
+      return;
     }
+
+    // L'utilisateur est connecté, procéder à la conversion
+    this.http.post('URL_DU_BACKEND', { file: this.uploadedFile }, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).subscribe(response => {
+      console.log("Conversion réussie :", response);
+      // Aller vers la page de transcription après succès
+      this.router.navigate(['/view']);
+    }, error => {
+      console.error("Erreur de conversion :", error);
+    });
   }
+
   isFlipped = false;
+
 
 
 
