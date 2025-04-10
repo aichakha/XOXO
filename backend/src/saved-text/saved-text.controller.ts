@@ -3,6 +3,7 @@ import { SavedTextService } from './saved-text.service';
 import { CreateSavedTextDto } from './dto/create-saved-text.dto';
 import { AuthGuard } from '../auth/jwt-auth.guard';
 import { UpdateClipDto } from './dto/update-clip.dto';
+import { FavoriteClipDto } from './dto/favorite-clip.dto';
 
 @Controller('saved-text')
 export class SavedTextController {
@@ -45,15 +46,23 @@ async update(
   }
 }
 
-/*@Patch(':id/favorite')
-async toggleFavorite(@Param('id') id: string) {
-  return this.savedTextService.toggleFavorite(id);
+@UseGuards(AuthGuard)
+@Patch(':id/favorite')
+async toggleFavorite(
+  @Param('id') id: string,
+  @Body() favoriteDto: FavoriteClipDto
+) {
+  return this.savedTextService.toggleFavorite(id, favoriteDto.isFavorite);
 }
 
+@UseGuards(AuthGuard)
 @Get(':userId/favorites')
 async getFavorites(@Param('userId') userId: string) {
   return this.savedTextService.getFavorites(userId);
-}*/
+}
+
+
+
 
 
 }

@@ -14,6 +14,8 @@ interface Clip {
   title: string;
   content?: string;
   createdAt?: string;
+  isFavorite?: boolean;
+  userId: string;
 }
 @Component({
   selector: 'app-history',
@@ -358,6 +360,34 @@ closeDetails() {
   this.selectedClip = null;
 }
 
+async toggleFavorite(clip: Clip) {
+  try {
+    const updatedClip = await lastValueFrom(
+      this.savedTextService.toggleFavorite(clip.id, !clip.isFavorite)
+    );
+    
+    // Mise à jour locale
+    this.clips = this.clips.map(c => 
+      c.id === clip.id ? { ...c, isFavorite: updatedClip.isFavorite } : c
+    );
+    this.filteredClips = [...this.clips];
+
+    const toast = await this.toastCtrl.create({
+      message: updatedClip.isFavorite ? 'Ajouté aux favoris ❤️' : 'Retiré des favoris',
+      duration: 2000,
+      color: 'success'
+    });
+    await toast.present();
+  } catch (error) {
+    console.error('Erreur de mise à jour des favoris:', error);
+    const toast = await this.toastCtrl.create({
+      message: 'Erreur lors de la mise à jour des favoris',
+      duration: 2000,
+      color: 'danger'
+    });
+    await toast.present();
+  }
+}
 
 
 }

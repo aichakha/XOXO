@@ -32,6 +32,7 @@
   </ion-header>
 
   <ion-content class="history-page">
+  
     <div class="search-container">
       <ion-searchbar 
         [(ngModel)]="searchTerm"
@@ -67,10 +68,18 @@
 
           <ion-footer>
             <small>{{ clip.createdAt | date:'medium' }}</small>
-            <ion-button (click)="deleteText(clip.id, $event)" color="danger">
-              Delete
+            <ion-button fill="clear" size="small" (click)="toggleFavorite(clip); $event.stopPropagation()">
+              <ion-icon 
+                [name]="clip.isFavorite ? 'heart' : 'heart-outline'"
+                [color]="clip.isFavorite ? 'danger' : 'medium'"
+                style="font-size: 24px;">
+              </ion-icon>
+            </ion-button>
+            <ion-button fill="clear" size="small" color="danger" (click)="deleteText(clip.id, $event)">
+              <ion-icon name="trash" style="font-size: 24px;"></ion-icon>
             </ion-button>
           </ion-footer>
+
         </ion-card>
       </div>
 
