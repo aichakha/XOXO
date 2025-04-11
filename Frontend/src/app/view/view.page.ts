@@ -394,14 +394,13 @@ showDownloadMenu() {
   this.summarizeMenuOpen = false;
 }
 toggleDropdown(event: any) {
-  this.dropdownOpen = !this.dropdownOpen;
 
-  if (!this.dropdownOpen) {
-    this.translateMenuOpen = false;
-    this.summarizeMenuOpen = false;
-    this.downloadMenuOpen = false;
+
+    event.stopPropagation();
+    this.dropdownOpen = !this.dropdownOpen;
+    console.log('Dropdown toggled:', this.dropdownOpen);
   }
-}
+
 
 toggleSubmenu(menu: string) {
   if (menu === 'translate') {

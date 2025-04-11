@@ -80,6 +80,7 @@ ion-text {
   padding-right: 16px;
 }
 
+/* MENU DEROULANT */
 .dropdown-container {
   position: absolute;
   top: 90px;
@@ -90,6 +91,8 @@ ion-text {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
   z-index: 1000;
   animation: fadeIn 0.2s ease-in-out;
+  pointer-events: auto;
+  visibility: visible !important;
 }
 
 ion-list.dropdown {
@@ -102,8 +105,12 @@ ion-item {
   --padding-start: 16px;
   --inner-padding-end: 16px;
   --background: transparent;
+  cursor: pointer;
 }
-
+ion-icon {
+  font-size: 20px;
+  color: #7a49d0;
+}
 ion-item:hover {
   background: #f1f1f1;
   cursor: pointer;
@@ -112,6 +119,8 @@ ion-item:hover {
 .submenu {
   padding-left: 20px;
   background-color: #fafafa;
+  margin-top: 4px;
+  border-left: 2px solid #eee;
 }
 
 ion-footer {
@@ -126,13 +135,32 @@ ion-title.ion-text-center {
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }
 
+/* ANIMATION */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: scale(0.98);
+    transform: translateY(-8px) scale(0.98);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0) scale(1);
+  }
+}
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.98);
+  }
+}
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
   }
 }

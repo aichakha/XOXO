@@ -7,13 +7,22 @@ import { AppComponent } from './app/app.component';
 import { AuthInterceptor } from './app/auth/auth.interceptor';
 import { appProviders } from './app/providers';
 import { addIcons } from 'ionicons';
-import { heart, heartOutline,trash  } from 'ionicons/icons';
+import { heart, menu,heartOutline,trash,shareOutline,downloadOutline ,copyOutline, menuOutline,languageOutline,logoUsd,logoEuro,globeOutline,earthOutline,documentOutline,documentTextOutline,expandOutline,contractOutline,ellipsisHorizontalOutline,createOutline,saveOutline } from 'ionicons/icons';
 
 // ✅ Enregistrement des icônes
 addIcons({
   heart,
   trash ,
-  heartOutline
+  menu,
+  heartOutline,
+  downloadOutline,
+  documentTextOutline,
+  copyOutline,shareOutline,
+  menuOutline,languageOutline,
+  logoUsd,logoEuro,globeOutline,
+  earthOutline,documentOutline,expandOutline,
+  contractOutline,ellipsisHorizontalOutline,createOutline,
+  saveOutline
 });
 bootstrapApplication(AppComponent, {
   providers: [

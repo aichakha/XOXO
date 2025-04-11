@@ -18,19 +18,91 @@
 
     <!-- Right: Logout + Welcome -->
     <ion-buttons slot="end" class="navbar-right">
+      <span class="welcome">{{username}}</span>
       <ion-button *ngIf="isAuthenticated" (click)="logout()" class="logout-btn">Logout</ion-button>
-      <span class="welcome">Welcome {{username}}</span>
     </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
 <ion-content class="ion-padding">
-  <div class="main-content" (click)="closeDropdownOnOutsideClick($event)">
+  <!-- Positionnement relatif pour le dropdown -->
+  <div class="main-content" style="position: relative;" (click)="closeDropdownOnOutsideClick($event)">
+
+    <!-- MENU DEROULANT POSITIONNÉ ICI -->
+    <div class="dropdown-container" *ngIf="dropdownOpen">
+      <ion-list class="dropdown">
+        <ion-item (click)="toggleSubmenu('translate')">
+          <ion-icon slot="start" name="language-outline"></ion-icon>
+          <ion-label>Translate</ion-label>
+        </ion-item>
+        <ion-list *ngIf="translateMenuOpen" class="submenu">
+          <ion-item (click)="translateAndReset(transcribedText, 'en')">
+            <ion-icon slot="start" name="logo-usd"></ion-icon>
+            <ion-label>English</ion-label>
+          </ion-item>
+          <ion-item (click)="translateAndReset(transcribedText, 'fr')">
+            <ion-icon slot="start" name="logo-euro"></ion-icon>
+            <ion-label>French</ion-label>
+          </ion-item>
+          <ion-item (click)="translateAndReset(transcribedText, 'es')">
+            <ion-icon slot="start" name="globe-outline"></ion-icon>
+            <ion-label>Spanish</ion-label>
+          </ion-item>
+          <ion-item (click)="translateAndReset(transcribedText, 'de')">
+            <ion-icon slot="start" name="earth-outline"></ion-icon>
+            <ion-label>German</ion-label>
+          </ion-item>
+        </ion-list>
+
+        <ion-item (click)="toggleSubmenu('summarize')">
+          <ion-icon slot="start" name="document-text-outline"></ion-icon>
+          <ion-label>Summarize</ion-label>
+        </ion-item>
+        <ion-list *ngIf="summarizeMenuOpen" class="submenu">
+          <ion-item (click)="summarizeText(transcribedText, 'large')">
+            <ion-icon slot="start" name="expand-outline"></ion-icon>
+            <ion-label>Large</ion-label>
+          </ion-item>
+          <ion-item (click)="summarizeText(transcribedText, 'medium')">
+            <ion-icon slot="start" name="contract-outline"></ion-icon>
+            <ion-label>Medium</ion-label>
+          </ion-item>
+          <ion-item (click)="summarizeText(transcribedText, 'small')">
+            <ion-icon slot="start" name="ellipsis-horizontal-outline"></ion-icon>
+            <ion-label>Small</ion-label>
+          </ion-item>
+        </ion-list>
+
+        <ion-item (click)="toggleEditMode()">
+          <ion-icon slot="start" name="create-outline"></ion-icon>
+          <ion-label>Edit</ion-label>
+        </ion-item>
+
+        <ion-item (click)="saveCurrentText()">
+          <ion-icon slot="start" name="save-outline"></ion-icon>
+          <ion-label>Save</ion-label>
+        </ion-item>
+
+        <ion-item (click)="downloadFile('pdf')">
+          <ion-icon slot="start" name="download-outline"></ion-icon>
+          <ion-label>Download</ion-label>
+        </ion-item>
+
+
+
+
+        <ion-item (click)="openModal()">
+          <ion-icon slot="start" name="share-outline"></ion-icon>
+          <ion-label>Share</ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
+
+    <!-- CARTE DE TRANSCRIPTION -->
     <ion-card>
       <ion-card-header>
         <div class="header-inline">
           <ion-card-title class="title-text">Transcribed Text</ion-card-title>
-
           <div class="header-buttons">
             <ion-button fill="clear" (click)="toggleDropdown($event)">
               <ion-icon name="menu-outline"></ion-icon>
@@ -57,55 +129,6 @@
         </div>
       </ion-card-content>
     </ion-card>
-
-    <!-- MENU DEROULANT -->
-    <div class="dropdown-container" *ngIf="dropdownOpen">
-      <ion-list class="dropdown">
-        <ion-item (click)="toggleSubmenu('translate')">
-          <ion-icon slot="start" name="language-outline"></ion-icon>
-          <ion-label>Translate</ion-label>
-        </ion-item>
-        <ion-list *ngIf="translateMenuOpen" class="submenu">
-          <ion-item (click)="translateAndReset(transcribedText, 'en')">English</ion-item>
-          <ion-item (click)="translateAndReset(transcribedText, 'fr')">French</ion-item>
-          <ion-item (click)="translateAndReset(transcribedText, 'es')">Spanish</ion-item>
-          <ion-item (click)="translateAndReset(transcribedText, 'de')">German</ion-item>
-        </ion-list>
-
-        <ion-item (click)="toggleSubmenu('summarize')">
-          <ion-icon slot="start" name="document-text-outline"></ion-icon>
-          <ion-label>Summarize</ion-label>
-        </ion-item>
-        <ion-list *ngIf="summarizeMenuOpen" class="submenu">
-          <ion-item (click)="summarizeText(transcribedText, 'large')">Large</ion-item>
-          <ion-item (click)="summarizeText(transcribedText, 'medium')">Medium</ion-item>
-          <ion-item (click)="summarizeText(transcribedText, 'small')">Small</ion-item>
-        </ion-list>
-
-        <ion-item (click)="toggleEditMode()">
-          <ion-icon slot="start" name="create-outline"></ion-icon>
-          <ion-label>Edit</ion-label>
-        </ion-item>
-
-        <ion-item (click)="saveCurrentText()">
-          <ion-icon slot="start" name="save-outline"></ion-icon>
-          <ion-label>Save</ion-label>
-        </ion-item>
-
-        <ion-item (click)="toggleSubmenu('download')">
-          <ion-icon slot="start" name="download-outline"></ion-icon>
-          <ion-label>Download</ion-label>
-        </ion-item>
-        <ion-list *ngIf="downloadMenuOpen" class="submenu">
-          <ion-item (click)="downloadFile('pdf')">Download PDF</ion-item>
-        </ion-list>
-
-        <ion-item (click)="openModal()">
-          <ion-icon slot="start" name="share-social-outline"></ion-icon>
-          <ion-label>Share</ion-label>
-        </ion-item>
-      </ion-list>
-    </div>
   </div>
 </ion-content>
 
