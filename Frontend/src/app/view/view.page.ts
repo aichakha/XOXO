@@ -39,8 +39,9 @@ export class ViewPage implements OnInit {
   detectedLanguage: string = 'en';
   uploadedFileName: string | null = null;
   mediaUrl: string="";
-  uploadedFile:string="";
+  uploadedFile: string | null = "";
   summarizeMenuOpen = false;
+  dropdownOpen = false;
 
   loadingMessage: string = 'Converting...';
 
@@ -57,6 +58,7 @@ export class ViewPage implements OnInit {
 showCopyButton: any;
 isAuthenticated = false;
 username: string | null = null;
+showEmailModal: boolean = false;
 
 
 
@@ -89,8 +91,7 @@ username: string | null = null;
     });
   }
   Home() {
-    // Réinitialiser les fichiers uploadés et les champs
-    this.uploadedFile = '';
+    this.uploadedFile = null;
     this.uploadedFileName = '';
     this.mediaUrl = '';
 
@@ -100,8 +101,21 @@ username: string | null = null;
       fileInput.value = ''; // Réinitialisation de l'élément HTML input file
     }
 
-    this.router.navigate(['/acceuil']);
+    // Réinitialiser l'input URL
+    const urlInput = document.getElementById('urlInput') as HTMLInputElement;
+    if (urlInput) {
+      urlInput.value = ''; // Réinitialisation de l'élément HTML input URL
+    }
+
+    this.router.navigate(['/acceuil-user']);
   }
+  @HostListener('document:click', ['$event'])
+onDocumentClick(event: MouseEvent) {
+  const target = event.target as HTMLElement;
+  if (!target.closest('.dropdown-container') && !target.closest('ion-button')) {
+    this.dropdownOpen = false;
+  }
+}
 
   // Fonction pour détecter la langue du texte
   detectLanguage(text: string) {
@@ -139,7 +153,9 @@ hideTranslateMenu() {
   this.translateMenuOpen = false;
 }
 showTranslateMenu() {
-  this.translateMenuOpen = true;
+  this.translateMenuOpen = !this.translateMenuOpen;
+  this.summarizeMenuOpen = false;
+  this.downloadMenuOpen = false;
 }
 Homeuser() {
   this.uploadedFile = '';
@@ -151,13 +167,19 @@ Homeuser() {
   if (fileInput) {
     fileInput.value = ''; // Réinitialisation de l'élément HTML input file
   }
+      // Réinitialiser l'input URL
+      const urlInput = document.getElementById('urlInput') as HTMLInputElement;
+      if (urlInput) {
+        urlInput.value = ''; // Réinitialisation de l'élément HTML input URL
+      }
   this.router.navigate(['/acceuil-user']);
 }
 
 
-
 showSummarizeMenu() {
-  this.summarizeMenuOpen = true;
+  this.summarizeMenuOpen = !this.summarizeMenuOpen;
+  this.translateMenuOpen = false;
+  this.downloadMenuOpen = false;
 }
 
 hideSummarizeMenu() {
@@ -166,10 +188,10 @@ hideSummarizeMenu() {
     // ✅ Fonction pour envoyer le texte au backend et obtenir un résumé
     summarizeText(text: string, type: string) {
       console.log(`👉 Summarizing text with level: ${type}`);
-    
+
       this.isLoading = true;
       this.loadingMessage = 'Summarizing...';
-    
+
       this.presentLoading().then((loading) => {
         this.http.post<any>('http://localhost:8001/summarize/', { text, type }).subscribe({
           next: (response: any) => {
@@ -192,7 +214,7 @@ hideSummarizeMenu() {
         });
       });
     }
-    
+
 originalText: string = ''; // 🔹 Contient toujours le texte source
 // ✅ Fonction pour traduire le texte
 translateText(text: string, targetLang: string) {
@@ -283,12 +305,8 @@ resetText() {
     this.router.navigate(['/login']);
   }
 
-  dropdownOpen = false;
 
-  toggleDropdown(event: Event) {
-    event.stopPropagation(); // Empêche la fermeture immédiate
-    this.dropdownOpen = !this.dropdownOpen;
-  }
+
 
   @HostListener('document:click', ['$event'])
   closeDropdown(event: MouseEvent) {
@@ -371,7 +389,44 @@ hideDownloadMenu() {
 }
 // Fonction pour afficher le menu de téléchargement
 showDownloadMenu() {
-  this.downloadMenuOpen = true;
+  this.downloadMenuOpen = !this.downloadMenuOpen;
+  this.translateMenuOpen = false;
+  this.summarizeMenuOpen = false;
+}
+toggleDropdown(event: any) {
+  this.dropdownOpen = !this.dropdownOpen;
+
+  if (!this.dropdownOpen) {
+    this.translateMenuOpen = false;
+    this.summarizeMenuOpen = false;
+    this.downloadMenuOpen = false;
+  }
+}
+
+toggleSubmenu(menu: string) {
+  if (menu === 'translate') {
+    this.translateMenuOpen = !this.translateMenuOpen;
+    this.summarizeMenuOpen = false;
+    this.downloadMenuOpen = false;
+  } else if (menu === 'summarize') {
+    this.summarizeMenuOpen = !this.summarizeMenuOpen;
+    this.translateMenuOpen = false;
+    this.downloadMenuOpen = false;
+  } else if (menu === 'download') {
+    this.downloadMenuOpen = !this.downloadMenuOpen;
+    this.translateMenuOpen = false;
+    this.summarizeMenuOpen = false;
+  }
+}
+
+closeDropdownOnOutsideClick(event: MouseEvent) {
+  const target = event.target as HTMLElement;
+  if (!target.closest('.dropdown-container') && !target.closest('ion-icon[name="menu-outline"]')) {
+    this.dropdownOpen = false;
+    this.translateMenuOpen = false;
+    this.summarizeMenuOpen = false;
+    this.downloadMenuOpen = false;
+  }
 }
 
 toggleEditMode() {
@@ -406,7 +461,7 @@ downloadFile(format: 'pdf' | 'txt') {
     window.URL.revokeObjectURL(url);
   } else if (format === 'pdf') {
     const doc = new jsPDF();
-    
+
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(18);
     doc.text('Transcription', 105, 15, { align: 'center' });
@@ -439,7 +494,7 @@ adjustTextareaHeight() {
 
 async saveCurrentText() {
   const content = this.translatedText || this.transcribedText;
-  
+
   // Vérifiez que le content n'est pas vide
   if (!content) {
     const toast = await this.toastController.create({
@@ -473,18 +528,18 @@ async saveCurrentText() {
       userId: userId,
       content: content
     }));
-    
+
     const toast = await this.toastController.create({
       message: 'Text saved successfully!',
       duration: 2000,
       color: 'success'
     });
     await toast.present();
-    
+
     this.router.navigate(['/history']);
   } catch (error: unknown) {
     console.error('Save error:', error);
-    
+
     let errorMessage = 'Failed to save text';
     if (error instanceof Error) {
       errorMessage = error.message;

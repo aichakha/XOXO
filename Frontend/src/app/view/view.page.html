@@ -1,145 +1,116 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recapify</title>
-    <link rel="stylesheet" href="view.page.scss">
-</head>
-<!-- Email Share Modal (Hidden by Default) -->
-<div id="emailModal" class="modal" style="display: none;">
-  <div class="modal-content">
-    <span class="close" (click)="closeModal()">&times;</span>
-    <h2>Share via Email</h2>
+<ion-header>
+  <ion-toolbar class="navbar-custom">
+    <!-- Logo -->
+    <ion-buttons slot="start">
+      <ion-button (click)="Homeuser()">
+        <ion-img src="assets/icon/Logo2.png" style="height: 50px; width: auto;"></ion-img>
+      </ion-button>
+    </ion-buttons>
 
-    <label for="recipientEmail">Send to:</label>
-    <input type="email" id="recipientEmail" placeholder="Recipient's email" [(ngModel)]="recipientEmail">
+    <!-- Navigation -->
+    <div class="navbar-center">
+      <ion-buttons class="nav-links">
+        <ion-button (click)="isAuthenticated ? Homeuser() : Home()">Home</ion-button>
+        <ion-button (click)="History()">History</ion-button>
+        <ion-button (click)="Contact()">How it Works</ion-button>
+      </ion-buttons>
+    </div>
 
-    <label for="senderEmail">Your Email:</label>
-    <input type="email" id="senderEmail" placeholder="Your email" [(ngModel)]="senderEmail">
+    <!-- Right: Logout + Welcome -->
+    <ion-buttons slot="end" class="navbar-right">
+      <ion-button *ngIf="isAuthenticated" (click)="logout()" class="logout-btn">Logout</ion-button>
+      <span class="welcome">Welcome {{username}}</span>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
 
-    <label for="message">Message:</label>
-    <textarea id="message" placeholder="Enter your message" [(ngModel)]="emailMessage"></textarea>
+<ion-content class="ion-padding">
+  <div class="main-content" (click)="closeDropdownOnOutsideClick($event)">
+    <ion-card>
+      <ion-card-header>
+        <div class="header-inline">
+          <ion-card-title class="title-text">Transcribed Text</ion-card-title>
 
-    <button (click)="sendEmail()">Send</button>
-  </div>
-</div>
-
-
-<body>
-    <header class="navbar">
-        <div class="logo">
-            <a href="#" (click)="Homeuser()">
-              <ion-img src="assets/icon/Logo2.png" style="height: 50px; width: auto;"></ion-img>
-            </a>
-        </div>
-        <nav>
-            <ul>
-              <li><a (click)="isAuthenticated ? Homeuser() : Home()">Home</a></li>
-                <li><a (click)="History()">History</a></li>
-                <li><a (click)="Contact()">How It Works</a></li>
-            </ul>
-        </nav>
-        <span *ngIf="username">{{ username }}</span>
-        <div class="auth-buttons">
-          <button class="logout" (click)="logout()">LOGOUT</button>
-        </div>
-    </header>
-
-
-        <section class="content">
-          <h2>Trascribed Text: </h2>
-
-          <article class="card">
-            <div class="user-info">
-              
-              <div class="user-name">
-                <strong>Trascribed Text:</strong>
-                
-              </div>
-
-            </div>
-            <textarea *ngIf="isEditing" [(ngModel)]="transcribedText" class="edit-area" (input)="adjustTextareaHeight()"> </textarea>
-
-            <button class="copy-btn" (click)="copyText()">
-              <ion-img src="assets/icon/copy.png" style="height: 20px; width: 20px;"></ion-img>
-            </button>
-<!-- Sinon, affiche le texte normalement -->
-<p *ngIf="!isEditing">{{ translatedText ? translatedText : transcribedText }}</p>
-
-          </article>
-        </section>
-
-        <div class="dropdown">
-          <i class="icon-menu" (click)="toggleDropdown($event)">☰</i>
-          <div class="dropdown-content" [ngClass]="{ 'open': dropdownOpen }">
-            <div class="dropdown-item translate-container" (mouseenter)="showTranslateMenu()" (mouseleave)="hideTranslateMenu()">
-              <a href="assets\icon\1.png"></a>
-              <ion-img src="assets/icon/1.png"></ion-img>
-              <span>Translate</span>
-
-            <div class="submenu" [ngClass]="{ 'show': translateMenuOpen }" >
-            <ul>
-              <li (click)=" translateAndReset(transcribedText,'en')">English</li>
-              <li (click)=" translateAndReset(transcribedText,'fr')">French</li>
-              <li (click)=" translateAndReset(transcribedText,'es')">Spanish</li>
-              <li (click)=" translateAndReset(transcribedText,'de')">German</li>
-            </ul>
+          <div class="header-buttons">
+            <ion-button fill="clear" (click)="toggleDropdown($event)">
+              <ion-icon name="menu-outline"></ion-icon>
+            </ion-button>
+            <ion-button fill="clear" (click)="copyText()">
+              <ion-icon name="copy-outline"></ion-icon>
+            </ion-button>
           </div>
         </div>
+      </ion-card-header>
 
-        <div class="dropdown-item summarize-container"
-        (mouseenter)="showSummarizeMenu()"
-        (mouseleave)="hideSummarizeMenu()">
-     <ion-img src="assets/icon/3.png"></ion-img>
-     <span>Summarize</span>
-
-     <div class="submenu" [ngClass]="{ 'show': summarizeMenuOpen }">
-       <ul>
-         <li (click)="summarizeText(transcribedText, 'large')">Large</li>
-         <li (click)="summarizeText(transcribedText, 'medium')">Medium</li>
-         <li (click)="summarizeText(transcribedText, 'small')">Small</li>
-       </ul>
-     </div>
-   </div>
-              <a (click)="toggleEditMode()">
-                <ion-img src="assets/icon/4.png"></ion-img>
-                <span>Edit</span>
-            </a>
-
-            <a (click)="saveCurrentText()">
-                <ion-img src="assets/icon/5.png"></ion-img>
-                <span>Save</span>
-              </a>
-
-<div class="dropdown-item download-container"
-(mouseenter)="showDownloadMenu()"
-(mouseleave)="hideDownloadMenu()">
-<ion-img src="assets/icon/2.png"></ion-img>
-<span>Download</span>
-
-<div class="submenu" [ngClass]="{ 'show': downloadMenuOpen }">
-<ul>
- 
- <li (click)="downloadFile('pdf')">Download PDF</li>
-</ul>
-</div>
-</div>
-              <a (click)="openModal()">
-                <ion-img src="assets/icon/6.png"></ion-img>
-                <span>Share</span>
-              </a>
-
-
-          </div>
+      <ion-card-content class="text-zone">
+        <div class="textarea-wrapper">
+          <ion-textarea
+            *ngIf="isEditing"
+            [(ngModel)]="transcribedText"
+            autoGrow="true"
+            class="edit-area"
+            (ionInput)="adjustTextareaHeight()"
+          ></ion-textarea>
+          <ion-text *ngIf="!isEditing">
+            {{ translatedText ? translatedText : transcribedText }}
+          </ion-text>
         </div>
+      </ion-card-content>
+    </ion-card>
 
+    <!-- MENU DEROULANT -->
+    <div class="dropdown-container" *ngIf="dropdownOpen">
+      <ion-list class="dropdown">
+        <ion-item (click)="toggleSubmenu('translate')">
+          <ion-icon slot="start" name="language-outline"></ion-icon>
+          <ion-label>Translate</ion-label>
+        </ion-item>
+        <ion-list *ngIf="translateMenuOpen" class="submenu">
+          <ion-item (click)="translateAndReset(transcribedText, 'en')">English</ion-item>
+          <ion-item (click)="translateAndReset(transcribedText, 'fr')">French</ion-item>
+          <ion-item (click)="translateAndReset(transcribedText, 'es')">Spanish</ion-item>
+          <ion-item (click)="translateAndReset(transcribedText, 'de')">German</ion-item>
+        </ion-list>
 
+        <ion-item (click)="toggleSubmenu('summarize')">
+          <ion-icon slot="start" name="document-text-outline"></ion-icon>
+          <ion-label>Summarize</ion-label>
+        </ion-item>
+        <ion-list *ngIf="summarizeMenuOpen" class="submenu">
+          <ion-item (click)="summarizeText(transcribedText, 'large')">Large</ion-item>
+          <ion-item (click)="summarizeText(transcribedText, 'medium')">Medium</ion-item>
+          <ion-item (click)="summarizeText(transcribedText, 'small')">Small</ion-item>
+        </ion-list>
 
-<div class="foot">
-    <footer>
-        <p>© 2025 Recapify Inc. All rights reserved.</p>
-    </footer>
+        <ion-item (click)="toggleEditMode()">
+          <ion-icon slot="start" name="create-outline"></ion-icon>
+          <ion-label>Edit</ion-label>
+        </ion-item>
+
+        <ion-item (click)="saveCurrentText()">
+          <ion-icon slot="start" name="save-outline"></ion-icon>
+          <ion-label>Save</ion-label>
+        </ion-item>
+
+        <ion-item (click)="toggleSubmenu('download')">
+          <ion-icon slot="start" name="download-outline"></ion-icon>
+          <ion-label>Download</ion-label>
+        </ion-item>
+        <ion-list *ngIf="downloadMenuOpen" class="submenu">
+          <ion-item (click)="downloadFile('pdf')">Download PDF</ion-item>
+        </ion-list>
+
+        <ion-item (click)="openModal()">
+          <ion-icon slot="start" name="share-social-outline"></ion-icon>
+          <ion-label>Share</ion-label>
+        </ion-item>
+      </ion-list>
+    </div>
   </div>
-</body>
-</html>
+</ion-content>
+
+<ion-footer class="foot">
+  <ion-toolbar>
+    <ion-title class="ion-text-center">© 2025 Recapify Inc. All rights reserved.</ion-title>
+  </ion-toolbar>
+</ion-footer>

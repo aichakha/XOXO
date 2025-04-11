@@ -1,4 +1,4 @@
-import { Injectable, BadRequestException, UnauthorizedException } from '@nestjs/common';
+import { Injectable, BadRequestException, UnauthorizedException, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
@@ -122,12 +122,52 @@ export class AuthService {
         });
       }
 
+    // Retourner l'utilisateur complet (pas le token)
+    return user;
+
+  } catch (error) {
+    console.error("❌ [Google Login] Erreur:", error);
+    throw new UnauthorizedException('Échec de la connexion Google');
+  }
+  }
+  async signupWithGoogle(token: string) {
+    try {
+      const ticket = await this.client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+  
+      const payload = ticket.getPayload();
+      if (!payload || !payload.email || !payload.name) {
+        throw new UnauthorizedException('Token Google invalide ou incomplet');
+      }
+  
+      // Vérifier si l'utilisateur existe déjà
+      const existingUser = await this.prisma.user.findUnique({ where: { email: payload.email } });
+      if (existingUser) {
+        throw new BadRequestException('Un compte avec cet email existe déjà. Veuillez vous connecter.');
+      }
+  
+      // Créer le compte utilisateur (sans mot de passe)
+      const user = await this.prisma.user.create({
+        data: {
+          name: payload.name,
+          email: payload.email,
+          password: '', // pas de mot de passe pour Google
+        },
+      });
+  
+      const tokenJwt = await this.generateJwt(user);
+  
       return {
-        token: await this.generateJwt(user),
-        username: user.name,
+        token: tokenJwt,
+        userId: user.id,
+        username: user.name
       };
     } catch (error) {
-      throw new UnauthorizedException('Échec de la connexion Google');
+      console.error('❌ [Google Signup Service] Erreur:', error);
+      throw new InternalServerErrorException('Erreur pendant l’inscription via Google');
     }
   }
+  
 }

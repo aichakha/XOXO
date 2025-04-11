@@ -57,6 +57,13 @@ export class ContactPage implements OnInit {
     if (fileInput) {
       fileInput.value = ''; // Réinitialisation de l'élément HTML input file
     }
+
+    // Réinitialiser l'input URL
+    const urlInput = document.getElementById('urlInput') as HTMLInputElement;
+    if (urlInput) {
+      urlInput.value = ''; // Réinitialisation de l'élément HTML input URL
+    }
+
     this.router.navigate(['/acceuil-user']);
   }
 

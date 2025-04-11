@@ -1,0 +1,23 @@
+# FastAPI & serveurs
+fastapi
+uvicorn
+
+# Whisper pour la transcription audio
+openai-whisper
+
+# PyTorch cpu
+torch==2.2.2+cpu
+torchaudio==2.2.2+cpu
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# Transformers pour T5 et MarianMT
+transformers
+sentencepiece  # nécessaire pour certains modèles de traduction
+
+# Autres utilitaires
+pydantic
+numpy
+
+# Manipulation audio
+pydub
+

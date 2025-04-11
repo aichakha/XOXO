@@ -41,11 +41,45 @@ export class AuthController {
     // Hacher le mot de passe
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Créer l'utilisateur
-    return this.prisma.user.create({
-      data: { name, email, password: hashedPassword },
-    });
+  // Créer l'utilisateur
+  const user = await this.prisma.user.create({
+    data: { name, email, password: hashedPassword },
+  });
+  
+  // Générer le token
+  const token = this.jwtService.sign({ email: user.email, sub: user.id });
+
+  // Retourner le token + infos
+  return {
+    message: 'Inscription réussie',
+    token,
+    userId: user.id,
+    username: user.name
+  };
   }
+  @Post('signup-google')
+async signupWithGoogle(@Body('token') token: string) {
+  console.log("🔹 [Google Signup] Token reçu :", token);
+
+  if (!token) {
+    throw new UnauthorizedException('Token Google manquant');
+  }
+
+  try {
+    const result = await this.authService.signupWithGoogle(token);
+
+    return {
+      message: 'Inscription avec Google réussie',
+      token: result.token,
+      userId: result.userId,
+      username: result.username
+    };
+  } catch (error) {
+    console.error('❌ [Google Signup] Erreur:', error);
+    throw new InternalServerErrorException('Inscription Google échouée');
+  }
+}
+
 
   @Post('login')
   async login(@Body() body: LoginDto) {
@@ -100,7 +134,8 @@ export class AuthController {
       return {
         message: 'Connexion Google réussie',
         token: jwtToken,
-        username: googleUser.username
+        userId: googleUser.id,// Replace 'id' with 'token' or another valid property
+        username: googleUser.name
       };
     } catch (error) {
       console.error('❌ [Google Login] Erreur:', error);

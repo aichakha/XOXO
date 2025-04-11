@@ -125,64 +125,64 @@ export class HistoryPage implements OnInit {
         await toast.present();
         return;
       }
-    
+
       const loading = await this.loadingCtrl.create({
         message: 'Updating title...'
       });
       await loading.present();
-    
+
       // Trouver l'index et sauvegarder l'ancien titre
       const clipIndex = this.clips.findIndex(c => c.id === id);
       const oldTitle = clipIndex > -1 ? this.clips[clipIndex].title : '';
-    
+
       try {
         // Mise à jour optimiste de l'UI
         if (clipIndex > -1) {
           this.clips[clipIndex].title = newTitle;
           this.filteredClips = [...this.clips];
         }
-    
+
         // Appel API
         const updatedClip = await lastValueFrom(
           this.savedTextService.updateSavedText(id, { title: newTitle })
         );
-    
+
         // Mise à jour avec la réponse du serveur
         if (clipIndex > -1) {
           this.clips[clipIndex] = { ...this.clips[clipIndex], ...updatedClip };
           this.filteredClips = [...this.clips];
         }
-    
+
         const toast = await this.toastCtrl.create({
           message: 'Titre mis à jour avec succès',
           duration: 2000,
           color: 'success'
         });
         await toast.present();
-    
+
       } catch (error) {
         console.error('Error updating title:', error);
-        
+
         // Revert UI en cas d'erreur
         if (clipIndex > -1) {
           this.clips[clipIndex].title = oldTitle;
           this.filteredClips = [...this.clips];
         }
-    
+
         let errorMessage = 'Échec de la mise à jour du titre';
         if (error instanceof Error) {
-          errorMessage = error.message.includes('401') 
+          errorMessage = error.message.includes('401')
             ? 'Session expirée. Veuillez vous reconnecter.'
             : error.message;
         }
-    
+
         const toast = await this.toastCtrl.create({
           message: errorMessage,
           duration: 3000,
           color: 'danger'
         });
         await toast.present();
-    
+
         // Déconnexion si token invalide
         if (errorMessage.includes('401')) {
           this.authService.logout();
@@ -200,17 +200,17 @@ export class HistoryPage implements OnInit {
         message: 'Chargement en cours...'
       });
       await loading.present();
-    
+
       try {
         const userId = this.authService.getUserId();
         if (!userId) {
           throw new Error('ID utilisateur non disponible');
         }
-    
+
         const response = await lastValueFrom(
           this.savedTextService.getSavedTexts(userId)
         );
-    
+
         console.log('API Response:', response); // Debug
         this.clips = Array.isArray(response) ? response : [];
         this.filteredClips = [...this.clips];
@@ -231,45 +231,45 @@ export class HistoryPage implements OnInit {
 
     async deleteText(id: string, event: Event) {
       event.stopPropagation();
-      
+
       const loading = await this.loadingCtrl.create({
         message: 'Deleting...'
       });
       await loading.present();
-    
+
       try {
         await lastValueFrom(
           this.savedTextService.deleteSavedText(id)
         );
-    
+
         // Mise à jour locale
         this.clips = this.clips.filter(clip => clip.id !== id);
         this.filteredClips = [...this.clips];
-    
+
         const toast = await this.toastCtrl.create({
           message: 'Text deleted successfully',
           duration: 2000,
           color: 'success'
         });
         await toast.present();
-    
+
       } catch (error) {
         console.error('Error deleting text:', error);
-        
+
         let errorMessage = 'Failed to delete text';
         if (error instanceof Error) {
-          errorMessage = error.message.includes('401') 
+          errorMessage = error.message.includes('401')
             ? 'Session expired. Please log in again.'
             : error.message;
         }
-    
+
         const toast = await this.toastCtrl.create({
           message: errorMessage,
           duration: 3000,
           color: 'danger'
         });
         await toast.present();
-    
+
         // Optionnel : Déconnexion automatique si token invalide
         if (errorMessage.includes('401')) {
           this.authService.logout();
@@ -284,9 +284,9 @@ export class HistoryPage implements OnInit {
       this.filteredClips = [...this.clips];
       return;
     }
-    
+
     const searchTermLower = this.searchTerm.toLowerCase().trim();
-    
+
     this.filteredClips = this.clips.filter(clip => {
       // Recherche uniquement dans le titre
       return clip.title?.toLowerCase().includes(searchTermLower) || false;
@@ -314,6 +314,13 @@ export class HistoryPage implements OnInit {
     if (fileInput) {
       fileInput.value = ''; // Réinitialisation de l'élément HTML input file
     }
+
+    // Réinitialiser l'input URL
+    const urlInput = document.getElementById('urlInput') as HTMLInputElement;
+    if (urlInput) {
+      urlInput.value = ''; // Réinitialisation de l'élément HTML input URL
+    }
+
     this.router.navigate(['/acceuil-user']);
   }
   Home() {
@@ -326,6 +333,10 @@ export class HistoryPage implements OnInit {
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     if (fileInput) {
       fileInput.value = ''; // Réinitialisation de l'élément HTML input file
+    }
+    const urlInput = document.getElementById('urlInput') as HTMLInputElement;
+    if (urlInput) {
+      urlInput.value = ''; // Réinitialisation de l'élément HTML input URL
     }
 
     this.router.navigate(['/acceuil']);

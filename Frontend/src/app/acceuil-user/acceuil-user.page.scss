@@ -372,7 +372,14 @@ footer {
     font-size: 14px;
   }
 }
-
+.footer {
+  flex-shrink: 0;
+  text-align: center;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  width: 100%;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
 // Responsive (Mobile)
 @media screen and (max-width: 480px) {
   .navbar {

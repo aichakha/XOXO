@@ -57,29 +57,33 @@ export class AIController {
         return { error: 'Erreur de transcription : ' + error.message };
       }
     }
-    @UseGuards(AuthGuard) 
     @Post('process')
-    async processFile(@Body() body: UploadAudioDto) {
-      console.log("📝 Requête reçue pour transcription:", body);
-    
-      if (!body.url) {
-        console.error("🚨 Aucune URL fournie !");
-        throw new BadRequestException('URL requise.');
-      }
-    
-      try {
-        // Étape 1 : Télécharger l'audio
-        const filePath = await this.aiService.processUrl(body.url);
-        console.log(`✅ Fichier téléchargé avec succès: ${filePath}`);
-        // Étape 2 : Envoyer le fichier à Whisper
-        console.log("📤 Envoi du fichier à Whisper...");
-        const transcription = await this.aiService.sendToWhisper(filePath);
-    
-        console.log("📝 Transcription obtenue:", transcription);
-        return { text: transcription };
-      } catch (error) {
-        console.error("🚨 Erreur dans le traitement:", error.message);
-        throw new InternalServerErrorException(`Erreur : ${error.message}`);
-      }
-    }
+@UseGuards(AuthGuard)
+async processFile(@Body() body: UploadAudioDto) {
+  console.log("📝 Requête reçue pour transcription:", body);
+
+  if (!body.url) {
+    console.error("🚨 Aucune URL fournie !");
+    throw new BadRequestException('URL requise.');
+  }
+
+  try {
+    const decodedUrl = decodeURIComponent(body.url); // ✅ décode ici
+
+    // Étape 1 : Télécharger l'audio
+    const filePath = await this.aiService.processUrl(decodedUrl);
+    console.log(`✅ Fichier téléchargé avec succès: ${filePath}`);
+
+    // Étape 2 : Envoyer le fichier à Whisper
+    console.log("📤 Envoi du fichier à Whisper...");
+    const transcription = await this.aiService.sendToWhisper(filePath);
+
+    console.log("📝 Transcription obtenue:", transcription);
+    return { text: transcription };
+  } catch (error) {
+    console.error("🚨 Erreur dans le traitement:", error.message);
+    throw new InternalServerErrorException(`Erreur : ${error.message}`);
+  }
+}
+
 }

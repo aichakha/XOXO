@@ -53,7 +53,7 @@ export class AIService {
   
     try {
       // Télécharger uniquement l'audio et le convertir en MP3
-      await execPromise(`yt-dlp -f bestaudio --extract-audio --audio-format mp3 -o ${outputPath} ${url}`);
+      await execPromise(`yt-dlp -f bestaudio --extract-audio --audio-format mp3 -o ${outputPath} "${url}"`);
   
       if (!fs.existsSync(outputPath)) {
         throw new Error("Le fichier audio n'a pas été téléchargé correctement.");

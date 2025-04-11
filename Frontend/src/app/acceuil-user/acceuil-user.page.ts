@@ -75,8 +75,16 @@ export class AcceuilUserPage implements OnInit,AfterViewInit {
     if (fileInput) {
       fileInput.value = ''; // Réinitialisation de l'élément HTML input file
     }
+
+    // Réinitialiser l'input URL
+    const urlInput = document.getElementById('urlInput') as HTMLInputElement;
+    if (urlInput) {
+      urlInput.value = ''; // Réinitialisation de l'élément HTML input URL
+    }
+
     this.router.navigate(['/acceuil-user']);
   }
+
   History() {
     this.router.navigate(['/history']);
   }
@@ -190,7 +198,8 @@ export class AcceuilUserPage implements OnInit,AfterViewInit {
 
     } else if (this.mediaUrl.trim()) {
       apiUrl = 'http://localhost:3000/ai/process';
-      const requestBody = { url: this.mediaUrl };
+      const requestBody = { url: encodeURIComponent(this.mediaUrl) };
+
 
       const loading = await this.loadingCtrl.create({
         spinner: 'crescent',

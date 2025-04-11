@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from file import convert_audio
 from translate import translate_marian
+from urllib.parse import unquote
 
 app = FastAPI()
 
@@ -72,6 +73,9 @@ async def transcribe_audio(
             audio_path = converted_path  # Utiliser le fichier converti
 
         elif url:
+            url=unquote(url)  # Décoder l'URL
+            if not url.startswith("http"):
+                return {"error": "URL invalide."}
             temp_file_path = "temp_downloaded_audio"
             response = requests.get(url)
             if response.status_code == 200:
