@@ -6,7 +6,15 @@ import { routes } from './app/app.routes';
 import { AppComponent } from './app/app.component';
 import { AuthInterceptor } from './app/auth/auth.interceptor';
 import { appProviders } from './app/providers';
+import { addIcons } from 'ionicons';
+import { heart, heartOutline,trash  } from 'ionicons/icons';
 
+// ✅ Enregistrement des icônes
+addIcons({
+  heart,
+  trash ,
+  heartOutline
+});
 bootstrapApplication(AppComponent, {
   providers: [
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },

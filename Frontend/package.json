@@ -27,7 +27,7 @@
     "@capacitor/haptics": "7.0.0",
     "@capacitor/keyboard": "7.0.0",
     "@capacitor/status-bar": "7.0.0",
-    "@ionic/angular": "^8.4.4",
+    "@ionic/angular": "^8.5.4",
     "esbuild": "^0.25.0",
     "ionicons": "^7.4.0",
     "jspdf": "^3.0.1",

@@ -74,4 +74,15 @@ export class SavedTextService {
       catchError(this.handleError)
     );
   }
+
+  toggleFavorite(id: string, isFavorite: boolean): Observable<any> {
+    const options = this.getRequestOptions(); // Authentification
+    return this.http.patch(`${this.baseUrl}/${id}/favorite`, { isFavorite }, options);
+  }
+  
+  getFavorites(userId: string): Observable<any[]> {
+    const options = this.getRequestOptions();
+    return this.http.get<any[]>(`${this.baseUrl}/${userId}/favorites`, options);
+  }
+  
 }
