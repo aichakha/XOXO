@@ -3,6 +3,7 @@ import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 import { RouterModule } from '@angular/router';
 import { AuthService } from './auth/services/auth.service';
 import { CommonModule } from '@angular/common';
+
 @Component({
   selector: 'app-root',
   standalone: true,

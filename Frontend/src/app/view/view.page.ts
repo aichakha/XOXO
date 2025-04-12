@@ -2,7 +2,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
-import { IonicModule } from '@ionic/angular';
+import { AlertController, IonicModule } from '@ionic/angular';
 import { Router,ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { LoadingController } from '@ionic/angular';
@@ -69,7 +69,8 @@ showEmailModal: boolean = false;
      private loadingCtrl: LoadingController,
      private loadingController: LoadingController,
     private toastController: ToastController, // Injecting ToastController
-    private authService: AuthService // Injecting AuthService
+    private authService: AuthService, // Injecting AuthService
+    private alertController:AlertController
     ) {}
 
   showSummary: boolean = false; // ✅ Zone de texte cachée par défaut
@@ -330,9 +331,7 @@ resetText() {
   }
 
   // Opens the email modal
-openModal() {
-  document.getElementById("emailModal")!.style.display = "block";
-}
+
 
 // Closes the email modal
 closeModal() {
@@ -556,5 +555,46 @@ async saveCurrentText() {
     await loading.dismiss();
   }
 }
+openModal() {
+  const payload = {
+    type: this.translatedText ? 'translation' : 'transcription',
+    text: this.translatedText || this.transcribedText,
+  };
+
+  this.http.post<any>('http://localhost:3000/text/generate-url', payload).subscribe(
+    (res) => {
+      const shareableUrl = res.url;
+
+      // Affiche une alerte avec l'URL générée
+      this.showAlert('Shareable Link', shareableUrl);
+    },
+    (error) => {
+      console.error('Erreur lors de la génération du lien', error);
+      this.showAlert('Erreur', 'Impossible de générer le lien.');
+    }
+  );
+}
+
+async showAlert(title: string, message: string) {
+  const alert = await this.alertController.create({
+    header: title,
+    message: `${message}`,
+    buttons: [
+      {
+        text: 'Copy',
+        handler: () => {
+          navigator.clipboard.writeText(message);
+        },
+      },
+      {
+        text: 'OK',
+        role: 'cancel'
+      }
+    ],
+    mode: 'ios'
+  });
+  await alert.present();
+}
+
 
 }

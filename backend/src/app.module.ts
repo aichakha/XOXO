@@ -13,9 +13,11 @@ import { MiddlewareConsumer, NestModule } from '@nestjs/common';
 import { CorsMiddleware } from './cors.middleware';
 import { SavedTextModule } from './saved-text/saved-text.module';
 import { ConfigModule } from '@nestjs/config';
-
+import { TextModule } from './text/text.module';
+import { MongooseModule } from '@nestjs/mongoose';
 @Module({
-  imports: [PrismaModule, AuthModule,AIModule,SummarizeModule,SavedTextModule] ,
+  imports: [PrismaModule,
+    MongooseModule.forRoot('mongodb+srv://admin:admin@cluster.clfsx.mongodb.net/xoxo'),TextModule, AuthModule,AIModule,SummarizeModule,SavedTextModule] ,
   controllers: [AppController, AuthController,SummarizeController],
   providers: [AppService,PrismaService,SummarizeService],
 })

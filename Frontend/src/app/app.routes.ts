@@ -6,6 +6,7 @@ import { ForgotPasswordPage } from './auth/pages/forgot-password/forgot-password
 import { ResetPasswordPage } from './auth/pages/reset-password/reset-password.page';
 
 import { HistoryPage } from './history/history.page';
+import { ViewPage } from './view/view.page';
 
 import { ContactPage } from './contact/contact.page';
 
@@ -44,6 +45,8 @@ export const routes: Routes = [
     path: 'contact',
     loadComponent: () => import('./contact/contact.page').then( m => m.ContactPage)
   },
+
+
   {
     path: 'view',
     loadComponent: () => import('./view/view.page').then( m => m.ViewPage)
@@ -52,7 +55,9 @@ export const routes: Routes = [
     path: 'acceuil-user',
     loadComponent: () => import('./acceuil-user/acceuil-user.page').then( m => m.AcceuilUserPage)
   },
-  
+
+
+
 
 
 
