@@ -18,8 +18,13 @@
     </nav>
     <div class="auth-buttons">
       <ng-container *ngIf="isAuthenticated; else loggedOut">
-        <span class="username">{{ username }}</span>
-        <button class="logout" (click)="logout()">LOG OUT</button>
+        <div class="user-avatar" (click)="showLogout = !showLogout">
+          {{ getFirstLetter(username) }}
+        </div>
+        
+        <ion-button *ngIf="showLogout && isAuthenticated" (click)="logout()" class="logout-button">
+          LOGOUT
+        </ion-button>
       </ng-container>
 
       <ng-template #loggedOut>

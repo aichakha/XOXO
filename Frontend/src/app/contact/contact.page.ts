@@ -22,6 +22,7 @@ export class ContactPage implements OnInit {
   mediaUrl: string = '';
   isAuthenticated = false;
   username: string | null = null;
+  showLogout = false; 
 
   constructor( private router: Router, private authService: AuthService) {} // Injection correcte de Router
 
@@ -90,6 +91,11 @@ export class ContactPage implements OnInit {
     this.isAuthenticated = false;
     this.username = null;
     this.router.navigate(['/']); // Redirection après déconnexion
-  }
+    this.showLogout = false; // Cache avant action
+    ;
 
+  }
+  getFirstLetter(name: string | undefined | null): string {
+    return name ? name.charAt(0).toUpperCase() : '';
+  }
 }

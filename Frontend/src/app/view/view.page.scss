@@ -35,6 +35,7 @@ ion-button {
   font-weight: bold;
   border-radius: 8px;
   text-transform: none;
+  
 }
 
 ion-card {
@@ -164,3 +165,36 @@ ion-title.ion-text-center {
     transform: translateX(0);
   }
 }
+.user-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background-color:  #6a5acd;
+  color: white;
+  border-radius: 50%;
+  font-weight: bold;
+  margin-right: 17px;
+  cursor: pointer;
+}
+
+.logout-button {
+  position: absolute;
+  right: 10px;
+  top: 60px;
+  background: white;
+ --background: #1050da;
+  border-radius: 20px;
+  padding: 8px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  transition: all 0.3s;
+  z-index: 100;
+  
+}
+

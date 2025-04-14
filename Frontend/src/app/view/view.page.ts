@@ -42,7 +42,7 @@ export class ViewPage implements OnInit {
   uploadedFile: string | null = "";
   summarizeMenuOpen = false;
   dropdownOpen = false;
-
+  showLogout = false; // Contrôle direct de la visibilité
   loadingMessage: string = 'Converting...';
 
   languages = [
@@ -304,6 +304,8 @@ resetText() {
     // Déconnexion de l'utilisateur (peut être améliorée avec JWT plus tard)
     localStorage.removeItem('user');
     this.router.navigate(['/login']);
+    this.showLogout = false; // Cache avant action
+    this.authService.logout();
   }
 
 
@@ -596,5 +598,7 @@ async showAlert(title: string, message: string) {
   await alert.present();
 }
 
-
+getFirstLetter(name: string | undefined | null): string {
+  return name ? name.charAt(0).toUpperCase() : '';
+}
 }

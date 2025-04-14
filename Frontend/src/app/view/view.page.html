@@ -16,13 +16,22 @@
       </ion-buttons>
     </div>
 
-    <!-- Right: Logout + Welcome -->
-    <ion-buttons slot="end" class="navbar-right">
-      <span class="welcome">{{username}}</span>
-      <ion-button *ngIf="isAuthenticated" (click)="logout()" class="logout-btn">Logout</ion-button>
-    </ion-buttons>
-  </ion-toolbar>
-</ion-header>
+    
+        <ion-buttons slot="end" class="user-avatar">
+          <!-- User avatar with first letter -->
+          <div (click)="showLogout = !showLogout">
+            {{ getFirstLetter(username) }}
+          </div>
+    
+          
+          
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <!-- Logout button -->
+    <ion-button *ngIf="showLogout && isAuthenticated" (click)="logout()" class="logout-button">
+      LOGOUT
+    </ion-button>
 
 <ion-content class="ion-padding">
   <!-- Positionnement relatif pour le dropdown -->

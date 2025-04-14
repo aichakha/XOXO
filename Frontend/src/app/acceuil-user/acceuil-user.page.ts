@@ -32,6 +32,7 @@ export class AcceuilUserPage implements OnInit,AfterViewInit {
   isLoading: boolean = false;  // Flag to track the loading state
   loadingMessage: string = 'Converting...';  // Message during conversion
   transcribedText: string = '';
+  showLogout = false; // Contrôle direct de la visibilité
 
 
 
@@ -62,8 +63,13 @@ export class AcceuilUserPage implements OnInit,AfterViewInit {
     localStorage.removeItem('authToken');
     localStorage.removeItem('username');
     this.router.navigate(['/login']);
-  }
+    logout: this.showLogout = false; // Cache avant action
+    
 
+  }
+  getFirstLetter(name: string | undefined | null): string {
+    return name ? name.charAt(0).toUpperCase() : '';
+  }
 
   Homeuser() {
     this.uploadedFile = null;

@@ -15,12 +15,16 @@
       </ul>
     </nav>
 
-    <!-- ✅ Vérification que username est bien défini avant l'affichage -->
-    <span *ngIf="username">Welcome {{ username }}</span>
-
-    <div class="auth-buttons">
-      <button class="logout" (click)="logout()">LOGOUT</button>
+   <!-- ✅ Vérification que username est bien défini avant l'affichage -->
+    <!-- Remplacer toute la section user-info par ceci -->
+    <div class="user-avatar" (click)="showLogout = !showLogout">
+      {{ getFirstLetter(username) }}
     </div>
+    
+    <ion-button *ngIf="showLogout && isAuthenticated" (click)="logout()" class="logout-button">
+      LOGOUT
+    </ion-button>
+    
   </header>
   <main class="upload-section">
 

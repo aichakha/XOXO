@@ -169,5 +169,7 @@ export class AuthService {
       throw new InternalServerErrorException('Erreur pendant l’inscription via Google');
     }
   }
-  
+  getCurrentUsername(): string | null {
+    return localStorage.getItem('username');
+  }
 }

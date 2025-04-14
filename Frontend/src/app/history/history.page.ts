@@ -51,6 +51,7 @@ export class HistoryPage implements OnInit {
   mediaUrl: string = '';
   isAuthenticated = false;
   username: string | null = null;
+  showLogout = false; // Contrôle direct de la visibilité
   async ngOnInit() {
 
     this.isAuthenticated = this.authService.isLoggedIn();
@@ -351,6 +352,7 @@ export class HistoryPage implements OnInit {
     this.isAuthenticated = false;
     this.username = null;
     this.router.navigate(['/']); // Redirection après déconnexion
+    this.showLogout = false; // Cache avant action
   }
 
   signup() {
@@ -399,6 +401,8 @@ async toggleFavorite(clip: Clip) {
     await toast.present();
   }
 }
-
+getFirstLetter(name: string | undefined | null): string {
+  return name ? name.charAt(0).toUpperCase() : '';
+}
 
 }
