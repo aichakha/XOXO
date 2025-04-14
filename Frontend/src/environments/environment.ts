@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:3000',
-  googleOAuthClientId: 'TON_NOUVEL_ID_CLIENT_OAUTH'
+  apiUrl: 'https://64q9nbwz-3000.euw.devtunnels.ms',
+  // apiUrl: 'http://192.168.56.1:3000',
 };
 
 
