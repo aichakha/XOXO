@@ -61,6 +61,26 @@ async getFavorites(@Param('userId') userId: string) {
   return this.savedTextService.getFavorites(userId);
 }
 
+@Put(':id/assign-category/:categoryId')
+  assignCategory(
+    @Param('id') textId: string,
+    @Param('categoryId') categoryId: string,
+  ) {
+    return this.savedTextService.assignCategoryToText(textId, categoryId);
+  }
+
+  @Put(':id/remove-category')
+  removeCategory(@Param('id') textId: string) {
+    return this.savedTextService.removeCategoryFromText(textId);
+  }
+
+  @Put(':id/change-category/:newCategoryId')
+  changeCategory(
+    @Param('id') textId: string,
+    @Param('newCategoryId') newCategoryId: string,
+  ) {
+    return this.savedTextService.changeCategory(textId, newCategoryId);
+  }
 
 
 

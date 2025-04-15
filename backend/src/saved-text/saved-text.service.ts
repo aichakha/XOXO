@@ -119,5 +119,26 @@ async updateSavedText(id: string, updateData: UpdateClipDto) {
       where: { userId, isFavorite: true },
     });
   }
+
+  // ✅ Associer à une catégorie
+  async assignCategoryToText(textId: string, categoryId: string) {
+    return this.prisma.savedText.update({
+      where: { id: textId },
+      data: { categoryId },
+    });
+  }
+
+  // ✅ Supprimer la catégorie
+  async removeCategoryFromText(textId: string) {
+    return this.prisma.savedText.update({
+      where: { id: textId },
+      data: { categoryId: null },
+    });
+  }
+
+  // ✅ Facultatif : changer de catégorie = assigner une autre
+  async changeCategory(textId: string, newCategoryId: string) {
+    return this.assignCategoryToText(textId, newCategoryId);
+  }  
     
 }

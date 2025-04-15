@@ -15,9 +15,10 @@ import { SavedTextModule } from './saved-text/saved-text.module';
 import { ConfigModule } from '@nestjs/config';
 import { TextModule } from './text/text.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CategoryModule } from './category/category.module';
 @Module({
   imports: [PrismaModule,
-    MongooseModule.forRoot('mongodb+srv://admin:admin@cluster.clfsx.mongodb.net/xoxo'),TextModule, AuthModule,AIModule,SummarizeModule,SavedTextModule] ,
+    MongooseModule.forRoot('mongodb+srv://admin:admin@cluster.clfsx.mongodb.net/xoxo'),TextModule, AuthModule,AIModule,SummarizeModule,SavedTextModule,CategoryModule] ,
   controllers: [AppController, AuthController,SummarizeController],
   providers: [AppService,PrismaService,SummarizeService],
 })
