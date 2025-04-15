@@ -1,8 +1,9 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit,ElementRef,ChangeDetectorRef  } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonContent, IonHeader, IonTitle, IonToolbar } from '@ionic/angular/standalone';
 import { AlertController, IonicModule } from '@ionic/angular';
+import { PopoverController } from '@ionic/angular';
 import { Router,ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { LoadingController } from '@ionic/angular';
@@ -11,7 +12,9 @@ import { AuthService } from '../auth/services/auth.service';
 import jsPDF from 'jspdf';
 import { firstValueFrom } from 'rxjs';
 import { SavedTextService } from '../auth/services/saved-text.service';
+import { PopoverMenuComponent } from '../components/popover-menu.component/popover-menu.component';
 @Component({
+
   selector: 'app-view',
   standalone: true,
   imports: [
@@ -24,17 +27,16 @@ import { SavedTextService } from '../auth/services/saved-text.service';
 })
 export class ViewPage implements OnInit {
   transcribedText: string = 'This is a sample transcribed text.';
-  downloadMenuOpen = false;
+  downloadMenuOpen = true;
   isEditing: boolean = false;
+  isDropdownOpen = false;
   translatedText: string | null = null;
   isLoading: boolean = true;
   summarizedText: string = '';
   errorMessage: string = '';
   translateMenuOpen = false;
   translateMenuPosition = { x: 0, y: 0 };
-  recipientEmail: string = '';
-  senderEmail: string = '';
-  emailMessage: string = '';
+
   selectedLanguage: string = 'fr'; // Langue cible par défaut
   detectedLanguage: string = 'en';
   uploadedFileName: string | null = null;
@@ -44,7 +46,7 @@ export class ViewPage implements OnInit {
   dropdownOpen = false;
   showLogout = false; // Contrôle direct de la visibilité
   loadingMessage: string = 'Converting...';
-
+  showDropdown = false;
   languages = [
     { code: 'fr', name: 'French' },
     { code: 'es', name: 'Spanish' },
@@ -64,21 +66,20 @@ showEmailModal: boolean = false;
 
   constructor(private router: Router,
      private route: ActivatedRoute,
-     private http: HttpClient,
-     private savedTextService: SavedTextService,
-     private loadingCtrl: LoadingController,
-     private loadingController: LoadingController,
+   private http: HttpClient,
+   private savedTextService: SavedTextService,
+   private loadingCtrl: LoadingController,
+    private loadingController: LoadingController,
     private toastController: ToastController, // Injecting ToastController
     private authService: AuthService, // Injecting AuthService
-    private alertController:AlertController
-    ) {}
+    private alertController:AlertController,
+    private popoverCtrl: PopoverController  ) {}
 
   showSummary: boolean = false; // ✅ Zone de texte cachée par défaut
   ngOnInit() {
     this.isAuthenticated = this.authService.isLoggedIn();
     console.log('🔐 Authenticated:', this.isAuthenticated);
     this.authService.username$.subscribe((digits) => this.username = digits);
-    this.username = localStorage.getItem('username');
     this.route.queryParams.subscribe({
       next: (params) => {
         this.transcribedText = params['text'] || 'No transcribed text available';
@@ -91,6 +92,8 @@ showEmailModal: boolean = false;
       }
     });
   }
+
+
   Home() {
     this.uploadedFile = null;
     this.uploadedFileName = '';
@@ -110,14 +113,70 @@ showEmailModal: boolean = false;
 
     this.router.navigate(['/acceuil-user']);
   }
-  @HostListener('document:click', ['$event'])
-onDocumentClick(event: MouseEvent) {
-  const target = event.target as HTMLElement;
-  if (!target.closest('.dropdown-container') && !target.closest('ion-button')) {
-    this.dropdownOpen = false;
-  }
-}
 
+async presentPopover(ev: Event) {
+  const popover = await this.popoverCtrl.create({
+    component: PopoverMenuComponent,
+    event: ev,
+    translucent: true,
+    showBackdrop: true
+  });
+
+  await popover.present();
+
+  const { data } = await popover.onDidDismiss();
+
+  if (data) {
+    switch (data) {
+      case 'translate-en':
+        this.translateAndReset(this.transcribedText, 'en');
+        break;
+      case 'translate-fr':
+        this.translateAndReset(this.transcribedText, 'fr');
+        break;
+      case 'translate-es':
+        this.translateAndReset(this.transcribedText, 'es');
+        break;
+      case 'translate-de':
+        this.translateAndReset(this.transcribedText, 'de');
+        break;
+      case 'translate-it':
+        this.translateAndReset(this.transcribedText, 'it');
+        break;
+      case 'translate-pt':
+        this.translateAndReset(this.transcribedText, 'pt');
+        break;
+
+      case 'summarize-large':
+        this.summarizeText(this.transcribedText, 'large');
+        break;
+      case 'summarize-medium':
+        this.summarizeText(this.transcribedText, 'medium');
+        break;
+      case 'summarize-small':
+        this.summarizeText(this.transcribedText, 'small');
+        break;
+
+      case 'edit':
+        this.toggleEditMode();
+        break;
+
+      case 'save':
+        this.saveCurrentText();
+        break;
+
+      case 'download':
+        this.downloadFile('pdf');
+        break;
+
+      case 'share':
+        this.openModal();
+        break;
+    }
+  }
+  this.translateMenuOpen = false; // Ferme le menu de traduction après sélection
+  this.summarizeMenuOpen = false; // Ferme le menu de résumé après sélection
+}
   // Fonction pour détecter la langue du texte
   detectLanguage(text: string) {
     // Exemple de requête pour une API de détection de langue, par exemple Google Translate API ou un service similaire
@@ -340,19 +399,6 @@ closeModal() {
   document.getElementById("emailModal")!.style.display = "none";
 }
 
-// Sends the email using mailto
-sendEmail() {
-  if (!this.recipientEmail || !this.senderEmail) {
-    alert("Please fill in both email fields.");
-    return;
-  }
-
-  const mailtoLink = `mailto:${this.recipientEmail}?subject=Sharing a File&body=${encodeURIComponent(this.emailMessage)}%0D%0A%0D%0ASent from ${this.senderEmail}`;
-  window.location.href = mailtoLink;
-
-  // Close the modal after sending
-  this.closeModal();
-}
 
 // Function to copy text when the button is clicked
 async copyText() {
@@ -394,13 +440,17 @@ showDownloadMenu() {
   this.translateMenuOpen = false;
   this.summarizeMenuOpen = false;
 }
-toggleDropdown(event: any) {
-
-
+/*toggleDropdown(event: Event) {
     event.stopPropagation();
     this.dropdownOpen = !this.dropdownOpen;
     console.log('Dropdown toggled:', this.dropdownOpen);
-  }
+  }*/
+
+    toggleDropdown() {
+      setTimeout(() => {
+        this.dropdownOpen = !this.dropdownOpen;
+      }, 0); // Laisse le cycle Angular finir
+    }
 
 
 toggleSubmenu(menu: string) {
