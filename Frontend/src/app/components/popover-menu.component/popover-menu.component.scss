@@ -1,0 +1,44 @@
+ion-item {
+  --background: #fff;
+  --color: #333;
+
+  ion-icon {
+    color: #9b59b6; // 🎨 Mauve
+    font-size: 20px;
+  }
+
+  ion-label {
+    font-weight: 500;
+  }
+}
+
+// Pour les sous-menus flottants à gauche
+.menu-item-with-sub {
+  position: relative;
+
+  .hover-submenu {
+    display: none;
+    position: absolute;
+    top: 0;
+    left: -180px;
+    background: #f8f8f8;
+    padding: 8px;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 160px;
+
+    ion-item {
+      --background: transparent;
+      color: #9b59b6;
+
+      ion-icon {
+        color: #9b59b6; // 👈 Encore mauve pour les sous-menus
+      }
+    }
+  }
+
+  &:hover .hover-submenu {
+    display: block;
+  }
+}
