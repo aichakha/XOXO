@@ -16,9 +16,31 @@ import { ConfigModule } from '@nestjs/config';
 import { TextModule } from './text/text.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { CategoryModule } from './category/category.module';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { MailModule } from './mail/mail.module';
 @Module({
-  imports: [PrismaModule,
-    MongooseModule.forRoot('mongodb+srv://admin:admin@cluster.clfsx.mongodb.net/xoxo'),TextModule, AuthModule,AIModule,SummarizeModule,SavedTextModule,CategoryModule] ,
+  imports: [PrismaModule,    MailerModule.forRoot({
+    transport: {
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+    },
+    defaults: {
+      from: '"IA Transcripteur" <tonemail@gmail.com>',
+    },
+  }),
+  MailModule,
+    MongooseModule.forRoot('mongodb+srv://admin:admin@cluster.clfsx.mongodb.net/xoxo'),
+    TextModule, 
+    AuthModule,
+    AIModule,
+    SummarizeModule,
+    SavedTextModule,
+    CategoryModule] ,
   controllers: [AppController, AuthController,SummarizeController],
   providers: [AppService,PrismaService,SummarizeService],
 })

@@ -13,6 +13,7 @@ import jsPDF from 'jspdf';
 import { firstValueFrom } from 'rxjs';
 import { SavedTextService } from '../auth/services/saved-text.service';
 import { PopoverMenuComponent } from '../components/popover-menu.component/popover-menu.component';
+import { text } from 'ionicons/icons';
 @Component({
 
   selector: 'app-view',
@@ -61,6 +62,7 @@ showCopyButton: any;
 isAuthenticated = false;
 username: string | null = null;
 showEmailModal: boolean = false;
+  toastCtrl: any;
 
 
 
@@ -114,70 +116,99 @@ showEmailModal: boolean = false;
     this.router.navigate(['/acceuil-user']);
   }
 
-async presentPopover(ev: Event) {
-  const popover = await this.popoverCtrl.create({
-    component: PopoverMenuComponent,
-    event: ev,
-    translucent: true,
-    showBackdrop: true
-  });
+  async presentPopover(ev: Event) {
+    const popover = await this.popoverCtrl.create({
+      component: PopoverMenuComponent,
+      event: ev,
+      translucent: true,
+      showBackdrop: true,
+      componentProps: {
+        transcribedText: this.transcribedText // 👈 Envoie le texte vers le composant
+      }
+    });
 
-  await popover.present();
+    await popover.present();
 
-  const { data } = await popover.onDidDismiss();
+    const { data } = await popover.onDidDismiss();
 
-  if (data) {
-    switch (data) {
-      case 'translate-en':
-        this.translateAndReset(this.transcribedText, 'en');
-        break;
-      case 'translate-fr':
-        this.translateAndReset(this.transcribedText, 'fr');
-        break;
-      case 'translate-es':
-        this.translateAndReset(this.transcribedText, 'es');
-        break;
-      case 'translate-de':
-        this.translateAndReset(this.transcribedText, 'de');
-        break;
-      case 'translate-it':
-        this.translateAndReset(this.transcribedText, 'it');
-        break;
-      case 'translate-pt':
-        this.translateAndReset(this.transcribedText, 'pt');
-        break;
+    if (data) {
+      let loading = null;
 
-      case 'summarize-large':
-        this.summarizeText(this.transcribedText, 'large');
-        break;
-      case 'summarize-medium':
-        this.summarizeText(this.transcribedText, 'medium');
-        break;
-      case 'summarize-small':
-        this.summarizeText(this.transcribedText, 'small');
-        break;
+      // Affiche le spinner uniquement pour certaines actions
+      const actionsWithLoading = [
+        'translate-en', 'translate-fr', 'translate-es',
+        'translate-de', 'translate-it', 'translate-pt',
+        'summarize-large', 'summarize-medium', 'summarize-small'
+      ];
 
-      case 'edit':
-        this.toggleEditMode();
-        break;
+      if (actionsWithLoading.includes(data)) {
+        this.loadingMessage = this.getLoadingMessage(data); // 💬 optionnel : message dynamique
+        loading = await this.loadingCtrl.create({
+          message: this.loadingMessage,
+          spinner: 'crescent',
+          backdropDismiss: false
+        });
+        await loading.present();
+      }
 
-      case 'save':
-        this.saveCurrentText();
-        break;
+      // Traitement des actions
+      switch (data) {
+        case 'translate-en':
+          await this.translateAndReset(this.transcribedText, 'en');
+          break;
+        case 'translate-fr':
+          await this.translateAndReset(this.transcribedText, 'fr');
+          break;
+        case 'translate-es':
+          await this.translateAndReset(this.transcribedText, 'es');
+          break;
+        case 'translate-de':
+          await this.translateAndReset(this.transcribedText, 'de');
+          break;
+        case 'translate-it':
+          await this.translateAndReset(this.transcribedText, 'it');
+          break;
+        case 'translate-pt':
+          await this.translateAndReset(this.transcribedText, 'pt');
+          break;
 
-      case 'download':
-        this.downloadFile('pdf');
-        break;
+        case 'summarize-large':
+          await this.summarizeText(this.transcribedText, 'large');
+          break;
+        case 'summarize-medium':
+          await this.summarizeText(this.transcribedText, 'medium');
+          break;
+        case 'summarize-small':
+          await this.summarizeText(this.transcribedText, 'small');
+          break;
 
-      case 'share':
-        this.openModal();
-        break;
+        case 'edit':
+          this.toggleEditMode();
+          break;
+
+        case 'save':
+          this.saveCurrentText();
+          break;
+
+        case 'download':
+          this.downloadFile('pdf');
+          break;
+
+        case 'share':
+          this.openModal();
+          break;
+      }
+
+      if (loading) {
+        await loading.dismiss();
+      }
     }
+
+    // Ferme les menus déroulants s'ils sont visibles
+    this.translateMenuOpen = false;
+    this.summarizeMenuOpen = false;
   }
-  this.translateMenuOpen = false; // Ferme le menu de traduction après sélection
-  this.summarizeMenuOpen = false; // Ferme le menu de résumé après sélection
-}
-  // Fonction pour détecter la langue du texte
+    // Fonction pour détecter la langue du texte
   detectLanguage(text: string) {
     // Exemple de requête pour une API de détection de langue, par exemple Google Translate API ou un service similaire
     this.http.post<any>('https://api.detectlanguage.com/0.2/detect', {
@@ -193,6 +224,38 @@ async presentPopover(ev: Event) {
       }
     });
   }
+  getLoadingMessage(action: string): string {
+    const messages: { [key: string]: string } = {
+      'translate-en': 'Translating to English...',
+      'translate-fr': 'Translating to French...',
+      'translate-es': 'Translating to Spanish...',
+      'translate-de': 'Translating to German...',
+      'translate-it': 'Translating to Italian...',
+      'translate-pt': 'Translating to Portuguese...',
+      'summarize-large': 'Generating large summary...',
+      'summarize-medium': 'Generating medium summary...',
+      'summarize-small': 'Generating short summary...'
+    };
+    return messages[action] || 'Processing...';
+  }
+
+
+sendEmail(to: string, subject: string) {
+  console.log('Texte à envoyer:', this.transcribedText); // 👈 vérifie ici qu’il n’est pas vide
+
+  const payload = {
+    to,
+    subject,
+    text: this.transcribedText
+  };
+
+  this.http.post('http://localhost:3000/mail/send', payload).subscribe({
+    next: () => this.showToast('Email envoyé !'),
+    error: err => this.showToast('Erreur envoi mail')
+  });
+}
+
+
 
 
   async PresentLoading() {
@@ -607,6 +670,20 @@ async saveCurrentText() {
     await loading.dismiss();
   }
 }
+
+async PresentPopover() {
+  const popover = await this.popoverCtrl.create({
+    component: PopoverMenuComponent,
+    componentProps: {
+      transcribedText: this.transcribedText // 👈 Assure-toi que cette variable contient le bon texte
+    },
+    translucent: true,
+  });
+
+  await popover.present();
+}
+
+
 openModal() {
   const payload = {
     type: this.translatedText ? 'translation' : 'transcription',
@@ -651,4 +728,14 @@ async showAlert(title: string, message: string) {
 getFirstLetter(name: string | undefined | null): string {
   return name ? name.charAt(0).toUpperCase() : '';
 }
+  //show toast fonction pour feedback:
+  async showToast(message: string) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 2000,
+      color: 'primary',
+      position: 'top'
+    });
+    toast.present();
+  }
 }

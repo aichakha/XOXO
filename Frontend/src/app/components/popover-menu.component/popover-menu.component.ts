@@ -1,8 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { IonicModule,AlertController, PopoverController } from '@ionic/angular';
+import { Component, Input } from '@angular/core';
+import { IonicModule,AlertController, PopoverController ,ToastController } from '@ionic/angular';
 import { HttpClient } from '@angular/common/http';
 import { LoadingController } from '@ionic/angular';
+import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
+import { AuthGuard } from 'src/app/auth/auth.guard';
+import { AuthService } from 'src/app/auth/services/auth.service';
+import { SavedTextService } from 'src/app/auth/services/saved-text.service';
+
 
 @Component({
   standalone: true,
@@ -15,11 +21,31 @@ export class PopoverMenuComponent {
   translateMenuOpen = false;
   summarizeMenuOpen = false;
 
-  constructor(private popoverCtrl: PopoverController,  private http: HttpClient,   private loadingCtrl: LoadingController,) {}
+
+  constructor(private popoverCtrl: PopoverController,  private alertCtrl: AlertController,   private toastController: ToastController,
+    private toastCtrl: ToastController,  private http: HttpClient,   private loadingCtrl: LoadingController,  private loadingController: LoadingController,
+    private authService: AuthService,
+    private savedTextService: SavedTextService,
+    private router: Router) {}
+    @Input() transcribedText: string = '';
+    originalText: string | null = null; // 👈 pour stockage propre
+
+    ngOnInit() {
+      if (!this.transcribedText || this.transcribedText.trim().length === 0) {
+        console.warn('❌ Aucun texte transcrit reçu dans le popover.');
+        this.transcribedText = 'Aucun texte transcrit disponible.';
+      } else {
+        console.log('✅ Texte transcrit reçu dans le popover :', this.transcribedText);
+        this.originalText = this.transcribedText; // 👈 on le garde ici pour ne pas perdre la trace
+      }
+    }
+
 
   selectAction(action: string) {
     this.popoverCtrl.dismiss(action);
   }
+
+
 
   toggleSubmenu(menu: string) {
     if (menu === 'translate') {
@@ -45,9 +71,9 @@ export class PopoverMenuComponent {
   detectedLanguage: string = 'en';
   errorMessage: string = '';
   isLoading: boolean = true;
-  transcribedText: string = '';
+
   translatedText: string | null = null;
-  originalText: string | null = null; // Nouvelle variable pour stocker le texte original
+
   detectLanguage(text: string) {
     // Exemple de requête pour une API de détection de langue, par exemple Google Translate API ou un service similaire
     this.http.post<any>('https://api.detectlanguage.com/0.2/detect', {
@@ -104,6 +130,155 @@ export class PopoverMenuComponent {
       });
     });
   }
+  //show toast fonction pour feedback:
+  async showToast(message: string) {
+    const toast = await this.toastCtrl.create({
+      message,
+      duration: 2000,
+      color: 'primary',
+      position: 'top'
+    });
+    toast.present();
+  }
+  sendEmail(to: string, subject: string) {
+    const finalText = this.originalText || this.transcribedText;
+
+    console.log('📩 Texte à envoyer par mail :', finalText);
+
+    if (!finalText || finalText.trim().length === 0 || finalText === 'Aucun texte transcrit disponible.') {
+      this.showToast('❌ Aucun texte disponible à envoyer.');
+      return;
+    }
+
+    const payload = {
+      to,
+      subject,
+      text: finalText
+    };
+
+    this.http.post('http://localhost:3000/mail/send', payload).subscribe({
+      next: () => {
+        this.showToast('📤 Mail envoyé avec succès !');
+      },
+      error: (error) => {
+        console.error('❌ Erreur lors de l’envoi du mail :', error);
+        this.showToast('Erreur lors de l’envoi du mail.');
+      },
+    });
+  }
+//save to history:
+async saveCurrentText() {
+  const content = this.translatedText || this.transcribedText;
+
+  // Vérifiez que le content n'est pas vide
+  if (!content) {
+    const toast = await this.toastController.create({
+      message: 'No text to save!',
+      duration: 2000,
+      color: 'danger'
+    });
+    await toast.present();
+    return;
+  }
+
+  const userId = this.authService.getUserId();
+  if (!userId) {
+    const toast = await this.toastController.create({
+      message: 'Please login to save texts',
+      duration: 2000,
+      color: 'danger'
+    });
+    await toast.present();
+    return;
+  }
+
+  const loading = await this.loadingController.create({
+    message: 'Saving...'
+  });
+  await loading.present();
+
+  try {
+    // Envoyez explicitement userId et content comme objet
+    await firstValueFrom(this.savedTextService.saveText({
+      userId: userId,
+      content: content
+    }));
+
+    const toast = await this.toastController.create({
+      message: 'Text saved successfully!',
+      duration: 2000,
+      color: 'success'
+    });
+    await toast.present();
+
+    this.router.navigate(['/history']);
+  } catch (error: unknown) {
+    console.error('Save error:', error);
+
+    let errorMessage = 'Failed to save text';
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    } else if (typeof error === 'string') {
+      errorMessage = error;
+    }
+
+    const toast = await this.toastController.create({
+      message: errorMessage,
+      duration: 3000,
+      color: 'danger'
+    });
+    await toast.present();
+  } finally {
+    await loading.dismiss();
+  }
+}
+
+
+
+
+  async openEmailModal() {
+    const alert = await this.alertCtrl.create({
+      header: 'Partager par mail',
+      inputs: [
+        {
+          name: 'to',
+          type: 'email',
+          placeholder: 'Adresse e-mail du destinataire'
+        },
+        {
+          name: 'subject',
+          type: 'text',
+          placeholder: 'Titre du message'
+        },
+
+
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel'
+        },
+        {
+          text: 'Send',
+          handler: data => {
+            this.sendEmail(data.to, data.subject); // ici
+          }
+        }
+      ]
+    });
+
+    await alert.present();
+  }
+
+
+
+
+  showShareOptions = false;
+
+toggleShareOptions() {
+  this.showShareOptions = !this.showShareOptions;
+}
+
   translateAndReset(text: string, targetLang: string) {
     if (!this.originalText) {
       this.originalText = this.transcribedText; // Sauvegarder une seule fois le texte transcrit (Whisper)
