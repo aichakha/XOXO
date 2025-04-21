@@ -27,7 +27,7 @@
           LOGOUT
         </ion-button>
       </ng-container>
-      
+
       <ng-template #loggedOut>
         <button class="sign-in" (click)="login()">LOG IN</button>
         <button class="join-now" (click)="signup()">JOIN NOW</button>
@@ -36,9 +36,9 @@
   </ion-header>
 
   <ion-content class="history-page">
-  
+
     <div class="search-container">
-      <ion-searchbar 
+      <ion-searchbar
         [(ngModel)]="searchTerm"
         (ionInput)="filterClips()"
         placeholder="Search in your history..."
@@ -51,8 +51,8 @@
       <ion-chip (click)="filterByCategory(null)" [outline]="selectedCategory !== null">
         All
       </ion-chip>
-      
-      <ion-chip *ngFor="let category of categories" 
+
+      <ion-chip *ngFor="let category of categories"
                 (click)="filterByCategory(category.id)"
                 [outline]="selectedCategory !== category.id">
         {{ category.name }}
@@ -101,10 +101,22 @@
     <div *ngIf="isAuthenticated; else loggedOutContent" class="content-container">
       <!-- ✅ Liste des notes complètes -->
       <div class="clips-container">
+        <!-- ✅ Aucun texte sauvegardé -->
+        <ion-card *ngIf="noSavedText || filteredClips.length === 0">
+          <ion-card-header>
+            <ion-card-title>No Saved Texts</ion-card-title>
+            <ion-card-subtitle>Start using the APP and save your texts</ion-card-subtitle>
+          </ion-card-header>
+          <ion-card-content>
+            History where you can store your transcribed, summarized and translated text...
+            Don't hesitate to start using our app.
+          </ion-card-content>
+        </ion-card>
+        <!-- ✅ Liste des notes -->
         <ion-card *ngFor="let clip of filteredClips" (click)="selectClip(clip)">
           <ion-card-header>
             <ion-card-title>
-              <ion-input 
+              <ion-input
                 [(ngModel)]="clip.title"
                 (ionChange)="updateTitle(clip.id, clip.title)"
                 placeholder="Modifier le titre">
@@ -115,7 +127,7 @@
           <ion-textarea [(ngModel)]="clip.content"
           (blur)="updateContent(clip.id, clip.content)"
           (keyup.enter)="updateContent(clip.id, clip.content)"
-          (input)="autoSave()" 
+          (input)="autoSave()"
           autoGrow="true"
           placeholder="Enter your text"
           class="editable-textarea">
@@ -123,7 +135,7 @@
            <!-- Ajoutez le sélecteur de catégorie ICI -->
     <ion-item lines="none" class="category-selector">
       <ion-label>Catégorie</ion-label>
-      <ion-select 
+      <ion-select
         [(ngModel)]="clip.categoryId"
         (ionChange)="clip.categoryId ? assignToCategory(clip.id, clip.categoryId) : removeFromCategory(clip.id)"
         interface="popover">
@@ -136,7 +148,7 @@
           <ion-footer>
             <small>{{ clip.createdAt | date:'medium' }}</small>
             <ion-button fill="clear" size="small" (click)="toggleFavorite(clip); $event.stopPropagation()">
-              <ion-icon 
+              <ion-icon
                 [name]="clip.isFavorite ? 'heart' : 'heart-outline'"
                 [color]="clip.isFavorite ? 'danger' : 'medium'"
                 style="font-size: 24px;">
@@ -150,7 +162,7 @@
         </ion-card>
       </div>
 
-      <!-- ✅ Panneau latéral des détails 
+      <!-- ✅ Panneau latéral des détails
       <div class="note-details" *ngIf="selectedClip">
         <h2>{{ selectedClip.name }}</h2>
         <h4>{{ selectedClip.username }}</h4>
@@ -159,7 +171,7 @@
         <ion-button (click)="closeDetails()">Close</ion-button>
       </div>-->
 
-      
+
     </div>
 
     <!-- ✅ Si l'utilisateur n'est PAS connecté -->

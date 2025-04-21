@@ -44,7 +44,7 @@ export class HistoryPage implements OnInit {
   newCategoryName: string = '';
   showCategoryModal: boolean = false;
   editingCategory: any = null;
-
+  noSavedText: boolean = false;
   constructor(private router: Router,
     private authService: AuthService,
     private savedTextService: SavedTextService,
@@ -70,8 +70,8 @@ export class HistoryPage implements OnInit {
     }
 
     if (this.isAuthenticated) {
-      await this.loadSavedTexts(); 
-      await this.loadCategories(); 
+      await this.loadSavedTexts();
+      await this.loadCategories();
     }
        // Appliquer un délai de 1 seconde avant de sauvegarder pour éviter de spammer l'API
        this.autoSaveSubject.pipe(debounceTime(1000)).subscribe(() => {
@@ -207,7 +207,7 @@ export class HistoryPage implements OnInit {
     async loadSavedTexts() {
       this.isLoading = true;
       const loading = await this.loadingCtrl.create({
-        message: 'Chargement en cours...'
+        message: 'LOADING.....'
       });
       await loading.present();
 
@@ -221,18 +221,15 @@ export class HistoryPage implements OnInit {
           this.savedTextService.getSavedTexts(userId)
         );
 
-        console.log('API Response:', response); // Debug
+        console.log('API Response:', response);
         this.clips = Array.isArray(response) ? response : [];
         this.filteredClips = [...this.clips];
+        this.noSavedText = this.clips.length === 0;
       } catch (error) {
         console.error('Erreur:', error);
-        const toast = await this.toastCtrl.create({
-          message: 'Échec du chargement. Veuillez vous reconnecter.',
-          duration: 3000,
-          color: 'danger'
-        });
-        await toast.present();
-        this.authService.logout();
+
+        
+
       } finally {
         loading.dismiss();
         this.isLoading = false;
@@ -385,9 +382,9 @@ async toggleFavorite(clip: Clip) {
     const updatedClip = await lastValueFrom(
       this.savedTextService.toggleFavorite(clip.id, !clip.isFavorite)
     );
-    
+
     // Mise à jour locale
-    this.clips = this.clips.map(c => 
+    this.clips = this.clips.map(c =>
       c.id === clip.id ? { ...c, isFavorite: updatedClip.isFavorite } : c
     );
     this.filteredClips = [...this.clips];
@@ -416,7 +413,7 @@ async loadCategories() {
   try {
     const userId = this.authService.getUserId();
     if (!userId) return;
-    
+
     this.categories = await lastValueFrom(
       this.savedTextService.getUserCategories(userId)
     );
@@ -426,15 +423,15 @@ async loadCategories() {
 }
 async createCategory() {
   if (!this.newCategoryName.trim()) return;
-  
+
   try {
     const userId = this.authService.getUserId();
     if (!userId) return;
-    
+
     await lastValueFrom(
       this.savedTextService.createCategory(this.newCategoryName, userId)
     );
-    
+
     this.newCategoryName = '';
     await this.loadCategories();
   } catch (error) {
