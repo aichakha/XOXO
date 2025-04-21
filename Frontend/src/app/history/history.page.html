@@ -46,6 +46,57 @@
         debounce="300">
       </ion-searchbar>
     </div>
+    <!-- Category management section -->
+    <div *ngIf="isAuthenticated" class="categories-section">
+      <ion-chip (click)="filterByCategory(null)" [outline]="selectedCategory !== null">
+        All
+      </ion-chip>
+      
+      <ion-chip *ngFor="let category of categories" 
+                (click)="filterByCategory(category.id)"
+                [outline]="selectedCategory !== category.id">
+        {{ category.name }}
+        <ion-icon name="create-outline" (click)="editingCategory = category; $event.stopPropagation()"></ion-icon>
+        <ion-icon name="trash"  (click)="deleteCategory(category.id); $event.stopPropagation()"></ion-icon>
+      </ion-chip>
+
+      <ion-chip (click)="showCategoryModal = true" color="primary">
+        <ion-icon name="add"></ion-icon>
+        New Category
+      </ion-chip>
+    </div>
+
+    <!-- Category edit modal -->
+    <div *ngIf="editingCategory" class="category-edit-modal">
+      <div class="popup-content">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Edit Category</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+      <ion-input [(ngModel)]="editingCategory.name"></ion-input>
+      <ion-button (click)="updateCategory(editingCategory)">Save</ion-button>
+      <ion-button (click)="editingCategory = null" fill="outline">Cancel</ion-button>
+    </ion-card-content>
+  </ion-card>
+</div>
+    </div>
+
+    <!-- New category modal (popup) -->
+<div *ngIf="showCategoryModal" class="popup-overlay">
+  <div class="popup-content">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>New Category</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-input [(ngModel)]="newCategoryName" placeholder="Category name"></ion-input>
+        <ion-button (click)="createCategory(); showCategoryModal = false">Create</ion-button>
+        <ion-button (click)="showCategoryModal = false" fill="outline">Cancel</ion-button>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</div>
     <!-- ✅ Si l'utilisateur est connecté -->
     <div *ngIf="isAuthenticated; else loggedOutContent" class="content-container">
       <!-- ✅ Liste des notes complètes -->
@@ -69,7 +120,19 @@
           placeholder="Enter your text"
           class="editable-textarea">
           </ion-textarea>
-
+           <!-- Ajoutez le sélecteur de catégorie ICI -->
+    <ion-item lines="none" class="category-selector">
+      <ion-label>Catégorie</ion-label>
+      <ion-select 
+        [(ngModel)]="clip.categoryId"
+        (ionChange)="clip.categoryId ? assignToCategory(clip.id, clip.categoryId) : removeFromCategory(clip.id)"
+        interface="popover">
+        <ion-select-option [value]="null">Aucune catégorie</ion-select-option>
+        <ion-select-option *ngFor="let category of categories" [value]="category.id">
+          {{ category.name }}
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
           <ion-footer>
             <small>{{ clip.createdAt | date:'medium' }}</small>
             <ion-button fill="clear" size="small" (click)="toggleFavorite(clip); $event.stopPropagation()">

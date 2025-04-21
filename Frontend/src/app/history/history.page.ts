@@ -39,6 +39,12 @@ export class HistoryPage implements OnInit {
   form = { title: '', content: '' };
   private autoSaveSubject = new Subject<void>();
 
+  categories: any[] = [];
+  selectedCategory: string | null = null;
+  newCategoryName: string = '';
+  showCategoryModal: boolean = false;
+  editingCategory: any = null;
+
   constructor(private router: Router,
     private authService: AuthService,
     private savedTextService: SavedTextService,
@@ -64,7 +70,8 @@ export class HistoryPage implements OnInit {
     }
 
     if (this.isAuthenticated) {
-      await this.loadSavedTexts(); // Chargement initial des textes sauvegardés
+      await this.loadSavedTexts(); 
+      await this.loadCategories(); 
     }
        // Appliquer un délai de 1 seconde avant de sauvegarder pour éviter de spammer l'API
        this.autoSaveSubject.pipe(debounceTime(1000)).subscribe(() => {
@@ -403,6 +410,92 @@ async toggleFavorite(clip: Clip) {
 }
 getFirstLetter(name: string | undefined | null): string {
   return name ? name.charAt(0).toUpperCase() : '';
+}
+
+async loadCategories() {
+  try {
+    const userId = this.authService.getUserId();
+    if (!userId) return;
+    
+    this.categories = await lastValueFrom(
+      this.savedTextService.getUserCategories(userId)
+    );
+  } catch (error) {
+    console.error('Error loading categories:', error);
+  }
+}
+async createCategory() {
+  if (!this.newCategoryName.trim()) return;
+  
+  try {
+    const userId = this.authService.getUserId();
+    if (!userId) return;
+    
+    await lastValueFrom(
+      this.savedTextService.createCategory(this.newCategoryName, userId)
+    );
+    
+    this.newCategoryName = '';
+    await this.loadCategories();
+  } catch (error) {
+    console.error('Error creating category:', error);
+  }
+}
+
+async assignToCategory(textId: string, categoryId: string) {
+  try {
+    await lastValueFrom(
+      this.savedTextService.assignCategoryToText(textId, categoryId)
+    );
+    await this.loadSavedTexts();
+  } catch (error) {
+    console.error('Error assigning category:', error);
+  }
+}
+
+async removeFromCategory(textId: string) {
+  try {
+    await lastValueFrom(
+      this.savedTextService.removeCategoryFromText(textId)
+    );
+    await this.loadSavedTexts();
+  } catch (error) {
+    console.error('Error removing category:', error);
+  }
+}
+
+async updateCategory(category: any) {
+  try {
+    await lastValueFrom(
+      this.savedTextService.updateCategory(category.id, category.name)
+    );
+    this.editingCategory = null;
+    await this.loadCategories();
+  } catch (error) {
+    console.error('Error updating category:', error);
+  }
+}
+
+async deleteCategory(categoryId: string) {
+  try {
+    await lastValueFrom(
+      this.savedTextService.deleteCategory(categoryId)
+    );
+    await this.loadCategories();
+    // Also reload texts to reflect changes
+    await this.loadSavedTexts();
+  } catch (error) {
+    console.error('Error deleting category:', error);
+  }
+}
+
+filterByCategory(categoryId: string | null) {
+  this.selectedCategory = categoryId;
+  if (!categoryId) {
+    this.filteredClips = [...this.clips];
+    return;
+  }
+  this.filteredClips = this.clips.filter(clip => clip.categoryId === categoryId);
 }
 
 }

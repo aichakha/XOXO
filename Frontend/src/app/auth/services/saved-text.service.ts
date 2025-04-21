@@ -10,6 +10,7 @@ import { AuthService } from './auth.service';
 export class SavedTextService {
   //private baseUrl = `${environment.apiUrl}/saved-text`;
   private baseUrl = 'http://localhost:3000/saved-text';
+  private categoryUrl = 'http://localhost:3000/categories';
   constructor(private http: HttpClient,private authService: AuthService) {}
 
   private getRequestOptions() {
@@ -85,4 +86,32 @@ export class SavedTextService {
     return this.http.get<any[]>(`${this.baseUrl}/${userId}/favorites`, options);
   }
   
+  assignCategoryToText(textId: string, categoryId: string): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${textId}/assign-category/${categoryId}`, {}, this.getRequestOptions());
+  }
+
+  removeCategoryFromText(textId: string): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${textId}/remove-category`, {}, this.getRequestOptions());
+  }
+
+  changeCategory(textId: string, newCategoryId: string): Observable<any> {
+    return this.http.put(`${this.baseUrl}/${textId}/change-category/${newCategoryId}`, {}, this.getRequestOptions());
+  }
+
+  // Category service methods
+  createCategory(name: string, userId: string): Observable<any> {
+    return this.http.post(this.categoryUrl, { name, userId }, this.getRequestOptions());
+  }
+
+  getUserCategories(userId: string): Observable<any> {
+    return this.http.get(`${this.categoryUrl}/${userId}`, this.getRequestOptions());
+  }
+
+  updateCategory(id: string, name: string): Observable<any> {
+    return this.http.patch(`${this.categoryUrl}/${id}`, { name }, this.getRequestOptions());
+  }
+
+  deleteCategory(id: string): Observable<any> {
+    return this.http.delete(`${this.categoryUrl}/${id}`, this.getRequestOptions());
+  }
 }
