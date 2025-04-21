@@ -14,7 +14,7 @@ import { LoginDto } from './dto/login.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { UseGuards } from '@nestjs/common';
-import { AuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { OAuth2Client } from 'google-auth-library';
@@ -56,7 +56,9 @@ export class AuthController {
     userId: user.id,
     username: user.name
   };
+
   }
+
   @Post('signup-google')
 async signupWithGoogle(@Body('token') token: string) {
   console.log("🔹 [Google Signup] Token reçu :", token);
@@ -98,7 +100,7 @@ async signupWithGoogle(@Body('token') token: string) {
   }
 
   @Get('profile')
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   getProfile(@Request() req) {
     console.log("🔹 [Profile] Requête reçue avec JWT :", req.headers.authorization);
 

@@ -4,7 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { JwtService } from '@nestjs/jwt';
 import { OAuth2Client } from 'google-auth-library';
-
+import { SignupDto } from './dto/signup.dto';
 @Injectable()
 export class AuthService {
   private client: OAuth2Client;
@@ -35,14 +35,27 @@ export class AuthService {
   }
 
   // ✅ Inscription utilisateur
-  async signUp(name: string, email: string, password: string) {
+  async signUp({ name, email, password }: SignupDto) {
     const existingUser = await this.prisma.user.findUnique({ where: { email } });
     if (existingUser) throw new BadRequestException('Email déjà utilisé');
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    return this.prisma.user.create({
+
+    const user = await this.prisma.user.create({
       data: { name, email, password: hashedPassword },
     });
+    const token = this.jwtService.sign({
+      sub: user.id,
+      email: user.email,
+    });
+
+    return {
+      message: 'Inscription réussie',
+      token,
+      userId: user.id,
+      username: user.name,
+    };
+  
   }
 
   // ✅ Connexion utilisateur
@@ -168,8 +181,5 @@ export class AuthService {
       console.error('❌ [Google Signup Service] Erreur:', error);
       throw new InternalServerErrorException('Erreur pendant l’inscription via Google');
     }
-  }
-  getCurrentUsername(): string | null {
-    return localStorage.getItem('username');
   }
 }

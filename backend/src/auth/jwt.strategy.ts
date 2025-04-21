@@ -16,4 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     console.log('🔐 Token reçu pour validation:', payload);
     return { userId: payload.sub, email: payload.email,last4Digits: payload.last4Digits  };
   }
+  async validate1(payload: any) {
+    return { userId: payload.sub, email: payload.email };
+  }
 }

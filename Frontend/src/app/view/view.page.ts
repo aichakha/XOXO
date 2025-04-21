@@ -197,6 +197,10 @@ showEmailModal: boolean = false;
         case 'share':
           this.openModal();
           break;
+          
+          case 'save':
+            this.saveCurrentText();
+            break;
       }
 
       if (loading) {

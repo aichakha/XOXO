@@ -1,6 +1,6 @@
 import { BadRequestException, Body, Controller, InternalServerErrorException, Post, UploadedFile, UseInterceptors, UseGuards } from '@nestjs/common';
 
-import { AuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard  } from 'src/auth/jwt-auth.guard';
 
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -13,7 +13,7 @@ import { UploadAudioDto } from './dto/upload-audio.dto';
 export class AIController {
   constructor(private readonly aiService: AIService) {}
 
-  @UseGuards(AuthGuard) // Protège la route avec JWT
+  @UseGuards(JwtAuthGuard ) // Protège la route avec JWT
   @Post('transcribe')
     @UseInterceptors(FileInterceptor('file', {
       storage: diskStorage({
@@ -58,7 +58,7 @@ export class AIController {
       }
     }
     @Post('process')
-@UseGuards(AuthGuard)
+@UseGuards(JwtAuthGuard )
 async processFile(@Body() body: UploadAudioDto) {
   console.log("📝 Requête reçue pour transcription:", body);
 

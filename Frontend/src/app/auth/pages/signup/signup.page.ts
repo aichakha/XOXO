@@ -83,10 +83,20 @@ export class SignupPage implements OnInit {
   }
 
   signup() {
-    this.authService.signUp(this.user).subscribe({
-      next: () => {
-        console.log('Inscription réussie');
-        this.router.navigate(['/acceuil']);
+    this.authService.signup(this.user.name,this.user.email, this.user.password).subscribe({
+      next: (res: any) => {
+        console.log('Inscription réussie ✅');
+
+        // 🔐 Stocker le token reçu dans le localStorage
+        this.authService.setToken(res.token);
+        console.log('Token stocké:', res.token);
+
+        // 🧾 Afficher les infos décodées (facultatif pour debug)
+        const decoded = JSON.parse(localStorage.getItem('decodedToken')!);
+        console.log('🎉 Profil récupéré:', decoded);
+
+        // 🚀 Navigation vers l'accueil user
+        this.router.navigate(['/acceuil-user']);
       },
       error: (err) => {
         console.error('Erreur d\'inscription:', err);
@@ -95,11 +105,13 @@ export class SignupPage implements OnInit {
     });
   }
 
+
+
   backlogin() {
     this.router.navigate(['/login']);
   }
 
   Home() {
-    this.router.navigate(['/acceuil-user']);
+    this.router.navigate(['/acceuil']);
   }
 }

@@ -211,10 +211,11 @@ async saveCurrentText() {
     });
     await toast.present();
 
+
     this.router.navigate(['/history']);
+
   } catch (error: unknown) {
     console.error('Save error:', error);
-
     let errorMessage = 'Failed to save text';
     if (error instanceof Error) {
       errorMessage = error.message;

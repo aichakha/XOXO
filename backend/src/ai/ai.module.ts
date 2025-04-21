@@ -4,7 +4,7 @@ import { AIController } from './ai.controller';
 import { AuthModule } from '../auth/auth.module'; // Importer AuthModule
 
 import { MulterModule } from '@nestjs/platform-express';
-import { AuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard  } from '../auth/jwt-auth.guard';
 @Module({
   imports: [AuthModule,
     MulterModule.register({
@@ -12,7 +12,7 @@ import { AuthGuard } from '../auth/jwt-auth.guard';
     }),
   ],
   controllers: [AIController],
-  providers: [AIService,AuthGuard],
+  providers: [AIService,JwtAuthGuard ],
   exports: [AIService],
 })
 export class AIModule {}

@@ -52,6 +52,7 @@ export class AcceuilUserPage implements OnInit,AfterViewInit {
     console.log('🔐 Authenticated:', this.isAuthenticated);
     this.authService.username$.subscribe(digits => this.username = digits);
     this.username = localStorage.getItem('username');
+    console.log('🔑 Username:', this.username);
   }
   ngAfterViewInit() {
     console.log('fileInput chargé ?', this.fileInputRef.nativeElement);
@@ -64,7 +65,7 @@ export class AcceuilUserPage implements OnInit,AfterViewInit {
     localStorage.removeItem('username');
     this.router.navigate(['/login']);
     logout: this.showLogout = false; // Cache avant action
-    
+
 
   }
   getFirstLetter(name: string | undefined | null): string {

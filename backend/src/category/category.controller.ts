@@ -2,9 +2,9 @@ import { Controller, Post, Body, Param, Get, Patch, Delete, UseGuards } from '@n
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
-import { AuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard  } from 'src/auth/jwt-auth.guard';
 
-@UseGuards(AuthGuard)
+@UseGuards(JwtAuthGuard )
 @Controller('categories')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}

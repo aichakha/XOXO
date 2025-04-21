@@ -1,7 +1,7 @@
 import { Body, Controller, Post, Get, Param, Delete, UseGuards ,Patch,Put, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { SavedTextService } from './saved-text.service';
 import { CreateSavedTextDto } from './dto/create-saved-text.dto';
-import { AuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard  } from '../auth/jwt-auth.guard';
 import { UpdateClipDto } from './dto/update-clip.dto';
 import { FavoriteClipDto } from './dto/favorite-clip.dto';
 
@@ -9,7 +9,7 @@ import { FavoriteClipDto } from './dto/favorite-clip.dto';
 export class SavedTextController {
   constructor(private savedTextService: SavedTextService) {}
 
-  @UseGuards(AuthGuard) 
+  @UseGuards(JwtAuthGuard ) 
   @Post()
   async saveText(@Body() createSavedTextDto: CreateSavedTextDto) {
     return this.savedTextService.saveText(
@@ -19,18 +19,18 @@ export class SavedTextController {
     );
   }
 
-  @UseGuards(AuthGuard) 
+  @UseGuards(JwtAuthGuard ) 
   @Get(':userId')
   async getSavedTexts(@Param('userId') userId: string) {
     return this.savedTextService.getSavedTexts(userId);
   }
 
-  @UseGuards(AuthGuard) 
+  @UseGuards(JwtAuthGuard ) 
   @Delete(':id')
   async deleteSavedText(@Param('id') id: string) {
     return this.savedTextService.deleteSavedText(id);
   }
-  @UseGuards(AuthGuard) 
+  @UseGuards(JwtAuthGuard ) 
 @Patch(':id')
 async update(
   @Param('id') id: string,
@@ -46,7 +46,7 @@ async update(
   }
 }
 
-@UseGuards(AuthGuard)
+@UseGuards(JwtAuthGuard )
 @Patch(':id/favorite')
 async toggleFavorite(
   @Param('id') id: string,
@@ -55,7 +55,7 @@ async toggleFavorite(
   return this.savedTextService.toggleFavorite(id, favoriteDto.isFavorite);
 }
 
-@UseGuards(AuthGuard)
+@UseGuards(JwtAuthGuard )
 @Get(':userId/favorites')
 async getFavorites(@Param('userId') userId: string) {
   return this.savedTextService.getFavorites(userId);
