@@ -81,7 +81,9 @@ showEmailModal: boolean = false;
   ngOnInit() {
     this.isAuthenticated = this.authService.isLoggedIn();
     console.log('🔐 Authenticated:', this.isAuthenticated);
-    this.authService.username$.subscribe((digits) => this.username = digits);
+    this.authService.username$.subscribe(digits => this.username = digits);
+    this.username = localStorage.getItem('username');
+    console.log('🔑 Username:', this.username);
     this.route.queryParams.subscribe({
       next: (params) => {
         this.transcribedText = params['text'] || 'No transcribed text available';
