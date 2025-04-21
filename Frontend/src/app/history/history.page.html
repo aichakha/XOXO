@@ -48,6 +48,15 @@
     </div>
     <!-- Category management section -->
     <div *ngIf="isAuthenticated" class="categories-section">
+      <ion-button 
+  fill="outline"
+  size="small"
+  [color]="showOnlyFavorites ? 'danger' : 'medium'" 
+  (click)="toggleFavoriteFilter()">
+  <ion-icon [name]="showOnlyFavorites ? 'heart' : 'heart-outline'" slot="start"></ion-icon>
+  {{ showOnlyFavorites ? 'Only Favorites' : 'All Texts' }}
+</ion-button>
+
       <ion-chip (click)="filterByCategory(null)" [outline]="selectedCategory !== null">
         All
       </ion-chip>

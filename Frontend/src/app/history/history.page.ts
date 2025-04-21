@@ -38,6 +38,7 @@ export class HistoryPage implements OnInit {
   isLoading = false;
   form = { title: '', content: '' };
   private autoSaveSubject = new Subject<void>();
+  showOnlyFavorites = false;
 
   categories: any[] = [];
   selectedCategory: string | null = null;
@@ -286,19 +287,20 @@ export class HistoryPage implements OnInit {
       }
     }
 
-  filterClips() {
-    if (!this.searchTerm || this.searchTerm.trim() === '') {
-      this.filteredClips = [...this.clips];
-      return;
+    filterClips() {
+      this.filteredClips = this.clips.filter(clip => {
+        const matchesSearch = !this.searchTerm || 
+          clip.title?.toLowerCase().includes(this.searchTerm.toLowerCase()) || 
+          clip.content?.toLowerCase().includes(this.searchTerm.toLowerCase());
+    
+        const matchesCategory = this.selectedCategory === null || clip.categoryId === this.selectedCategory;
+    
+        const matchesFavorite = !this.showOnlyFavorites || clip.isFavorite;
+    
+        return matchesSearch && matchesCategory && matchesFavorite;
+      });
     }
-
-    const searchTermLower = this.searchTerm.toLowerCase().trim();
-
-    this.filteredClips = this.clips.filter(clip => {
-      // Recherche uniquement dans le titre
-      return clip.title?.toLowerCase().includes(searchTermLower) || false;
-    });
-  }
+    
 
 
 
@@ -494,5 +496,11 @@ filterByCategory(categoryId: string | null) {
   }
   this.filteredClips = this.clips.filter(clip => clip.categoryId === categoryId);
 }
+
+toggleFavoriteFilter() {
+  this.showOnlyFavorites = !this.showOnlyFavorites;
+  this.filterClips(); // Refiltre la liste
+}
+
 
 }
