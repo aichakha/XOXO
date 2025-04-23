@@ -1,5 +1,4 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { IonicModule, LoadingController, ToastController } from '@ionic/angular';
@@ -8,7 +7,18 @@ import { SavedTextService } from '../auth/services/saved-text.service';
 import { lastValueFrom } from 'rxjs';
 import { FormGroup, FormBuilder } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject ,firstValueFrom} from 'rxjs';
+import { Component, OnInit, ElementRef, HostListener, ViewChildren, QueryList } from '@angular/core';
+
+import { ClickOutsideDirective } from '../directives/click-outside.directive';
+import {
+  trigger,
+  state,
+  style,
+  animate,
+  transition,
+} from '@angular/animations';
+
 interface Clip {
   id: string;
   title: string;
@@ -20,13 +30,29 @@ interface Clip {
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [
+  imports: [ClickOutsideDirective,
     CommonModule,
     FormsModule,
     IonicModule
   ],
+
   templateUrl: './history.page.html',
   styleUrls: ['./history.page.scss'],
+  animations: [
+    trigger('expandCollapse', [
+      state('collapsed', style({
+        maxHeight: '4.5em',
+        overflow: 'hidden'
+      })),
+      state('expanded', style({
+        maxHeight: '1000px',
+        overflow: 'auto'
+      })),
+      transition('collapsed <=> expanded', [
+        animate('300ms ease-in-out')
+      ])
+    ])
+  ]
 })
 
 
@@ -47,13 +73,15 @@ export class HistoryPage implements OnInit {
   editingCategory: any = null;
   noSavedText: boolean = false;
   constructor(private router: Router,
+    private toastController: ToastController,
     private authService: AuthService,
     private savedTextService: SavedTextService,
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController,
     private fb: FormBuilder) {}
   uploadedFileName: string = '';
-
+  expandedClipIds: Set<string> = new Set();
+  editingClipId: string | null = null;
   uploadedFile: File | null = null;
   mediaUrl: string = '';
   isAuthenticated = false;
@@ -85,6 +113,17 @@ export class HistoryPage implements OnInit {
         this.form.content = this.clips[0].content;
       }
   }
+  //TOAST FOR SUCCESS
+  async presentToast(message: string, color: 'success' | 'danger' = 'success') {
+    const toast = await this.toastController.create({
+      message,
+      duration: 2000,
+      color,
+      position: 'top'
+    });
+    await toast.present();
+  }
+
     // Fonction d'auto-save qui envoie les modifications à l'API
     async autoSave() {
       try {
@@ -100,32 +139,41 @@ export class HistoryPage implements OnInit {
       } catch (error) {
         console.error('Error during auto-save:', error);
       }
+
     }
+
     triggerAutoSave() {
       this.autoSaveSubject.next();
     }
-    async updateContent(id: string, newContent: string) {
-      try {
-        const updatedClip = await this.savedTextService.updateSavedText(id, { content: newContent }).toPromise();
-        this.clips = this.clips.map(clip => clip.id === id ? { ...clip, content: updatedClip.content } : clip);
 
-        const toast = await this.toastCtrl.create({
-          message: 'Text updated successfully!',
-          duration: 2000,
-          color: 'success',
-        });
-        await toast.present();
-      } catch (error) {
-        console.error('Error updating content:', error);
-        const toast = await this.toastCtrl.create({
-          message: 'Failed to update content',
-          duration: 2000,
-          color: 'danger',
-        });
-        await toast.present();
-      }
-    }
-    async updateTitle(id: string, newTitle: string) {
+
+async updateContent(id: string, newContent: string) {
+  try {
+    const updatedClip = await firstValueFrom(
+      this.savedTextService.updateSavedText(id, { content: newContent })
+    );
+
+    this.clips = this.clips.map(clip =>
+      clip.id === id ? { ...clip, content: updatedClip.content } : clip
+    );
+
+    const toast = await this.toastCtrl.create({
+      message: 'Text updated successfully!',
+      duration: 2000,
+      color: 'success',
+    });
+    await toast.present();
+  } catch (error) {
+    console.error('Error updating content:', error);
+    const toast = await this.toastCtrl.create({
+      message: 'Failed to update content',
+      duration: 2000,
+      color: 'danger',
+    });
+    await toast.present();
+  }
+}
+async updateTitle(id: string, newTitle: string) {
       // Validation simple
       if (!newTitle || newTitle.trim().length === 0) {
         const toast = await this.toastCtrl.create({
@@ -165,7 +213,7 @@ export class HistoryPage implements OnInit {
         }
 
         const toast = await this.toastCtrl.create({
-          message: 'Titre mis à jour avec succès',
+          message: 'Title updated successfully!',
           duration: 2000,
           color: 'success'
         });
@@ -180,7 +228,7 @@ export class HistoryPage implements OnInit {
           this.filteredClips = [...this.clips];
         }
 
-        let errorMessage = 'Échec de la mise à jour du titre';
+        let errorMessage = 'Error updating title';
         if (error instanceof Error) {
           errorMessage = error.message.includes('401')
             ? 'Session expirée. Veuillez vous reconnecter.'
@@ -202,6 +250,130 @@ export class HistoryPage implements OnInit {
         await loading.dismiss();
       }
     }
+    async updateContentAutoSave(textId: string, newContent: string) {
+      // Validation
+      if (!newContent || newContent.trim().length === 0) {
+        const toast = await this.toastCtrl.create({
+          message: 'Content cannot be empty',
+          duration: 2000,
+          color: 'warning'
+        });
+        await toast.present();
+        return;
+      }
+
+      const clipIndex = this.clips.findIndex(c => c.id === textId);
+      const oldContent = clipIndex > -1 ? this.clips[clipIndex].transcription : '';
+
+      // Optimistic update
+      if (clipIndex > -1) {
+        this.clips[clipIndex].transcription = newContent;
+        this.filteredClips = [...this.clips];
+      }
+
+      try {
+        const updatedClip = await lastValueFrom(
+          this.savedTextService.updateTextContent(textId, newContent)
+        );
+
+        if (clipIndex > -1) {
+          this.clips[clipIndex] = { ...this.clips[clipIndex], ...updatedClip };
+          this.filteredClips = [...this.clips];
+        }
+
+        const toast = await this.toastCtrl.create({
+          message: '✅Content updated successfully!',
+          duration: 2000,
+          color: 'success'
+        });
+        await toast.present();
+
+      } catch (error) {
+        // Revert changes
+        if (clipIndex > -1) {
+          this.clips[clipIndex].transcription = oldContent;
+          this.filteredClips = [...this.clips];
+        }
+
+        let errorMessage = '❌ Erreur lors de la mise à jour du texte.';
+        if (error instanceof Error) {
+          errorMessage = error.message.includes('401')
+            ? 'Session expirée. Veuillez vous reconnecter.'
+            : error.message;
+        }
+
+        const toast = await this.toastCtrl.create({
+          message: errorMessage,
+          duration: 3000,
+          color: 'danger'
+        });
+        await toast.present();
+
+        if (errorMessage.includes('401')) {
+          this.authService.logout();
+        }
+      }
+    }
+
+
+
+ //selectedClip: any = null;
+ isClipOpen = true;
+
+ close() {
+   this.isClipOpen = false;
+ }
+
+ toggleClip(clip: Clip) {
+  if (this.editingClipId === clip.id) {
+    this.editingClipId = null; // Ferme si déjà ouvert
+  } else {
+    this.editingClipId = clip.id; // Ouvre ce clip en mode édition
+  }
+}
+
+closeClip(id: string) {
+  console.log('Clicked outside, closing clip with id:', id);
+  if (this.editingClipId === id) {
+    this.editingClipId = null;
+  }
+  // Fermer aussi le texte étendu
+  if (this.selectedClipId === id) {
+    this.selectedClipId = null;
+  }
+}
+
+isClipExpanded(clip: Clip): boolean {
+  return this.expandedClipIds.has(clip.id);
+}
+isEditing(clip: Clip): boolean {
+  return this.editingClipId === clip.id;
+}
+editClip(clipId: string) {
+  this.editingClipId = clipId;
+}
+isExpanded: { [key: string]: boolean } = {};
+expandText(clipId: string) {
+  this.isExpanded[clipId] = true;
+}
+//Pour fermer le clip étendu lors du clic à l'extérieur
+@ViewChildren('clipCard') clipCards!: QueryList<ElementRef>;
+
+@HostListener('document:click', ['$event'])
+handleClick(event: MouseEvent) {
+  let clickedInside = false;
+
+  this.clipCards.forEach((cardRef) => {
+    if (cardRef.nativeElement.contains(event.target)) {
+      clickedInside = true;
+    }
+  });
+
+  if (!clickedInside) {
+    this.editingClipId = null;
+    this.selectedClipId = null;
+  }
+}
 
 
 
@@ -229,13 +401,15 @@ export class HistoryPage implements OnInit {
       } catch (error) {
         console.error('Erreur:', error);
 
-        
+
 
       } finally {
         loading.dismiss();
         this.isLoading = false;
       }
+
     }
+
 
     async deleteText(id: string, event: Event) {
       event.stopPropagation();
@@ -289,18 +463,18 @@ export class HistoryPage implements OnInit {
 
     filterClips() {
       this.filteredClips = this.clips.filter(clip => {
-        const matchesSearch = !this.searchTerm || 
-          clip.title?.toLowerCase().includes(this.searchTerm.toLowerCase()) || 
+        const matchesSearch = !this.searchTerm ||
+          clip.title?.toLowerCase().includes(this.searchTerm.toLowerCase()) ||
           clip.content?.toLowerCase().includes(this.searchTerm.toLowerCase());
-    
+
         const matchesCategory = this.selectedCategory === null || clip.categoryId === this.selectedCategory;
-    
+
         const matchesFavorite = !this.showOnlyFavorites || clip.isFavorite;
-    
+
         return matchesSearch && matchesCategory && matchesFavorite;
       });
     }
-    
+
 
 
 
@@ -501,6 +675,65 @@ toggleFavoriteFilter() {
   this.showOnlyFavorites = !this.showOnlyFavorites;
   this.filterClips(); // Refiltre la liste
 }
+//changes for testtting the update for the content:
+selectedClipId: string | null = null;
 
 
+expandClip(clip: any) {
+  clip.isExpanded = true;
+}
+
+collapseClip(clip: any) {
+  clip.isExpanded = false;
+  if (this.editingClipId === clip.id) {
+    this.editingClipId = null;
+  }
+}
+
+enableEditing(clip: any) {
+  clip.isExpanded = true;
+  this.editingClipId = clip.id;
+}
+
+
+
+
+UpdateContent(textId: string, newContent: string) {
+  this.savedTextService.updateTextContent(textId, newContent).subscribe({
+    next: (res) => {
+      console.log("Contenu mis à jour :", res);
+      this.loadSavedTexts(); // Recharger la liste si tu veux voir les changements
+    },
+    error: (err) => {
+      console.error("Erreur lors de la mise à jour :", err);
+    }
+  });
+}
+
+collapseAndClose(clip: any) {
+  clip.isExpanded = false;
+  this.editingClipId = null;
+}
+  // Expansion + mise en mode édition
+  expandAndEdit(clip: any) {
+    clip.isExpanded = true;
+    this.editingClipId = clip.id;
+  }
+expandedClipId: string | null = null;
+
+// Fonction pour étendre le texte complet
+
+ExpandText(clip: any) {
+  clip.isExpanded = true;
+  this.expandedClipId = clip.id;  // On stocke l'ID du clip que l'on souhaite étendre
+}
+
+UnCollapseText(clip: any) {
+  clip.isExpanded = false;}
+
+// Fonction pour permettre l'édition du texte
+startEditing(clip: any) {
+  this.editingClipId = clip.id;  // On passe en mode édition pour ce clip
+  this.expandedClipId = null;  // On cache le texte complet
+}
 }

@@ -129,16 +129,35 @@ getProfile() {
     }
   }
   // ✅ Suppression du token lors de la déconnexion
-  logout() {
     localStorage.removeItem('access_token');
-    localStorage.removeItem('userId');
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('decodedToken');
-    localStorage.removeItem('username');
+  logout(): void {
+    // ✅ Supprimer tous les tokens et données sensibles
+    const itemsToRemove = [
+      'access_token',
+      'authToken',
+      'refresh_token',
+      'decodedToken',
+      'username',
+      'userId',
+      'clip_id',          // Ajouté
+      'clip_contents',    // Ajouté
+      'user',             // Si stocké
+    ];
+
+    itemsToRemove.forEach(item => localStorage.removeItem(item));
+
+    // ✅ Si tu utilises aussi sessionStorage ou Capacitor Storage, pense à les nettoyer :
+    sessionStorage.clear(); // Optionnel
+
+    // ✅ Réinitialiser les observables
     this.isAuthenticated.next(false);
     this.last4Digits.next(null);
+    this.username$.next(null);
+
+    // ✅ Rediriger vers la page d’accueil ou de login
     this.router.navigate(['/acceuil']);
   }
+
 // auth.service.ts
 getUserId(): string | null {
   const token = this.getToken();

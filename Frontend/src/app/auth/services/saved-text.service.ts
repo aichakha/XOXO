@@ -18,7 +18,7 @@ export class SavedTextService {
     if (!token) {
       throw new Error('No token available');
     }
-  
+
     return {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
@@ -35,6 +35,10 @@ export class SavedTextService {
       catchError(this.handleError)
     );
   }
+  updateTextContent(id: string, content: string): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/${id}`, { content }, this.getRequestOptions());
+  }
+
 
   getSavedTexts(userId: string): Observable<any> {
     const options = this.getRequestOptions();
@@ -44,13 +48,13 @@ export class SavedTextService {
     );
   }
 
- 
+
 
 
   deleteSavedText(id: string): Observable<any> {
     const options = this.getRequestOptions(); // Ajout des options d'authentification
     console.log('Delete request options:', options); // Pour débogage
-    
+
     return this.http.delete(`${this.baseUrl}/${id}`, options).pipe(
       catchError(this.handleError)
     );
@@ -70,7 +74,7 @@ export class SavedTextService {
   updateSavedText(id: string, data: { title?: string; content?: string }): Observable<any> {
     const options = this.getRequestOptions(); // Ajoutez cette ligne
     console.log('Update request options:', options); // Pour débogage
-    
+
     return this.http.patch(`${this.baseUrl}/${id}`, data, options).pipe( // Ajoutez options ici
       catchError(this.handleError)
     );
@@ -80,12 +84,12 @@ export class SavedTextService {
     const options = this.getRequestOptions(); // Authentification
     return this.http.patch(`${this.baseUrl}/${id}/favorite`, { isFavorite }, options);
   }
-  
+
   getFavorites(userId: string): Observable<any[]> {
     const options = this.getRequestOptions();
     return this.http.get<any[]>(`${this.baseUrl}/${userId}/favorites`, options);
   }
-  
+
   assignCategoryToText(textId: string, categoryId: string): Observable<any> {
     return this.http.put(`${this.baseUrl}/${textId}/assign-category/${categoryId}`, {}, this.getRequestOptions());
   }

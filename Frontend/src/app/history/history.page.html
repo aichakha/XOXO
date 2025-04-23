@@ -48,10 +48,10 @@
     </div>
     <!-- Category management section -->
     <div *ngIf="isAuthenticated" class="categories-section">
-      <ion-button 
+      <ion-button
   fill="outline"
   size="small"
-  [color]="showOnlyFavorites ? 'danger' : 'medium'" 
+  [color]="showOnlyFavorites ? 'danger' : 'medium'"
   (click)="toggleFavoriteFilter()">
   <ion-icon [name]="showOnlyFavorites ? 'heart' : 'heart-outline'" slot="start"></ion-icon>
   {{ showOnlyFavorites ? 'Only Favorites' : 'All Texts' }}
@@ -122,25 +122,52 @@
           </ion-card-content>
         </ion-card>
         <!-- ✅ Liste des notes -->
-        <ion-card *ngFor="let clip of filteredClips" (click)="selectClip(clip)">
+        <ion-card *ngFor="let clip of filteredClips">
           <ion-card-header>
             <ion-card-title>
               <ion-input
                 [(ngModel)]="clip.title"
                 (ionChange)="updateTitle(clip.id, clip.title)"
-                placeholder="Modifier le titre">
+                placeholder="Modify title">
               </ion-input>
             </ion-card-title>
             <ion-card-subtitle>{{ clip.createdAt | date }}</ion-card-subtitle>
           </ion-card-header>
-          <ion-textarea [(ngModel)]="clip.content"
-          (blur)="updateContent(clip.id, clip.content)"
-          (keyup.enter)="updateContent(clip.id, clip.content)"
-          (input)="autoSave()"
-          autoGrow="true"
-          placeholder="Enter your text"
-          class="editable-textarea">
-          </ion-textarea>
+          <ion-card-content>
+
+            <div class="text-container">
+              <!-- Affichage texte -->
+              <div *ngIf="!clip.isExpanded">
+                {{ clip.content | slice:0:100 }}<span *ngIf="clip.content.length > 100">...</span>
+                <div class="see-more" *ngIf="clip.content.length > 100" (click)="clip.isExpanded = true">
+                  See More ...
+                </div>
+              </div>
+
+              <!-- Mode édition -->
+              <div *ngIf="clip.isExpanded">
+                <ion-textarea
+                  [(ngModel)]="clip.content"
+                  autoGrow="true"
+                  placeholder="Update Text"
+                  (blur)="updateContentAutoSave(clip.id, clip.content)"
+                  (keydown.enter)="updateContentAutoSave(clip.id, clip.content)">
+                </ion-textarea>
+
+                <div class="see-less" (click)="clip.isExpanded = false">
+                  See Less ...
+                </div>
+              </div>
+            </div>
+
+
+          </ion-card-content>
+
+
+
+
+
+
            <!-- Ajoutez le sélecteur de catégorie ICI -->
     <ion-item lines="none" class="category-selector">
       <ion-label>Catégorie</ion-label>
@@ -170,17 +197,6 @@
 
         </ion-card>
       </div>
-
-      <!-- ✅ Panneau latéral des détails
-      <div class="note-details" *ngIf="selectedClip">
-        <h2>{{ selectedClip.name }}</h2>
-        <h4>{{ selectedClip.username }}</h4>
-        <p>{{ selectedClip.text }}</p>
-        <small>{{ selectedClip.date }}</small>
-        <ion-button (click)="closeDetails()">Close</ion-button>
-      </div>-->
-
-
     </div>
 
     <!-- ✅ Si l'utilisateur n'est PAS connecté -->
@@ -188,17 +204,25 @@
       <div class="content-container">
         <!-- ✅ Clip démo -->
         <div class="clips-container">
-          <ion-card>
+          <ion-card *ngFor="let clip of filteredClips" (click)="toggleClip(clip)">
             <ion-card-header>
-              <ion-card-title>Sample Clip</ion-card-title>
-              <ion-card-subtitle>Guest User</ion-card-subtitle>
+              <ion-card-title>{{ clip.title }}</ion-card-title>
             </ion-card-header>
             <ion-card-content>
-              History where you can store your transcribed, summarized and translated text...
-              Don't hesitate to start using our app.
+              <div
+                [@expandCollapse]="selectedClip?.id === clip.id ? 'expanded' : 'collapsed'"
+                class="animated-content"
+              >
+                {{ clip.content }}
+              </div>
             </ion-card-content>
+
+            <ion-button fill="clear" color="danger" size="small" (click)="deleteText(clip.id, $event)">
+              <ion-icon name="trash-outline"></ion-icon>
+            </ion-button>
           </ion-card>
         </div>
+
       </div>
     </ng-template>
   </ion-content>
