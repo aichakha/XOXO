@@ -27,6 +27,7 @@ export class ResetPasswordPage {
   constructor(private authService: AuthService, private route: ActivatedRoute, private router: Router) {
 
   }
+  
   ngOnInit() {
     this.route.queryParams.subscribe(params => {
       this.email = params['email'];

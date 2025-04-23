@@ -129,8 +129,9 @@ getProfile() {
     }
   }
   // ✅ Suppression du token lors de la déconnexion
-    localStorage.removeItem('access_token');
+    
   logout(): void {
+    localStorage.removeItem('access_token');
     // ✅ Supprimer tous les tokens et données sensibles
     const itemsToRemove = [
       'access_token',
