@@ -129,7 +129,7 @@ getProfile() {
     }
   }
   // ✅ Suppression du token lors de la déconnexion
-    localStorage.removeItem('access_token');
+    
   logout(): void {
     // ✅ Supprimer tous les tokens et données sensibles
     const itemsToRemove = [

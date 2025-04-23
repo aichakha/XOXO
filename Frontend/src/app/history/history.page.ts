@@ -9,7 +9,9 @@ import { FormGroup, FormBuilder } from '@angular/forms';
 import { debounceTime } from 'rxjs/operators';
 import { Subject ,firstValueFrom} from 'rxjs';
 import { Component, OnInit, ElementRef, HostListener, ViewChildren, QueryList } from '@angular/core';
-
+import { PopoverMenuComponent } from '../components/popover-menu.component/popover-menu.component';
+import { HttpClient } from '@angular/common/http';
+import { AlertController, PopoverController } from '@ionic/angular';
 import { ClickOutsideDirective } from '../directives/click-outside.directive';
 import {
   trigger,
@@ -57,9 +59,12 @@ interface Clip {
 
 
 export class HistoryPage implements OnInit {
+  loadingMessage: string = 'Loading...';
   searchTerm: string = '';
   userName: string = '';
   clips: any[] = [];
+  transcribedText: string = '';
+  translatedText: string = '';
   filteredClips = [...this.clips];
   isLoading = false;
   form = { title: '', content: '' };
@@ -78,7 +83,10 @@ export class HistoryPage implements OnInit {
     private savedTextService: SavedTextService,
     private loadingCtrl: LoadingController,
     private toastCtrl: ToastController,
-    private fb: FormBuilder) {}
+    private fb: FormBuilder,
+    private http: HttpClient, // Add this
+    private alertController: AlertController, // Add this
+    private popoverCtrl: PopoverController) {}
   uploadedFileName: string = '';
   expandedClipIds: Set<string> = new Set();
   editingClipId: string | null = null;
@@ -735,5 +743,117 @@ UnCollapseText(clip: any) {
 startEditing(clip: any) {
   this.editingClipId = clip.id;  // On passe en mode édition pour ce clip
   this.expandedClipId = null;  // On cache le texte complet
+}
+// Email method
+sendEmail(to: string, subject: string) {
+  console.log('Texte à envoyer:', this.transcribedText); // 👈 vérifie ici qu'il n'est pas vide
+
+  const payload = {
+    to,
+    subject,
+    text: this.transcribedText
+  };
+
+  this.http.post('http://localhost:3000/mail/send', payload).subscribe({
+    next: () => this.presentToast('Email envoyé !'),
+    error: err => this.presentToast('Erreur envoi mail', 'danger')
+  });
+}
+
+// Loading method
+async PresentLoading() {
+  const loading = await this.loadingCtrl.create({
+    message: this.loadingMessage,  // ✅ Utilisation du message dynamique
+    spinner: 'crescent',  // ✅ Spinner Ionic
+    backdropDismiss: false,  // ✅ Empêche la fermeture en cliquant dehors
+  });
+
+  await loading.present();  // ✅ Affichage du loader
+  return loading;  // ✅ Retourne l'instance pour pouvoir fermer avec `loading.dismiss()`
+}
+
+// Popover method
+async PresentPopover() {
+  const popover = await this.popoverCtrl.create({
+    component: PopoverMenuComponent,
+    componentProps: {
+      transcribedText: this.transcribedText // 👈 Assure-toi que cette variable contient le bon texte
+    },
+    translucent: true,
+  });
+
+  await popover.present();
+}
+
+// Modal method
+openModal() {
+  const payload = {
+    type: this.translatedText ? 'translation' : 'transcription',
+    text: this.translatedText || this.transcribedText,
+  };
+
+  this.http.post<any>('http://localhost:3000/text/generate-url', payload).subscribe(
+    (res) => {
+      const shareableUrl = res.url;
+      // Affiche une alerte avec l'URL générée
+      this.showAlert('Shareable Link', shareableUrl);
+    },
+    (error) => {
+      console.error('Erreur lors de la génération du lien', error);
+      this.showAlert('Erreur', 'Impossible de générer le lien.');
+    }
+  );
+}
+
+// Alert method
+async showAlert(title: string, message: string) {
+  const alert = await this.alertController.create({
+    header: title,
+    message: `${message}`,
+    buttons: [
+      {
+        text: 'Copy',
+        handler: () => {
+          navigator.clipboard.writeText(message);
+        },
+      },
+      {
+        text: 'OK',
+        role: 'cancel'
+      }
+    ],
+    mode: 'ios'
+  });
+  await alert.present();
+}
+setTranscribedText(text: string) {
+  this.transcribedText = text;
+}
+
+setTranslatedText(text: string) {
+  this.translatedText = text;
+}
+async shareTextOrGenerateLink(text: string) {
+  if (!text) {
+    this.presentToast('No text to share', 'danger');
+    return;
+  }
+
+  // Si l'API Web Share est disponible (mobile)
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: 'Text from Recapify',
+        text: text,
+      });
+    } catch (err) {
+      console.log('Share cancelled', err);
+    }
+  }
+  // Fallback pour desktop ou navigateurs sans support
+  else {
+    this.transcribedText = text; // Stocke le texte pour openModal()
+    this.openModal(); // Ouvre une popup avec option de copie
+  }
 }
 }
