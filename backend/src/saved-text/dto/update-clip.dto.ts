@@ -9,6 +9,10 @@ export class UpdateClipDto extends PartialType(CreateSavedTextDto) {
   isFavorite?: boolean;
   
   @IsOptional()
+  @IsBoolean()
+  isPinned?: boolean;
+
+  @IsOptional()
   @IsString()
   title?: string; 
   

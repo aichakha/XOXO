@@ -27,15 +27,17 @@ model User {
 }
 
 model SavedText {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId      String
+
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  userId      String     
   categoryId  String?    @db.ObjectId
   title       String?
   content     String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  isFavorite  Boolean  @default(false) 
-  user        User?    @relation(fields: [userId], references: [id])
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  isFavorite  Boolean    @default(false) 
+  isPinned    Boolean    @default(false)  
+  user        User?      @relation(fields: [userId], references: [id])
   category    Category?  @relation(fields: [categoryId], references: [id])
   @@index([userId])
   @@index([categoryId])
@@ -44,10 +46,8 @@ model SavedText {
 model Category {
   id        String      @id @default(auto()) @map("_id") @db.ObjectId
   name      String
-  userId    String
-
+  userId    String    
   user      User        @relation(fields: [userId], references: [id])
   texts     SavedText[]
-
   @@index([userId])
 }

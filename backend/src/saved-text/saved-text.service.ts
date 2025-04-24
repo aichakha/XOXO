@@ -1,6 +1,8 @@
+import { TestingModule } from '@nestjs/testing';
 import { Injectable,NotFoundException  } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateClipDto } from './dto/update-clip.dto';
+import { tagclipDto } from './dto/Tag-clip.dto';
 
 
 @Injectable()
@@ -75,15 +77,15 @@ async updateSavedText(id: string, updateData: UpdateClipDto) {
     throw new Error(`Failed to update saved text: ${error.message}`);
   }
 }
-
-  
-
-
-  
+ 
   async getSavedTexts(userId: string) {
+    console.log('📌 Getting saved texts for user:', userId); 
     const texts = await this.prisma.savedText.findMany({
-      where: { userId },
-      orderBy: { createdAt: 'desc' },
+      where: { userId  },
+      orderBy: [
+        { isPinned: 'desc' },     // 🔝 les textes épinglés en haut
+        { createdAt: 'desc' }
+      ],
     });
 
     if (!texts || texts.length === 0) {
@@ -111,15 +113,13 @@ async updateSavedText(id: string, updateData: UpdateClipDto) {
       data: { isFavorite },
     });
   }
-  
-  
-  
+
   async getFavorites(userId: string) {
     return this.prisma.savedText.findMany({
       where: { userId, isFavorite: true },
     });
   }
-
+  
   // ✅ Associer à une catégorie
   async assignCategoryToText(textId: string, categoryId: string) {
     return this.prisma.savedText.update({
@@ -139,6 +139,45 @@ async updateSavedText(id: string, updateData: UpdateClipDto) {
   // ✅ Facultatif : changer de catégorie = assigner une autre
   async changeCategory(textId: string, newCategoryId: string) {
     return this.assignCategoryToText(textId, newCategoryId);
-  }  
-    
+  } 
+  
+  // ✅ Épingler ou désépingler un texte
+  async togglePinText(id: string, dto: tagclipDto) {
+    return this.prisma.savedText.update({
+      where: { id },
+      data: { isPinned: dto.isPinned },
+    });
+  }
+
+  // 📌 Récupérer tous les textes épinglés pour un utilisateur
+async getPinned(userId: string) {
+  console.log('Fetching pinned texts for user:', userId);
+  const pinnedTexts = await this.prisma.savedText.findMany({
+    where: { userId, isPinned: true },
+  });
+  console.log('Pinned texts:', pinnedTexts);
+  return pinnedTexts;
+}
+
+  async getUnpinned(userId: string) {
+    return this.prisma.savedText.findMany({ 
+      where: { userId, isPinned: false },
+    });
+  }
+  
+  //get text by id
+  async getAllTextsByUser(userId: string) {
+  const results = await this.prisma.savedText.findMany({
+    where: { userId },
+    orderBy: { createdAt: 'desc' },
+  });
+
+  if (!results || results.length === 0) {
+    throw new NotFoundException(`this user has no texts ${userId}`);
+  }
+
+  return results;
+}
+
+
 }

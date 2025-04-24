@@ -118,4 +118,19 @@ export class SavedTextService {
   deleteCategory(id: string): Observable<any> {
     return this.http.delete(`${this.categoryUrl}/${id}`, this.getRequestOptions());
   }
+  //for pinned
+   // 🟢 Récupérer tous les textes
+   getAllTexts(userId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/${userId}`,this.getRequestOptions());
+  }
+
+  // 🔶 Récupérer les textes épinglés
+  getPinnedTexts(userId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/pinned/${userId}`,this.getRequestOptions());
+  }
+
+  // 🔁 Changer l'état "pinned"
+  updatePinStatus(id: string, isPinned: boolean): Observable<any> {
+    return this.http.patch(`${this.baseUrl}/pin/${id}`, { isPinned },this.getRequestOptions());
+  }
 }
