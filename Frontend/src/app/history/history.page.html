@@ -56,6 +56,18 @@
   <ion-icon [name]="showOnlyFavorites ? 'heart' : 'heart-outline'" slot="start"></ion-icon>
   {{ showOnlyFavorites ? 'Only Favorites' : 'All Texts' }}
 </ion-button>
+    <!-- Pinned texts -->
+<ion-button
+        fill="outline"
+        size="small"
+        [color]="showOnlyPinned ? 'secondary' : 'medium'"
+        (click)="togglePinnedFilter()">
+        <ion-icon
+          [name]="showOnlyPinned ? 'pin' : 'pin-outline'"
+          slot="start">
+        </ion-icon>
+        {{ showOnlyPinned ? 'Only Pinned' : 'All Texts' }}
+      </ion-button>
 
       <ion-chip (click)="filterByCategory(null)" [outline]="selectedCategory !== null">
         All
@@ -187,6 +199,13 @@
               <ion-icon
                 [name]="clip.isFavorite ? 'heart' : 'heart-outline'"
                 [color]="clip.isFavorite ? 'danger' : 'medium'"
+                style="font-size: 24px;">
+              </ion-icon>
+            </ion-button>
+            <ion-button fill="clear" size="small" (click)="togglePin(clip); $event.stopPropagation()">
+              <ion-icon
+                [name]="clip.isPinned ? 'pin' : 'pin'"
+                [color]="clip.isPinned ? 'purple' : 'medium'"
                 style="font-size: 24px;">
               </ion-icon>
             </ion-button>

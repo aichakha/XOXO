@@ -27,6 +27,7 @@ interface Clip {
   content?: string;
   createdAt?: string;
   isFavorite?: boolean;
+  isPinned?: boolean;
   userId: string;
 }
 @Component({
@@ -102,6 +103,7 @@ export class HistoryPage implements OnInit {
     this.authService.username$.subscribe(digits => this.username = digits);
     this.username = localStorage.getItem('username');
     const user = localStorage.getItem('user');
+    const userId = this.authService.getUserId();
     if (user) {
       this.userName = JSON.parse(user).name;
     }
@@ -854,6 +856,53 @@ async shareTextOrGenerateLink(text: string) {
   else {
     this.transcribedText = text; // Stocke le texte pour openModal()
     this.openModal(); // Ouvre une popup avec option de copie
+  }
+}
+//épingler un texte:
+texts: any[] = [];
+showOnlyPinned: boolean = false;
+applyFilters(){
+  let filtered = [...this.clips];
+  if (this.showOnlyPinned) {
+    filtered = filtered.filter(clip => clip.isPinned);
+  }
+  this.filteredClips = filtered;
+}
+togglePinnedFilter() {
+  this.showOnlyPinned = !this.showOnlyPinned;
+  this.applyFilters();
+}
+async togglePin(clip: Clip) {
+  try {
+    // Appel au backend pour mettre à jour l'état "pinned"
+    const response = await lastValueFrom(
+      this.savedTextService.updatePinStatus(clip.id, !clip.isPinned)
+    );
+
+    // Vérifie que la réponse contient bien la nouvelle valeur (ajuste selon ton backend)
+    const updatedIsPinned = response?.isPinned ?? !clip.isPinned;
+
+    // Mise à jour locale
+    this.clips = this.clips.map(c =>
+      c.id === clip.id ? { ...c, isPinned: updatedIsPinned } : c
+    );
+    this.filteredClips = [...this.clips];
+
+    // Affiche un toast
+    const toast = await this.toastCtrl.create({
+      message: updatedIsPinned ? 'Texte épinglé 📌' : 'Texte désépinglé',
+      duration: 2000,
+      color: updatedIsPinned ? 'success' : 'danger'
+    });
+    await toast.present();
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour de l\'épinglage:', error);
+    const toast = await this.toastCtrl.create({
+      message: 'Erreur lors de la mise à jour de l\'épinglage',
+      duration: 2000,
+      color: 'danger'
+    });
+    await toast.present();
   }
 }
 }
