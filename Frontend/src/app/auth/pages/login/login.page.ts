@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { IonicModule } from '@ionic/angular';
-
+import { NavController } from '@ionic/angular';
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
@@ -23,8 +23,13 @@ export class LoginPage {
   rememberMe = false; // ✅ Ajout de rememberMe
   errorMessage = '';
   isLoading = false; // ✅ Ajout de isLoading
+  navCtrl: any;
 
   constructor(private authService: AuthService, private router: Router) {}
+  
+  goHome() {
+    this.navCtrl.navigateRoot('/home'); // Assurez-vous que le chemin est correct
+  }
   onLogin() {
     // Simuler une connexion API (remplace par ton appel réel à l'API)
     const mockApiResponse = {
