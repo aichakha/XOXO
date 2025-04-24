@@ -20,7 +20,7 @@ import {
   animate,
   transition,
 } from '@angular/animations';
-
+import { jsPDF } from 'jspdf';
 interface Clip {
   id: string;
   title: string;
@@ -905,4 +905,43 @@ async togglePin(clip: Clip) {
     await toast.present();
   }
 }
+selectAction(action: string, clip?: any) {
+  if (action === 'download' && clip) {
+    this.generatePDF(clip);
+  }
+}
+
+generatePDF(clip: any) {
+  const doc = new jsPDF();
+
+  const title = 'Résumé de la vidéo';
+  const date = new Date(clip.createdAt).toLocaleString(); // date formatée
+  const content = clip.content;
+
+  // Titre
+  doc.setFontSize(16);
+  doc.setFont('helvetica', 'bold');
+  doc.text(title, 10, 20);
+
+  // Date
+  doc.setFontSize(10);
+  doc.setFont('helvetica', 'normal');
+  doc.text(`Date : ${date}`, 10, 30);
+
+  // Contenu principal
+  doc.setFontSize(12);
+  const marginLeft = 10;
+  const marginTop = 40;
+  const maxWidth = 180; // largeur max du texte (pour retour à la ligne)
+  const lineHeight = 8;
+
+  const lines = doc.splitTextToSize(content, maxWidth);
+  lines.forEach((line: string, index: number) => {
+    doc.text(line, marginLeft, marginTop + index * lineHeight);
+  });
+
+  // Téléchargement
+  doc.save('resume-video.pdf');
+}
+
 }
