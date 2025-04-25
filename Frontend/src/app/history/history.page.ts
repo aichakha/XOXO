@@ -914,25 +914,19 @@ selectAction(action: string, clip?: any) {
 generatePDF(clip: any) {
   const doc = new jsPDF();
 
-  const title = 'Résumé de la vidéo';
-  const date = new Date(clip.createdAt).toLocaleString(); // date formatée
+  const date = new Date(clip.createdAt).toLocaleString(); // Date formatée
   const content = clip.content;
 
-  // Titre
-  doc.setFontSize(16);
-  doc.setFont('helvetica', 'bold');
-  doc.text(title, 10, 20);
-
-  // Date
+  // Date (en haut)
   doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
-  doc.text(`Date : ${date}`, 10, 30);
+  doc.text(`Date : ${date}`, 10, 20);
 
   // Contenu principal
   doc.setFontSize(12);
   const marginLeft = 10;
-  const marginTop = 40;
-  const maxWidth = 180; // largeur max du texte (pour retour à la ligne)
+  const marginTop = 30; // commence un peu plus bas après la date
+  const maxWidth = 180;
   const lineHeight = 8;
 
   const lines = doc.splitTextToSize(content, maxWidth);
@@ -943,5 +937,4 @@ generatePDF(clip: any) {
   // Téléchargement
   doc.save('resume-video.pdf');
 }
-
 }
