@@ -872,6 +872,35 @@ togglePinnedFilter() {
   this.showOnlyPinned = !this.showOnlyPinned;
   this.applyFilters();
 }
+ionViewWillEnter() {
+  this.loadSavedTexts();
+}
+FilterClips() {
+  const search = this.searchTerm.toLowerCase();
+  this.filteredClips = this.clips
+    .filter(clip =>
+      clip.title.toLowerCase().includes(search) ||
+      clip.content.toLowerCase().includes(search)
+    )
+    // 🔁 TRIER avec pinned d'abord
+    .sort((a, b) => {
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(); // ensuite trier par date
+    });
+
+  if (this.showOnlyFavorites) {
+    this.filteredClips = this.filteredClips.filter(clip => clip.isFavorite);
+  }
+
+  if (this.showOnlyPinned) {
+    this.filteredClips = this.filteredClips.filter(clip => clip.isPinned);
+  }
+
+  if (this.selectedCategory !== null) {
+    this.filteredClips = this.filteredClips.filter(clip => clip.categoryId === this.selectedCategory);
+  }
+}
 async togglePin(clip: Clip) {
   try {
     // Appel au backend pour mettre à jour l'état "pinned"
@@ -879,16 +908,17 @@ async togglePin(clip: Clip) {
       this.savedTextService.updatePinStatus(clip.id, !clip.isPinned)
     );
 
-    // Vérifie que la réponse contient bien la nouvelle valeur (ajuste selon ton backend)
     const updatedIsPinned = response?.isPinned ?? !clip.isPinned;
 
     // Mise à jour locale
     this.clips = this.clips.map(c =>
       c.id === clip.id ? { ...c, isPinned: updatedIsPinned } : c
     );
-    this.filteredClips = [...this.clips];
 
-    // Affiche un toast
+    // 🔁 Réappliquer le tri, les filtres, etc.
+    this.FilterClips();
+
+    // Toast de confirmation
     const toast = await this.toastCtrl.create({
       message: updatedIsPinned ? 'Texte épinglé 📌' : 'Texte désépinglé',
       duration: 2000,

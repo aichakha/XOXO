@@ -48,26 +48,21 @@
     </div>
     <!-- Category management section -->
     <div *ngIf="isAuthenticated" class="categories-section">
-      <ion-button
-  fill="outline"
-  size="small"
-  [color]="showOnlyFavorites ? 'danger' : 'medium'"
-  (click)="toggleFavoriteFilter()">
-  <ion-icon [name]="showOnlyFavorites ? 'heart' : 'heart-outline'" slot="start"></ion-icon>
-  {{ showOnlyFavorites ? 'Only Favorites' : 'All Texts' }}
-</ion-button>
-    <!-- Pinned texts -->
-<ion-button
-        fill="outline"
-        size="small"
-        [color]="showOnlyPinned ? 'secondary' : 'medium'"
-        (click)="togglePinnedFilter()">
+      <ion-chip class="category-chip" (click)="toggleFavoriteFilter()">
+        <ion-icon
+          [name]="showOnlyFavorites ? 'heart' : 'heart-outline'"
+          [color]="showOnlyFavorites ? 'danger' : 'medium'">
+        </ion-icon>
+        {{ showOnlyFavorites ? 'Only Favorites' : 'All Texts' }}
+      </ion-chip>
+
+      <ion-chip class="category-chip" (click)="togglePinnedFilter()">
         <ion-icon
           [name]="showOnlyPinned ? 'pin' : 'pin-outline'"
-          slot="start">
+          [color]="showOnlyPinned ? 'secondary' : 'medium'">
         </ion-icon>
         {{ showOnlyPinned ? 'Only Pinned' : 'All Texts' }}
-      </ion-button>
+      </ion-chip>
 
       <ion-chip (click)="filterByCategory(null)" [outline]="selectedCategory !== null">
         All
@@ -195,7 +190,7 @@
     </ion-item>
     <ion-footer class="ion-padding-horizontal" style="display: flex; align-items: center; justify-content: space-between;">
       <small>{{ clip.createdAt | date:'medium' }}</small>
-    
+
       <div style="display: flex; align-items: center; gap: 8px;">
         <ion-button fill="clear" size="small" (click)="toggleFavorite(clip); $event.stopPropagation()">
           <ion-icon
@@ -204,7 +199,7 @@
             style="font-size: 24px;">
           </ion-icon>
         </ion-button>
-    
+
         <ion-button fill="clear" size="small" (click)="togglePin(clip); $event.stopPropagation()">
           <ion-icon
             [name]="clip.isPinned ? 'pin' : 'pin'"
@@ -212,22 +207,22 @@
             style="font-size: 24px;">
           </ion-icon>
         </ion-button>
-    
+
         <ion-button fill="clear" size="small" (click)="shareTextOrGenerateLink(clip.content); $event.stopPropagation()">
           <ion-icon name="share-social-outline" style="font-size: 24px; color: blueviolet;"></ion-icon>
         </ion-button>
-    
+
         <ion-button fill="clear" size="small" (click)="selectAction('download', clip); $event.stopPropagation()">
           <ion-icon name="download-outline" style="font-size: 24px; color: blueviolet;"></ion-icon>
         </ion-button>
-        
-    
+
+
         <ion-button fill="clear" size="small" color="danger" (click)="deleteText(clip.id, $event)">
           <ion-icon name="trash" style="font-size: 24px;"></ion-icon>
         </ion-button>
       </div>
     </ion-footer>
-    
+
 
         </ion-card>
       </div>
