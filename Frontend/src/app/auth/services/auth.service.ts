@@ -18,8 +18,11 @@ export class AuthService {
   isAuthenticated$ = this.isAuthenticated.asObservable();
   private last4Digits = new BehaviorSubject<string | null>(null);
   username$ = new BehaviorSubject<string | null>(null);
-
-  constructor(private http: HttpClient,private router: Router) {}
+  private currentUserSubject = new BehaviorSubject<any>(null);
+  constructor(private http: HttpClient,private router: Router) {
+    const storedUser = localStorage.getItem('user');
+    this.currentUserSubject.next(storedUser ? JSON.parse(storedUser) : null);
+  }
 
   signup(name: string, email: string, password: string) {
     return this.http.post(`${this.apiUrl}/signup`, { name, email, password }).pipe(
@@ -129,34 +132,34 @@ getProfile() {
     }
   }
   // ✅ Suppression du token lors de la déconnexion
-    
-  logout(): void {
-    // ✅ Supprimer tous les tokens et données sensibles
-    const itemsToRemove = [
-      'access_token',
-      'authToken',
-      'refresh_token',
-      'decodedToken',
-      'username',
-      'userId',
-      'clip_id',          // Ajouté
-      'clip_contents',    // Ajouté
-      'user',             // Si stocké
-    ];
 
-    itemsToRemove.forEach(item => localStorage.removeItem(item));
+/*logout(): void {
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('username');
+  localStorage.removeItem('userId');
+  localStorage.removeItem('decodedToken');
+  this.isAuthenticated.next(false);
+  this.router.navigate(['/login']);
+}*/
+//test logout to avoid the history confusion
 
-    // ✅ Si tu utilises aussi sessionStorage ou Capacitor Storage, pense à les nettoyer :
-    sessionStorage.clear(); // Optionnel
+setCurrentUser(user: any) {
+  localStorage.setItem('user', JSON.stringify(user));
+  this.currentUserSubject.next(user);
+}
 
-    // ✅ Réinitialiser les observables
-    this.isAuthenticated.next(false);
-    this.last4Digits.next(null);
-    this.username$.next(null);
+logout() {
+  localStorage.removeItem('user');
+  this.currentUserSubject.next(null);
+}
 
-    // ✅ Rediriger vers la page d’accueil ou de login
-    this.router.navigate(['/acceuil']);
-  }
+getCurrentUser() {
+  return this.currentUserSubject.value;
+}
+
+getCurrentUserObservable() {
+  return this.currentUserSubject.asObservable();
+}
 
 // auth.service.ts
 getUserId(): string | null {

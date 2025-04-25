@@ -150,15 +150,18 @@ async updateSavedText(id: string, updateData: UpdateClipDto) {
   }
 
   // 📌 Récupérer tous les textes épinglés pour un utilisateur
-async getPinned(userId: string) {
-  console.log('Fetching pinned texts for user:', userId);
-  const pinnedTexts = await this.prisma.savedText.findMany({
-    where: { userId, isPinned: true },
-  });
-  console.log('Pinned texts:', pinnedTexts);
-  return pinnedTexts;
-}
-
+  async getPinned(userId: string) {
+    console.log('Fetching pinned texts for user:', userId);
+    const pinnedTexts = await this.prisma.savedText.findMany({
+      where: { userId, isPinned: true },
+      orderBy: [
+        { isPinned: 'desc' },  // Affiche les textes épinglés d'abord
+        { createdAt: 'desc' },],
+    });
+    console.log('Pinned texts:', pinnedTexts);
+    return pinnedTexts;
+  }
+  
   async getUnpinned(userId: string) {
     return this.prisma.savedText.findMany({ 
       where: { userId, isPinned: false },

@@ -8,12 +8,12 @@ import { AuthInterceptor } from './app/auth/auth.interceptor';
 import { appProviders } from './app/providers';
 import { addIcons } from 'ionicons';
 import { heart, menu,heartOutline,trash,
-  shareSocialOutline,shareOutline,mailOutline,pin,downloadOutline,linkOutline ,copyOutline, menuOutline,languageOutline,logoUsd,logoEuro,globeOutline,earthOutline,documentOutline,documentTextOutline,expandOutline,contractOutline,ellipsisHorizontalOutline,createOutline,saveOutline,
+  shareSocialOutline,shareOutline,mailOutline,pin,pinOutline,downloadOutline,linkOutline ,copyOutline, menuOutline,languageOutline,logoUsd,logoEuro,globeOutline,earthOutline,documentOutline,documentTextOutline,expandOutline,contractOutline,ellipsisHorizontalOutline,createOutline,saveOutline,
 } from 'ionicons/icons';
 
 // ✅ Enregistrement des icônes
 addIcons({
-  heart,pin,
+  heart,pin,pinOutline,
   trash ,shareSocialOutline,
   menu,mailOutline,
   linkOutline,
