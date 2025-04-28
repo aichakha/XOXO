@@ -24,7 +24,7 @@ app.add_middleware(
 )
 
 # 🚀 Charger les modèles
-model = whisper.load_model("base")
+model = whisper.load_model("large")
 
 # 📌 Initialiser T5 pour le résumé
 class SummarizerT5:
