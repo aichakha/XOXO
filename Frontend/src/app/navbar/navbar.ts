@@ -6,15 +6,14 @@ import { IonicModule } from '@ionic/angular';
 import { AlertController } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/services/auth.service';
-import { Navbar } from "../navbar/navbar";
 @Component({
-  selector: 'app-contact',
-  templateUrl: './contact.page.html',
-  styleUrls: ['./contact.page.scss'],
+  selector: 'app-navbar',
+  templateUrl: './navbar.html',
+  styleUrls: ['./navbar.scss'],
   standalone: true,
-  imports: [IonicModule, CommonModule, FormsModule, Navbar]
+  imports: [IonicModule, CommonModule, FormsModule]
 })
-export class ContactPage implements OnInit {
+export class Navbar implements OnInit {
 
 
 
@@ -93,7 +92,7 @@ export class ContactPage implements OnInit {
     this.username = null;
     this.router.navigate(['/']); // Redirection après déconnexion
     this.showLogout = false; // Cache avant action
-    ;
+    
 
   }
   getFirstLetter(name: string | undefined | null): string {

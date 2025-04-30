@@ -14,6 +14,7 @@ import { firstValueFrom } from 'rxjs';
 import { SavedTextService } from '../auth/services/saved-text.service';
 import { PopoverMenuComponent } from '../components/popover-menu.component/popover-menu.component';
 import { text } from 'ionicons/icons';
+import { Navbar } from "../navbar/navbar";
 @Component({
 
   selector: 'app-view',
@@ -21,8 +22,9 @@ import { text } from 'ionicons/icons';
   imports: [
     CommonModule,
     FormsModule,
-    IonicModule
-  ],
+    IonicModule,
+    Navbar
+],
   templateUrl: './view.page.html',
   styleUrls: ['./view.page.scss'],
 })

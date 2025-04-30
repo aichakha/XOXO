@@ -1,39 +1,5 @@
 <div class="container">
-  <ion-header class="navbar">
-    <div class="logo">
-      <div id="logo">
-        <ion-buttons slot="start">
-          <a (click)="Home()">
-            <ion-img src="assets/icon/Logo2.png" style="height: 50px; width: auto;"></ion-img>
-          </a>
-        </ion-buttons>
-      </div>
-    </div>
-    <nav>
-      <ul>
-        <li><a (click)="isAuthenticated ? Homeuser() : Home()">Home</a></li>
-        <li><a (click)="History()">History</a></li>
-        <li><a (click)="Contact()">How It Works</a></li>
-      </ul>
-    </nav>
-    <div class="auth-buttons">
-      <ng-container *ngIf="isAuthenticated; else loggedOut">
-        <div class="user-avatar" (click)="showLogout = !showLogout">
-          {{ getFirstLetter(username) }}
-        </div>
-        
-        <ion-button *ngIf="showLogout && isAuthenticated" (click)="logout()" class="logout-button">
-          LOGOUT
-        </ion-button>
-      </ng-container>
-
-      <ng-template #loggedOut>
-        <button class="sign-in" (click)="login()">LOG IN</button>
-        <button class="join-now" (click)="signup()">JOIN NOW</button>
-      </ng-template>
-    </div>
-
-  </ion-header>
+  <app-navbar></app-navbar>
 
   <ion-content [fullscreen]="true">
     <div class="steps-container">

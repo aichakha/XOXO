@@ -1,34 +1,4 @@
-<ion-header>
-  <ion-toolbar class="navbar-custom">
-    <!-- Logo -->
-    <ion-buttons slot="start">
-      <ion-button (click)="Homeuser()">
-        <ion-img src="assets/icon/Logo2.png" style="height: 50px; width: auto;"></ion-img>
-      </ion-button>
-    </ion-buttons>
-
-    <!-- Navigation -->
-    <div class="navbar-center">
-      <ion-buttons class="nav-links">
-        <ion-button (click)="isAuthenticated ? Homeuser() : Home()">Home</ion-button>
-        <ion-button (click)="History()">History</ion-button>
-        <ion-button (click)="Contact()">How it Works</ion-button>
-      </ion-buttons>
-    </div>
-
-    <!-- Right: Logout + Welcome -->
-     <!-- Right: Logout + Welcome -->
-   <ion-buttons slot="end" class="navbar-right">
-    <div class="user-avatar" (click)="showLogout = !showLogout">
-      {{ getFirstLetter(username) }}
-    </div>
-   
-  </ion-buttons>
-</ion-toolbar>
-</ion-header>
-<ion-button *ngIf="showLogout && isAuthenticated" (click)="logout()" class="logout-button">
-  LOGOUT
-</ion-button>
+<app-navbar></app-navbar>
 
 <ion-content class="ion-padding">
   <!-- Positionnement relatif pour le dropdown -->

@@ -7,7 +7,8 @@ import { Router } from '@angular/router';
 import { IonRouterOutlet } from '@ionic/angular';
 import { IonicModule, AlertController, LoadingController } from '@ionic/angular';
 
-import { HttpClient, HttpHeaders } from '@angular/common/http'; // Import HttpClient
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Navbar } from "../navbar/navbar"; // Import HttpClient
 
 @Component({
   selector: 'app-acceuil-user',
@@ -15,10 +16,11 @@ import { HttpClient, HttpHeaders } from '@angular/common/http'; // Import HttpCl
   styleUrls: ['./acceuil-user.page.scss'],
   standalone: true,
   imports: [
-      CommonModule,
-      FormsModule,
-      IonicModule
-    ]
+    CommonModule,
+    FormsModule,
+    IonicModule,
+    Navbar
+]
 
 })
 export class AcceuilUserPage implements OnInit,AfterViewInit {

@@ -10,6 +10,7 @@ import { Observable, Subscribable } from 'rxjs';
 import { AlertController } from '@ionic/angular';
 import { ModalController } from '@ionic/angular';
 import { lastValueFrom } from 'rxjs';
+import { Navbar } from "../navbar/navbar";
 
 @Component({
   selector: 'app-acceuil',
@@ -17,8 +18,9 @@ import { lastValueFrom } from 'rxjs';
   imports: [
     CommonModule,
     FormsModule,
-    IonicModule
-  ],
+    IonicModule,
+    Navbar
+],
   templateUrl: './acceuil.page.html',
   styleUrls: ['./acceuil.page.scss'],
 })

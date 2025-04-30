@@ -21,6 +21,7 @@ import {
   transition,
 } from '@angular/animations';
 import { jsPDF } from 'jspdf';
+import { Navbar } from "../navbar/navbar";
 interface Clip {
   id: string;
   title: string;
@@ -36,8 +37,7 @@ interface Clip {
   imports: [ClickOutsideDirective,
     CommonModule,
     FormsModule,
-    IonicModule
-  ],
+    IonicModule, Navbar],
 
   templateUrl: './history.page.html',
   styleUrls: ['./history.page.scss'],

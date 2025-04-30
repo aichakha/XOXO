@@ -9,6 +9,7 @@ ion-content {
 .main-content {
   position: relative;
   flex: 1;
+  padding-top: 70px;
 }
 
 .navbar-center {
@@ -127,8 +128,7 @@ ion-item:hover {
 
 ion-footer {
   background: #f8f4ff;
-  border-top: 1px solid #dcd4ff;
-  padding: 10px 0;
+  border-top: 1px solid #dcd4ff; 
 }
 
 ion-title.ion-text-center {

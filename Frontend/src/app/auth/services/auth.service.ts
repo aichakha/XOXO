@@ -149,7 +149,7 @@ setCurrentUser(user: any) {
 }
 
 logout() {
-  localStorage.removeItem('user');
+  localStorage.clear();
   this.currentUserSubject.next(null);
 }
 
