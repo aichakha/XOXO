@@ -79,6 +79,7 @@ export class HistoryPage implements OnInit {
   editingCategory: any = null;
   noSavedText: boolean = false;
   constructor(private router: Router,
+    private alertCtrl: AlertController,
     private toastController: ToastController,
     private authService: AuthService,
     private savedTextService: SavedTextService,
@@ -95,6 +96,7 @@ export class HistoryPage implements OnInit {
   mediaUrl: string = '';
   isAuthenticated = false;
   username: string | null = null;
+   originalText: string | null = null;
   showLogout = false; // Contrôle direct de la visibilité
   async ngOnInit() {
 
@@ -747,20 +749,38 @@ startEditing(clip: any) {
   this.expandedClipId = null;  // On cache le texte complet
 }
 // Email method
-sendEmail(to: string, subject: string) {
-  console.log('Texte à envoyer:', this.transcribedText); // 👈 vérifie ici qu'il n'est pas vide
+async showToast(message: string, color: string = 'success') {
+  const toast = await this.toastController.create({
+    message,
+    duration: 2000,
+    color,
+    position: 'bottom'
+  });
+  toast.present();
+}
+sendEmail(to: string, subject: string, text: string) {
+  if (!text || text.trim().length === 0 || text === 'Aucun texte transcrit disponible.') {
+    this.showToast('❌ Aucun texte disponible à envoyer.');
+    return;
+  }
 
   const payload = {
     to,
     subject,
-    text: this.transcribedText
+    text
   };
 
   this.http.post('http://localhost:3000/mail/send', payload).subscribe({
-    next: () => this.presentToast('Email sent !'),
-    error: err => this.presentToast('Email sending error.', 'danger')
+    next: () => {
+      this.showToast('📤 Mail envoyé avec succès !');
+    },
+    error: (error) => {
+      console.error('❌ Erreur lors de l’envoi du mail :', error);
+      this.showToast('Erreur lors de l’envoi du mail.');
+    },
   });
 }
+
 
 // Loading method
 async PresentLoading() {
@@ -967,4 +987,43 @@ generatePDF(clip: any) {
   // Téléchargement
   doc.save('resume-video.pdf');
 }
+showShareOptions = false;
+
+toggleShareOptions() {
+  this.showShareOptions = !this.showShareOptions;
+}
+async openEmailModal(clipText: string) {
+  const alert = await this.alertCtrl.create({
+    header: 'Partager par mail',
+    inputs: [
+      {
+        name: 'to',
+        type: 'email',
+        placeholder: 'Adresse e-mail du destinataire'
+      },
+      {
+        name: 'subject',
+        type: 'text',
+        placeholder: 'Titre du message'
+      },
+
+
+    ],
+    buttons: [
+      {
+        text: 'Cancel',
+        role: 'cancel'
+      },
+      {
+        text: 'Send',
+        handler: data => {
+          this.sendEmail(data.to, data.subject, clipText)// ici
+        }
+      }
+    ]
+  });
+
+  await alert.present();
+}
+
 }
