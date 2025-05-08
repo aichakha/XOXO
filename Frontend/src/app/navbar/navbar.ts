@@ -67,7 +67,9 @@ export class Navbar implements OnInit {
 
     this.router.navigate(['/acceuil-user']);
   }
-
+  Acceuil() {
+    this.router.navigate(['/acceuil']); // 
+  }
 
   Contact() {
     this.router.navigate(['/contact']); // Navigation fonctionnelle
