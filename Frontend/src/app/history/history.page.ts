@@ -187,7 +187,7 @@ async updateTitle(id: string, newTitle: string) {
       // Validation simple
       if (!newTitle || newTitle.trim().length === 0) {
         const toast = await this.toastCtrl.create({
-          message: 'Le titre ne peut pas être vide',
+          message: 'The title cannot be empty.',
           duration: 2000,
           color: 'warning'
         });
@@ -305,7 +305,7 @@ async updateTitle(id: string, newTitle: string) {
           this.filteredClips = [...this.clips];
         }
 
-        let errorMessage = '❌ Erreur lors de la mise à jour du texte.';
+        let errorMessage = '❌ Error while updating the text.';
         if (error instanceof Error) {
           errorMessage = error.message.includes('401')
             ? 'Session expirée. Veuillez vous reconnecter.'
@@ -397,7 +397,7 @@ handleClick(event: MouseEvent) {
       try {
         const userId = this.authService.getUserId();
         if (!userId) {
-          throw new Error('ID utilisateur non disponible');
+          throw new Error('User ID not available.');
         }
 
         const response = await lastValueFrom(
@@ -576,7 +576,7 @@ async toggleFavorite(clip: Clip) {
     this.filteredClips = [...this.clips];
 
     const toast = await this.toastCtrl.create({
-      message: updatedClip.isFavorite ? 'Ajouté aux favoris ❤️' : 'Retiré des favoris',
+      message: updatedClip.isFavorite ? 'Added to favorites. ❤️' : 'Removed from favorites.',
       duration: 2000,
       color: 'success'
     });
@@ -584,7 +584,7 @@ async toggleFavorite(clip: Clip) {
   } catch (error) {
     console.error('Erreur de mise à jour des favoris:', error);
     const toast = await this.toastCtrl.create({
-      message: 'Erreur lors de la mise à jour des favoris',
+      message: 'Error while updating favorites.',
       duration: 2000,
       color: 'danger'
     });
@@ -757,8 +757,8 @@ sendEmail(to: string, subject: string) {
   };
 
   this.http.post('http://localhost:3000/mail/send', payload).subscribe({
-    next: () => this.presentToast('Email envoyé !'),
-    error: err => this.presentToast('Erreur envoi mail', 'danger')
+    next: () => this.presentToast('Email sent !'),
+    error: err => this.presentToast('Email sending error.', 'danger')
   });
 }
 
@@ -801,8 +801,8 @@ openModal() {
       this.showAlert('Shareable Link', shareableUrl);
     },
     (error) => {
-      console.error('Erreur lors de la génération du lien', error);
-      this.showAlert('Erreur', 'Impossible de générer le lien.');
+      console.error('Error generating the link.', error);
+      this.showAlert('Erreur', 'Unable to generate the link.');
     }
   );
 }
@@ -920,7 +920,7 @@ async togglePin(clip: Clip) {
 
     // Toast de confirmation
     const toast = await this.toastCtrl.create({
-      message: updatedIsPinned ? 'Texte épinglé 📌' : 'Texte désépinglé',
+      message: updatedIsPinned ? 'Pinned text. 📌' : 'Unpinned text.',
       duration: 2000,
       color: updatedIsPinned ? 'success' : 'danger'
     });
@@ -928,7 +928,7 @@ async togglePin(clip: Clip) {
   } catch (error) {
     console.error('Erreur lors de la mise à jour de l\'épinglage:', error);
     const toast = await this.toastCtrl.create({
-      message: 'Erreur lors de la mise à jour de l\'épinglage',
+      message: 'Error while updating the pinning.',
       duration: 2000,
       color: 'danger'
     });

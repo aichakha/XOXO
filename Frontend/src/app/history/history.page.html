@@ -19,18 +19,21 @@
     <div *ngIf="isAuthenticated" class="categories-section">
       <ion-chip class="category-chip" (click)="toggleFavoriteFilter()">
         <ion-icon
-          [name]="showOnlyFavorites ? 'heart' : 'heart-outline'"
-          [color]="showOnlyFavorites ? 'danger' : 'medium'">
-        </ion-icon>
-        {{ showOnlyFavorites ? 'Only Favorites' : 'All Texts' }}
+    [name]="showOnlyFavorites ? 'heart' : 'heart-outline'"
+    [color]="showOnlyFavorites ? 'danger' : 'medium'"
+    class="ion-margin-end"
+  ></ion-icon>
+  <span>{{ showOnlyFavorites ? 'Only Favorites' : 'All Texts' }}</span>
       </ion-chip>
+
 
       <ion-chip class="category-chip" (click)="togglePinnedFilter()">
         <ion-icon
-          [name]="showOnlyPinned ? 'pin' : 'pin-outline'"
-          [color]="showOnlyPinned ? 'secondary' : 'medium'">
-        </ion-icon>
-        {{ showOnlyPinned ? 'Only Pinned' : 'All Texts' }}
+        [name]="showOnlyPinned ? 'pin' : 'pin-outline'"
+        [color]="showOnlyPinned ? 'secondary' : 'medium'"
+        class="ion-margin-end"
+      ></ion-icon>
+      <span>{{ showOnlyPinned ? 'Only Pinned' : 'All Texts' }}</span>
       </ion-chip>
 
       <ion-chip (click)="filterByCategory(null)" [outline]="selectedCategory !== null">

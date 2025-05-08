@@ -121,7 +121,7 @@ $text-color: #333;
     right: 11px;
     background: transparent;
     border: none;
-    color: #3c4043; /* Gris Google plus professionnel */
+    color: #feffff; /* Gris Google plus professionnel */
     font: 500 13px/1.5 'Google Sans', 'Segoe UI', system-ui, sans-serif;
     padding: 0;
     cursor: pointer;
@@ -132,9 +132,6 @@ $text-color: #333;
     letter-spacing: 0.02em;
 }
 
-.logout-button:hover {
-    color: #EA4335; /* Rouge Google plus vif */
-}
 
 
 

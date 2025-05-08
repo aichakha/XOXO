@@ -176,7 +176,7 @@ export class AcceuilUserPage implements OnInit,AfterViewInit {
 
       const token = this.authService.getToken();
       if (!token) {
-        alert('Erreur : Token non disponible. Connectez-vous.');
+        alert('Error: Token not available. Please log in.');
         return;
       }
 
@@ -192,14 +192,14 @@ export class AcceuilUserPage implements OnInit,AfterViewInit {
             this.transcribedText = response.text;
             this.router.navigate(['/view'], { queryParams: { text: this.transcribedText } });
           } else {
-            alert("La transcription a échoué.");
+            alert("Transcription failed.");
           }
           this.isLoading = false;
           loading.dismiss();
         },
         error: (error) => {
           console.error('🚨 Erreur de transcription:', error);
-          alert('Erreur lors de la transcription. Vérifiez le fichier ou l\'URL.');
+          alert('Error during transcription. Please check the file or the URL.');
           this.isLoading = false;
           loading.dismiss();
         }
@@ -230,14 +230,14 @@ export class AcceuilUserPage implements OnInit,AfterViewInit {
             this.transcribedText = response.text;
             this.router.navigate(['/view'], { queryParams: { text: this.transcribedText } });
           } else {
-            alert("La transcription a échoué.");
+            alert("The transcription failed..");
           }
           this.isLoading = false;
           loading.dismiss();
         },
         error: (error) => {
           console.error('🚨 Erreur de transcription:', error);
-          alert('Erreur lors de la transcription. Vérifiez le fichier ou l\'URL.');
+          alert('Transcription error. Please check the file or the URL.');
           this.isLoading = false;
           loading.dismiss();
         }
