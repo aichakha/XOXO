@@ -596,7 +596,14 @@ async toggleFavorite(clip: Clip) {
 getFirstLetter(name: string | undefined | null): string {
   return name ? name.charAt(0).toUpperCase() : '';
 }
-
+onCategoryChange(clip: any) {
+  if (clip.categoryId === 'none') {
+    clip.categoryId = null;
+    this.removeFromCategory(clip.id);
+  } else {
+    this.assignToCategory(clip.id, clip.categoryId);
+  }
+}
 async loadCategories() {
   try {
     const userId = this.authService.getUserId();
@@ -643,11 +650,24 @@ async removeFromCategory(textId: string) {
     await lastValueFrom(
       this.savedTextService.removeCategoryFromText(textId)
     );
+    this.showToast('Category removed from the text successfully.', 'success');
     await this.loadSavedTexts();
   } catch (error) {
     console.error('Error removing category:', error);
+    this.showToast('An error occurred while removing the category.', 'danger');
   }
 }
+
+async showToast(message: string, color: 'success' | 'danger' = 'success') {
+  const toast = await this.toastController.create({
+    message,
+    duration: 2000,
+    color,
+    position: 'bottom',
+  });
+  await toast.present();
+}
+
 
 async updateCategory(category: any) {
   try {
@@ -662,18 +682,40 @@ async updateCategory(category: any) {
 }
 
 async deleteCategory(categoryId: string) {
-  try {
-    await lastValueFrom(
-      this.savedTextService.deleteCategory(categoryId)
-    );
-    await this.loadCategories();
-    // Also reload texts to reflect changes
-    await this.loadSavedTexts();
-  } catch (error) {
-    console.error('Error deleting category:', error);
-  }
-}
+  const alert = await this.alertController.create({
+    header: 'Confirm Deletion',
+    message: 'Are you sure you want to delete this category? This action is irreversible.',
+    buttons: [
+      {
+        text: 'Cancel',
+        role: 'cancel',
+        cssClass: 'secondary',
+        handler: () => {
+          console.log('Deletion cancelled');
+        }
+      },
+      {
+        text: 'Delete',
+        handler: async () => {
+          try {
+            await lastValueFrom(
+              this.savedTextService.deleteCategory(categoryId)
+            );
+            await this.loadCategories();
+            // Rechargez également les textes pour refléter les changements
+            await this.loadSavedTexts();
+            this.showToast('Category deleted successfully.', 'success');
+          } catch (error) {
+            console.error('Error deleting category:', error);
+            this.showToast('An error occurred while deleting the category.', 'danger');
+          }
+        }
+      }
+    ]
+  });
 
+  await alert.present();
+}
 filterByCategory(categoryId: string | null) {
   this.selectedCategory = categoryId;
   if (!categoryId) {
@@ -749,7 +791,7 @@ startEditing(clip: any) {
   this.expandedClipId = null;  // On cache le texte complet
 }
 // Email method
-async showToast(message: string, color: string = 'success') {
+async ShowToast(message: string, color: string = 'success') {
   const toast = await this.toastController.create({
     message,
     duration: 2000,

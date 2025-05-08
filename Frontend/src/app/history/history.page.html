@@ -152,12 +152,13 @@
       <ion-label>Catégorie</ion-label>
       <ion-select
         [(ngModel)]="clip.categoryId"
-        (ionChange)="clip.categoryId ? assignToCategory(clip.id, clip.categoryId) : removeFromCategory(clip.id)"
+        (ionChange)="onCategoryChange(clip)"
         interface="popover">
-        <ion-select-option [value]="null">Aucune catégorie</ion-select-option>
-        <ion-select-option *ngFor="let category of categories" [value]="category.id">
-          {{ category.name }}
-        </ion-select-option>
+        <ion-select-option value="none">Aucune catégorie</ion-select-option>
+<ion-select-option *ngFor="let category of categories" [value]="category.id">
+  {{ category.name }}
+</ion-select-option>
+        <ion-select-option value="new">Nouvelle catégorie</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-footer class="ion-padding-horizontal" style="display: flex; align-items: center; justify-content: space-between;">
