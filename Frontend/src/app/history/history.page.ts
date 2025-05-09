@@ -60,7 +60,7 @@ interface Clip {
 
 
 export class HistoryPage implements OnInit {
-  
+
 filteredClips: any[] = [];
   loadingMessage: string = 'Loading...';
   searchTerm: string = '';
@@ -624,16 +624,30 @@ async createCategory() {
     const userId = this.authService.getUserId();
     if (!userId) return;
 
+    // Vérifier si une catégorie avec ce nom existe déjà
+    const existing = this.categories.find(
+      (cat) => cat.name.toLowerCase().trim() === this.newCategoryName.toLowerCase().trim()
+    );
+
+    if (existing) {
+      this.showToast('Category name already exists.', 'danger');
+      return;
+    }
+
+    // Créer la catégorie si elle n'existe pas
     await lastValueFrom(
       this.savedTextService.createCategory(this.newCategoryName, userId)
     );
 
     this.newCategoryName = '';
     await this.loadCategories();
+    this.showToast('Category created successfully.', 'success');
   } catch (error) {
     console.error('Error creating category:', error);
+    this.showToast('An error occurred while creating the category.', 'danger');
   }
 }
+
 
 async assignToCategory(textId: string, categoryId: string) {
   try {
@@ -727,7 +741,7 @@ filterByCategory(categoryId: string | null) {
 toggleFavoriteFilter() {
   this.showOnlyFavorites = !this.showOnlyFavorites;
   this.filterClips(); // Refiltre la liste
- 
+
 }
 //changes for testtting the update for the content:
 selectedClipId: string | null = null;
