@@ -60,13 +60,14 @@ interface Clip {
 
 
 export class HistoryPage implements OnInit {
+  
+filteredClips: any[] = [];
   loadingMessage: string = 'Loading...';
   searchTerm: string = '';
   userName: string = '';
   clips: any[] = [];
   transcribedText: string = '';
   translatedText: string = '';
-  filteredClips = [...this.clips];
   isLoading = false;
   form = { title: '', content: '' };
   private autoSaveSubject = new Subject<void>();
@@ -718,16 +719,15 @@ async deleteCategory(categoryId: string) {
 }
 filterByCategory(categoryId: string | null) {
   this.selectedCategory = categoryId;
-  if (!categoryId) {
-    this.filteredClips = [...this.clips];
-    return;
-  }
-  this.filteredClips = this.clips.filter(clip => clip.categoryId === categoryId);
+  this.applyFilters();
 }
+
+
 
 toggleFavoriteFilter() {
   this.showOnlyFavorites = !this.showOnlyFavorites;
   this.filterClips(); // Refiltre la liste
+ 
 }
 //changes for testtting the update for the content:
 selectedClipId: string | null = null;
@@ -923,13 +923,42 @@ async shareTextOrGenerateLink(text: string) {
 //épingler un texte:
 texts: any[] = [];
 showOnlyPinned: boolean = false;
-applyFilters(){
+applyFilters() {
   let filtered = [...this.clips];
-  if (this.showOnlyPinned) {
-    filtered = filtered.filter(clip => clip.isPinned);
+
+  // Filtrage par catégorie
+  if (this.selectedCategory !== null) {
+    filtered = filtered.filter(clip => clip.categoryId === this.selectedCategory);
   }
+
+  // Filtrage favoris
+  if (this.showOnlyFavorites) {
+    filtered = filtered.filter(clip => clip.isFavorite === true);
+  }
+
+  // Filtrage épinglés
+  if (this.showOnlyPinned) {
+    filtered = filtered.filter(clip => clip.isPinned === true);
+  }
+
+  // ✅ Si ni les favoris ni les épinglés ne sont filtrés, on trie les épinglés en haut
+  if (!this.showOnlyFavorites && !this.showOnlyPinned) {
+    filtered = filtered.sort((a, b) => {
+      if (a.isPinned === b.isPinned) return 0;
+      return a.isPinned ? -1 : 1; // Épinglés en haut
+    });
+  }
+
   this.filteredClips = filtered;
 }
+
+
+resetFilters() {
+  this.selectedCategory = null;
+  this.showOnlyPinned = false;
+  this.applyFilters();
+}
+
 togglePinnedFilter() {
   this.showOnlyPinned = !this.showOnlyPinned;
   this.applyFilters();

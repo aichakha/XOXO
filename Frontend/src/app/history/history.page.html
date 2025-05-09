@@ -36,9 +36,10 @@
       <span>{{ showOnlyPinned ? 'Only Pinned' : 'All Texts' }}</span>
       </ion-chip>
 
-      <ion-chip (click)="filterByCategory(null)" [outline]="selectedCategory !== null">
+      <ion-chip (click)="resetFilters()" [outline]="selectedCategory !== null || showOnlyPinned">
         All
       </ion-chip>
+      
 
       <ion-chip *ngFor="let category of categories"
                 (click)="filterByCategory(category.id)"
