@@ -686,15 +686,30 @@ async showToast(message: string, color: 'success' | 'danger' = 'success') {
 
 async updateCategory(category: any) {
   try {
+    // Vérifie si un autre nom de catégorie existe déjà (hors de celui qu'on édite)
+    const nameAlreadyUsed = this.categories.some(
+      (cat) =>
+        cat.id !== category.id &&
+        cat.name.toLowerCase().trim() === category.name.toLowerCase().trim()
+    );
+
+    if (nameAlreadyUsed) {
+      this.showToast('Category name already exists.', 'danger');
+      return;
+    }
+
     await lastValueFrom(
       this.savedTextService.updateCategory(category.id, category.name)
     );
     this.editingCategory = null;
     await this.loadCategories();
+    this.showToast('Category updated successfully.', 'success');
   } catch (error) {
     console.error('Error updating category:', error);
+    this.showToast('An error occurred while updating the category.', 'danger');
   }
 }
+
 
 async deleteCategory(categoryId: string) {
   const alert = await this.alertController.create({
