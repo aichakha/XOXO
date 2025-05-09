@@ -126,15 +126,32 @@ ion-item:hover {
   border-left: 2px solid #eee;
 }
 
-ion-footer {
-  background: #f8f4ff;
-  border-top: 1px solid #dcd4ff; 
-}
 
-ion-title.ion-text-center {
-  font-size: 14px;
-  color: #666;
-  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
+// Pied de page
+footer {
+  text-align: center;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.8); // Fond semi-transparent
+  width: 100%;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+
+  position: fixed;
+  bottom: 0;
+
+  p {
+    margin: 0;
+    color: #333;
+    font-size: 14px;
+  }
+}
+.footer {
+  flex-shrink: 0;
+  text-align: center;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.8);
+  width: 100%;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* ANIMATION */

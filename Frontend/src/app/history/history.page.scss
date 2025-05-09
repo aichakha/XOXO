@@ -366,20 +366,22 @@ ion-card-content.collapsed {
   resize: none;
 }
 
+
 // Pied de page
 footer {
   text-align: center;
   padding: 10px;
-  background-color: rgba(255, 255, 255, 0.8); // Fond semi-transparent
+  background-color: #fff; /* ✅ Fond blanc (sans transparence) */
   width: 100%;
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-  margin-top:0;
+  margin-top: 0;
 
   p {
     margin: 0;
     color: #333;
     font-size: 14px;
   }
+
   .content-container {
     padding: 16px;
   }
@@ -436,7 +438,7 @@ footer {
 
   ion-footer {
     padding: 12px;
-    background-color: #fafafa;
+    background-color: #fff; /* ✅ Fond blanc */
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;
     font-size: 14px;
@@ -446,8 +448,8 @@ footer {
     justify-content: flex-end;
     gap: 8px;
   }
+}
 
-  }
   .favorite-icon {
     font-size: 24px;
     color: red;
