@@ -425,54 +425,37 @@ handleClick(event: MouseEvent) {
 
 
     async deleteText(id: string, event: Event) {
-      event.stopPropagation();
+  event.stopPropagation();
+  const loading = await this.loadingCtrl.create({
+    message: 'Deleting...'
+  });
+  await loading.present();
 
-      const loading = await this.loadingCtrl.create({
-        message: 'Deleting...'
-      });
-      await loading.present();
+  try {
+    await lastValueFrom(this.savedTextService.deleteSavedText(id));
+    // Local update
+    this.clips = this.clips.filter(clip => clip.id !== id);
+    this.filteredClips = [...this.clips];
 
-      try {
-        await lastValueFrom(
-          this.savedTextService.deleteSavedText(id)
-        );
+    const toast = await this.toastCtrl.create({
+      message: '✅ Clip deleted successfully.',
+      duration: 2000,
+      color: 'success'
+    });
+    await toast.present();
+  } catch (error) {
+    console.error('Error while deleting the clip:', error);
+    const toast = await this.toastCtrl.create({
+      message: '❌ Failed to delete the clip.',
+      duration: 3000,
+      color: 'danger'
+    });
+    await toast.present();
+  } finally {
+    await loading.dismiss();
+  }
+}
 
-        // Mise à jour locale
-        this.clips = this.clips.filter(clip => clip.id !== id);
-        this.filteredClips = [...this.clips];
-
-        const toast = await this.toastCtrl.create({
-          message: 'Text deleted successfully',
-          duration: 2000,
-          color: 'success'
-        });
-        await toast.present();
-
-      } catch (error) {
-        console.error('Error deleting text:', error);
-
-        let errorMessage = 'Failed to delete text';
-        if (error instanceof Error) {
-          errorMessage = error.message.includes('401')
-            ? 'Session expired. Please log in again.'
-            : error.message;
-        }
-
-        const toast = await this.toastCtrl.create({
-          message: errorMessage,
-          duration: 3000,
-          color: 'danger'
-        });
-        await toast.present();
-
-        // Optionnel : Déconnexion automatique si token invalide
-        if (errorMessage.includes('401')) {
-          this.authService.logout();
-        }
-      } finally {
-        await loading.dismiss();
-      }
-    }
 
     filterClips() {
       this.filteredClips = this.clips.filter(clip => {
