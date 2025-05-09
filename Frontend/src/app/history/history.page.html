@@ -39,7 +39,7 @@
       <ion-chip (click)="resetFilters()" [outline]="selectedCategory !== null || showOnlyPinned">
         All
       </ion-chip>
-      
+
 
       <ion-chip *ngFor="let category of categories"
                 (click)="filterByCategory(category.id)"
@@ -159,7 +159,6 @@
 <ion-select-option *ngFor="let category of categories" [value]="category.id">
   {{ category.name }}
 </ion-select-option>
-        <ion-select-option value="new">Nouvelle catégorie</ion-select-option>
       </ion-select>
     </ion-item>
     <ion-footer class="ion-padding-horizontal" style="display: flex; align-items: center; justify-content: space-between;">
