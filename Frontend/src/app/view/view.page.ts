@@ -15,6 +15,7 @@ import { SavedTextService } from '../auth/services/saved-text.service';
 import { PopoverMenuComponent } from '../components/popover-menu.component/popover-menu.component';
 import { text } from 'ionicons/icons';
 import { Navbar } from "../navbar/navbar";
+import { Filesystem, Directory,Encoding  } from '@capacitor/filesystem';
 @Component({
 
   selector: 'app-view',
@@ -201,7 +202,7 @@ showEmailModal: boolean = false;
         case 'share':
           this.openModal();
           break;
-          
+
           case 'save':
             this.saveCurrentText();
             break;
@@ -257,7 +258,7 @@ sendEmail(to: string, subject: string) {
     text: this.transcribedText
   };
 
-  this.http.post('http://localhost:3000/mail/send', payload).subscribe({
+  this.http.post('https://f863-196-203-24-105.ngrok-free.app/mail/send', payload).subscribe({
     next: () => this.showToast('Email envoyé !'),
     error: err => this.showToast('Erreur envoi mail')
   });
@@ -324,7 +325,7 @@ hideSummarizeMenu() {
       this.loadingMessage = 'Summarizing...';
 
       this.presentLoading().then((loading) => {
-        this.http.post<any>('http://localhost:8001/summarize/', { text, type }).subscribe({
+        this.http.post<any>('https://7424-196-203-24-105.ngrok-free.app/summarize/', { text, type }).subscribe({
           next: (response: any) => {
             console.log('✅ Summary received:', response);
             if (response && response.summary) {
@@ -357,7 +358,7 @@ translateText(text: string, targetLang: string) {
   this.loadingMessage = 'Translating...';
     // Show loading spinner
   this.presentLoading1().then((loading) => {
-    this.http.post<any>('http://localhost:8001/translate/', {
+    this.http.post<any>('https://7424-196-203-24-105.ngrok-free.app/translate/', {
       text: this.originalText,
 
       src_lang: this.detectedLanguage, // 🔹 Changer "srcLang" en "src_lang"
@@ -565,41 +566,51 @@ closeDownloadMenu(event: MouseEvent) {
     this.downloadMenuOpen = false;
   }
 }
-downloadFile(format: 'pdf' | 'txt') {
+async downloadFile(format: 'pdf' | 'txt') {
   const content = this.transcribedText || 'No content available';
 
   if (format === 'txt') {
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = window.URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'transcription.txt';
-    document.body.appendChild(a);
-    a.click();
-
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
+    try {
+      await Filesystem.writeFile({
+        path: 'transcription.txt',
+        data: content,
+        directory: Directory.Documents,
+        encoding: Encoding.UTF8, // Ici c’est correct
+      });
+      alert('TXT file saved in Documents.');
+    } catch (e) {
+      console.error('TXT save error:', e);
+      alert('Error saving TXT.');
+    }
   } else if (format === 'pdf') {
     const doc = new jsPDF();
-
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(18);
     doc.text('Transcription', 105, 15, { align: 'center' });
-
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(12);
 
-    // Gérer les retours à la ligne
     const marginLeft = 10;
     const marginTop = 30;
     const pageWidth = doc.internal.pageSize.width - 2 * marginLeft;
     const splitText = doc.splitTextToSize(content, pageWidth);
-
     doc.text(splitText, marginLeft, marginTop);
 
-    // Télécharger le fichier PDF
-    doc.save('transcription.pdf');
+    // Récupérer les données PDF en base64
+    const base64Data = doc.output('dataurlstring').split(',')[1];
+
+    try {
+      await Filesystem.writeFile({
+        path: 'transcription.pdf',
+        data: base64Data,
+        directory: Directory.Documents,
+        // Ne PAS mettre encoding: 'base64' ici
+      });
+      alert('PDF file saved in Documents.');
+    } catch (e) {
+      console.error('PDF save error:', e);
+      alert('Error saving PDF.');
+    }
   }
 
   this.downloadMenuOpen = false;
@@ -698,7 +709,7 @@ openModal() {
     text: this.translatedText || this.transcribedText,
   };
 
-  this.http.post<any>('http://localhost:3000/text/generate-url', payload).subscribe(
+  this.http.post<any>('https://f863-196-203-24-105.ngrok-free.app/text/generate-url', payload).subscribe(
     (res) => {
       const shareableUrl = res.url;
 

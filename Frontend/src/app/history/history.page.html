@@ -183,22 +183,13 @@
 
         <!-- Bouton principal "Share" -->
 <!-- Bouton principal "Share" -->
-       <ion-button fill="clear" (click)="toggleShareOptions(); $event.stopPropagation()" style="display: flex; align-items: center;">
-  <ion-icon name="share-social-outline" style="margin-right: -20px;"></ion-icon>
-  <ion-icon [name]="showShareOptions ? 'chevron-up-outline' : 'chevron-down-outline'" style="margin-left: 4px;"></ion-icon>
+       <ion-button fill="clear" (click)="openEmailModal(clip.content); $event.stopPropagation()" style="display: flex; align-items: center;">
+  <ion-icon name="share-social-outline" style="font-size: 24px;"></ion-icon>
+
 </ion-button>
 
 <!-- Liste déroulante avec les options URL et Mail -->
-<ion-list *ngIf="showShareOptions" class="share-sub-options" style="margin-left: 12px;">
 
-
-
-  <ion-item (click)="openEmailModal(clip.content)">
-    <ion-icon slot="start" name="mail-outline"></ion-icon>
-    Mail
-  </ion-item>
-
-</ion-list>
 
 
         <ion-button fill="clear" size="small" (click)="selectAction('download', clip); $event.stopPropagation()">

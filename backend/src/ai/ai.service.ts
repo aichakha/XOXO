@@ -16,7 +16,7 @@ export class AIService {
       const formData = new FormData();
       formData.append('file', fs.createReadStream(filePath));
       console.log("📤 Envoi du fichier pour transcription...");
-      const response = await axios.post('http://localhost:8001/transcribe/', formData, {
+      const response = await axios.post('https://7424-196-203-24-105.ngrok-free.app/transcribe/', formData, {
         headers: {
           ...formData.getHeaders(),
         },
@@ -77,7 +77,7 @@ export class AIService {
   
     try {
       console.log("📤 Envoi du fichier audio à Whisper...");
-      const response = await axios.post('http://localhost:8001/transcribe', form, {
+      const response = await axios.post('https://7424-196-203-24-105.ngrok-free.app/transcribe', form, {
         headers: { ...form.getHeaders() },
       });
   

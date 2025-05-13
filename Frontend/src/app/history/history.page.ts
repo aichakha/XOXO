@@ -20,8 +20,9 @@ import {
   animate,
   transition,
 } from '@angular/animations';
-import { jsPDF } from 'jspdf';
+import jsPDF from 'jspdf';
 import { Navbar } from "../navbar/navbar";
+import { Filesystem, Directory,Encoding  } from '@capacitor/filesystem';
 interface Clip {
   id: string;
   title: string;
@@ -824,7 +825,7 @@ sendEmail(to: string, subject: string, text: string) {
     text
   };
 
-  this.http.post('http://localhost:3000/mail/send', payload).subscribe({
+  this.http.post('https://f863-196-203-24-105.ngrok-free.app/mail/send', payload).subscribe({
     next: () => {
       this.showToast('📤 Mail envoyé avec succès !');
     },
@@ -868,7 +869,7 @@ openModal() {
     text: this.translatedText || this.transcribedText,
   };
 
-  this.http.post<any>('http://localhost:3000/text/generate-url', payload).subscribe(
+  this.http.post<any>('https://f863-196-203-24-105.ngrok-free.app/text/generate-url', payload).subscribe(
     (res) => {
       const shareableUrl = res.url;
       // Affiche une alerte avec l'URL générée
@@ -1044,32 +1045,48 @@ selectAction(action: string, clip?: any) {
   }
 }
 
-generatePDF(clip: any) {
+async generatePDF(clip: any) {
   const doc = new jsPDF();
 
-  const date = new Date(clip.createdAt).toLocaleString(); // Date formatée
-  const content = clip.content;
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(18);
+  doc.text('Transcription', 105, 15, { align: 'center' });
 
-  // Date (en haut)
-  doc.setFontSize(10);
   doc.setFont('helvetica', 'normal');
-  doc.text(`Date : ${date}`, 10, 20);
-
-  // Contenu principal
   doc.setFontSize(12);
+
   const marginLeft = 10;
-  const marginTop = 30; // commence un peu plus bas après la date
-  const maxWidth = 180;
-  const lineHeight = 8;
+  const marginTop = 30;
+  const pageWidth = doc.internal.pageSize.width - 2 * marginLeft;
 
-  const lines = doc.splitTextToSize(content, maxWidth);
-  lines.forEach((line: string, index: number) => {
-    doc.text(line, marginLeft, marginTop + index * lineHeight);
-  });
+  const content = clip.content || '';
+  const splitText = doc.splitTextToSize(content, pageWidth);
+  doc.text(splitText, marginLeft, marginTop);
 
-  // Téléchargement
-  doc.save('resume-video.pdf');
+  // Obtenir un nom de fichier unique avec la date et l'heure
+  const now = new Date();
+  const timestamp = now.getFullYear().toString() + '.'+
+                    (now.getMonth() + 1).toString().padStart(2, '0') +'.'+
+                    now.getDate().toString().padStart(2, '0') ;
+
+  const fileName = `transcription_${timestamp}.pdf`;
+
+  const base64Data = doc.output('dataurlstring').split(',')[1];
+
+  try {
+    await Filesystem.writeFile({
+      path: fileName,
+      data: base64Data,
+      directory: Directory.Documents,
+    });
+    alert(`PDF saved: ${fileName}`);
+  } catch (e) {
+    console.error('PDF save error:', e);
+    alert('Error saving PDF.');
+  }
 }
+
+
 showShareOptions = false;
 
 toggleShareOptions() {

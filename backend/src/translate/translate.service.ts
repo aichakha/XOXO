@@ -8,7 +8,7 @@ export class TranslationService {
   }
   async translateText(text: string, srcLang: string, tgtLang: string): Promise<string> {
     try {
-      const response = await axios.post('http://localhost:8001/translate', {
+      const response = await axios.post('https://7424-196-203-24-105.ngrok-free.app/translate', {
         text,
         src_lang: srcLang,
         tgt_lang: tgtLang,
