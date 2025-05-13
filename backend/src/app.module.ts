@@ -18,6 +18,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { CategoryModule } from './category/category.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { MailModule } from './mail/mail.module';
+import { TranslationModule } from './translate/translate.module';
 @Module({
   imports: [PrismaModule,    MailerModule.forRoot({
     transport: {
@@ -40,7 +41,8 @@ import { MailModule } from './mail/mail.module';
     AIModule,
     SummarizeModule,
     SavedTextModule,
-    CategoryModule] ,
+    CategoryModule,
+  TranslationModule] ,
   controllers: [AppController, AuthController,SummarizeController],
   providers: [AppService,PrismaService,SummarizeService],
 })

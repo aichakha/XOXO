@@ -6,7 +6,7 @@ export class SummarizeService {
   async summarizeText(text: string): Promise<string> {
     try {
       // Appeler l'API FastAPI pour obtenir le résumé
-      const response = await axios.post('https://7424-196-203-24-105.ngrok-free.app/summarize', { text });
+      const response = await axios.post('https://bf2c-154-111-224-232.ngrok-free.app/summarize', { text });
 
       // Vérifier la réponse et renvoyer le résumé
       if (response.data && response.data.summary) {

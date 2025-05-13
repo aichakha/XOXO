@@ -258,7 +258,7 @@ sendEmail(to: string, subject: string) {
     text: this.transcribedText
   };
 
-  this.http.post('https://f863-196-203-24-105.ngrok-free.app/mail/send', payload).subscribe({
+  this.http.post('https://de3d-154-111-224-232.ngrok-free.app/mail/send', payload).subscribe({
     next: () => this.showToast('Email envoyé !'),
     error: err => this.showToast('Erreur envoi mail')
   });
@@ -325,7 +325,7 @@ hideSummarizeMenu() {
       this.loadingMessage = 'Summarizing...';
 
       this.presentLoading().then((loading) => {
-        this.http.post<any>('https://7424-196-203-24-105.ngrok-free.app/summarize/', { text, type }).subscribe({
+        this.http.post<any>('https://bf2c-154-111-224-232.ngrok-free.app/summarize/', { text, type }).subscribe({
           next: (response: any) => {
             console.log('✅ Summary received:', response);
             if (response && response.summary) {
@@ -347,34 +347,32 @@ hideSummarizeMenu() {
       });
     }
 
-originalText: string = ''; // 🔹 Contient toujours le texte source
-// ✅ Fonction pour traduire le texte
+originalText: string = ''; 
+
 translateText(text: string, targetLang: string) {
   console.log('👉 Translating text:', text, 'to:', targetLang);
   if (!text || !targetLang) return;
-  this.originalText = text; // 🔹 Sauvegarde le texte original
-
+  this.originalText = text; 
   this.isLoading = true;
   this.loadingMessage = 'Translating...';
-    // Show loading spinner
   this.presentLoading1().then((loading) => {
-    this.http.post<any>('https://7424-196-203-24-105.ngrok-free.app/translate/', {
+    this.http.post<any>('https://de3d-154-111-224-232.ngrok-free.app/translate', {
       text: this.originalText,
 
-      src_lang: this.detectedLanguage, // 🔹 Changer "srcLang" en "src_lang"
-      tgt_lang: targetLang
+      srcLang: this.detectedLanguage, 
+      tgtLang: targetLang
     }).subscribe({
       next: (response) => {
         console.log('✅ Translation received:', response);
-        this.transcribedText = response.translation; // Remplace le texte par la traduction
+        this.transcribedText = response.translation; 
         this.isLoading = false;
-        loading.dismiss(); // Ferme le loader après la traduction
+        loading.dismiss(); 
       },
       error: (error) => {
         console.error('❌ Error translating:', error);
         this.errorMessage = 'Erreur lors de la traduction.';
         this.isLoading = false;
-        loading.dismiss(); // Ferme le loader en cas d'erreur
+        loading.dismiss(); 
       }
     });
   });
@@ -392,28 +390,28 @@ translateAndReset(text: string, targetLang: string) {
     this.translatedText = null;  // Effacer la traduction uniquement si ce n'est pas la première fois
   }
 
-  // Toujours revenir au texte transcrit (de Whisper), pas au texte traduit
+  
   this.transcribedText = this.originalText;
 
   console.log('Text has been reset to transcribed (original):', this.transcribedText);
 
-  // Traduire ensuite avec le texte transcrit
+  
   this.translateText(this.transcribedText, targetLang);
 }
 async presentLoading1() {
   const loading = await this.loadingCtrl.create({
-    message: 'Translating...',  // Message personnalisé
-    spinner: 'crescent',  // Type de spinner (tu peux changer si tu veux)
-    cssClass: 'full-page-loading',  // Classe CSS pour personnaliser le style du spinner
-    backdropDismiss: false,  // Empêche la fermeture quand on clique en dehors
+    message: 'Translating...', 
+    spinner: 'crescent',  
+    cssClass: 'full-page-loading',  
+    backdropDismiss: false,
   });
 
-  await loading.present();  // Affiche le loader
-  return loading;  // Retourne l'instance du loader pour pouvoir le fermer plus tard
+  await loading.present();  
+  return loading;  
 }
 resetText() {
-  this.translatedText = null; // Effacer le texte traduit
-  this.transcribedText = this.originalText; // Réinitialiser au texte original
+  this.translatedText = null; 
+  this.transcribedText = this.originalText;
   console.log('Text has been reset to original:', this.transcribedText);
 }
 
@@ -552,7 +550,7 @@ closeDropdownOnOutsideClick(event: MouseEvent) {
 }
 
 toggleEditMode() {
-  this.isEditing = !this.isEditing; // Bascule entre édition et affichage normal
+  this.isEditing = !this.isEditing; 
 }
 toggleDownloadMenu(event: Event) {
   event.stopPropagation();
@@ -568,17 +566,16 @@ closeDownloadMenu(event: MouseEvent) {
 }
 async downloadFile(format: 'pdf' | 'txt') {
   const content = this.transcribedText || 'No content available';
-
   if (format === 'txt') {
     try {
       await Filesystem.writeFile({
         path: 'transcription.txt',
         data: content,
         directory: Directory.Documents,
-        encoding: Encoding.UTF8, // Ici c’est correct
+        encoding: Encoding.UTF8, 
       });
       alert('TXT file saved in Documents.');
-    } catch (e) {
+    } catch (e: unknown) {
       console.error('TXT save error:', e);
       alert('Error saving TXT.');
     }
@@ -589,45 +586,63 @@ async downloadFile(format: 'pdf' | 'txt') {
     doc.text('Transcription', 105, 15, { align: 'center' });
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(12);
-
     const marginLeft = 10;
     const marginTop = 30;
     const pageWidth = doc.internal.pageSize.width - 2 * marginLeft;
     const splitText = doc.splitTextToSize(content, pageWidth);
     doc.text(splitText, marginLeft, marginTop);
-
-    // Récupérer les données PDF en base64
-    const base64Data = doc.output('dataurlstring').split(',')[1];
-
     try {
-      await Filesystem.writeFile({
-        path: 'transcription.pdf',
-        data: base64Data,
-        directory: Directory.Documents,
-        // Ne PAS mettre encoding: 'base64' ici
+      const pdfBlob = doc.output('blob');
+      const reader = new FileReader();
+      const base64Data = await new Promise<string>((resolve, reject) => {
+        reader.onloadend = () => {
+          const base64data = reader.result?.toString().split(',')[1];
+          if (base64data) {
+            resolve(base64data);
+          } else {
+            reject(new Error('Failed to convert PDF to base64'));
+          }
+        };
+        reader.readAsDataURL(pdfBlob);
       });
+      const now = new Date();
+      const timestamp = now.getFullYear().toString() + '.'+
+                    (now.getMonth() + 1).toString().padStart(2, '0') +'.'+
+                    now.getDate().toString().padStart(2, '0') ;
+
+      console.log('Taille des données base64:', base64Data.length);
+      const result = await Filesystem.writeFile({
+        path: `transcription_${timestamp}.pdf`,
+        data: base64Data,
+        directory: Directory.Documents
+      });
+      console.log('Fichier enregistré avec succès:', result);
       alert('PDF file saved in Documents.');
-    } catch (e) {
+    } catch (e: unknown) {
       console.error('PDF save error:', e);
-      alert('Error saving PDF.');
+      let errorMessage = 'Unknown error';
+      if (e instanceof Error) {
+        errorMessage = e.message;
+      } else if (typeof e === 'object' && e !== null && 'message' in e) {
+        errorMessage = (e as { message: string }).message;
+      } else if (typeof e === 'string') {
+        errorMessage = e;
+      }
+      alert(`Error saving PDF: ${errorMessage}`);
     }
   }
-
   this.downloadMenuOpen = false;
 }
-
 adjustTextareaHeight() {
   const textarea = document.querySelector('.edit-area') as HTMLTextAreaElement;
   if (textarea) {
-    textarea.style.height = 'auto'; // Réinitialise la hauteur
-    textarea.style.height = textarea.scrollHeight + 'px'; // Ajuste la hauteur
+    textarea.style.height = 'auto'; 
+    textarea.style.height = textarea.scrollHeight + 'px'; 
   }
 }
 
 async saveCurrentText() {
   const content = this.translatedText || this.transcribedText;
-
-  // Vérifiez que le content n'est pas vide
   if (!content) {
     const toast = await this.toastController.create({
       message: 'No text to save!',
@@ -637,7 +652,6 @@ async saveCurrentText() {
     await toast.present();
     return;
   }
-
   const userId = this.authService.getUserId();
   if (!userId) {
     const toast = await this.toastController.create({
@@ -648,14 +662,13 @@ async saveCurrentText() {
     await toast.present();
     return;
   }
-
   const loading = await this.loadingController.create({
     message: 'Saving...'
   });
   await loading.present();
 
   try {
-    // Envoyez explicitement userId et content comme objet
+
     await firstValueFrom(this.savedTextService.saveText({
       userId: userId,
       content: content
@@ -709,7 +722,7 @@ openModal() {
     text: this.translatedText || this.transcribedText,
   };
 
-  this.http.post<any>('https://f863-196-203-24-105.ngrok-free.app/text/generate-url', payload).subscribe(
+  this.http.post<any>('https://de3d-154-111-224-232.ngrok-free.app/text/generate-url', payload).subscribe(
     (res) => {
       const shareableUrl = res.url;
 

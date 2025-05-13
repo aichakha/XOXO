@@ -825,7 +825,7 @@ sendEmail(to: string, subject: string, text: string) {
     text
   };
 
-  this.http.post('https://f863-196-203-24-105.ngrok-free.app/mail/send', payload).subscribe({
+  this.http.post('https://de3d-154-111-224-232.ngrok-free.app/mail/send', payload).subscribe({
     next: () => {
       this.showToast('📤 Mail envoyé avec succès !');
     },
@@ -869,7 +869,7 @@ openModal() {
     text: this.translatedText || this.transcribedText,
   };
 
-  this.http.post<any>('https://f863-196-203-24-105.ngrok-free.app/text/generate-url', payload).subscribe(
+  this.http.post<any>('https://de3d-154-111-224-232.ngrok-free.app/text/generate-url', payload).subscribe(
     (res) => {
       const shareableUrl = res.url;
       // Affiche une alerte avec l'URL générée

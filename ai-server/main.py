@@ -101,25 +101,45 @@ async def transcribe_audio(
     except Exception as e:
         return {"error": f"Erreur: {str(e)}"}
 
-# 📌 Traduction de texte
-@app.post("/translate/")
-async def translate_text(data: dict):
-    text = data.get("text")
-    src_lang = data.get("src_lang", "").lower()
-    tgt_lang = data.get("tgt_lang", "").lower()
+from traduction.translation_logic import translate,clear_cache
+from typing import List
 
-    allowed_languages = ["fr", "es", "de", "it", "pt", "nl", "pl", "ru", "ja", "zh", "ko"]
 
-    if not text:
-        raise HTTPException(status_code=400, detail="Aucun texte fourni.")
-    if tgt_lang not in allowed_languages:
-        raise HTTPException(status_code=400, detail=f"Langue cible non supportée: {tgt_lang}")
+
+SUPPORTED_LANGS = {"fr", "en", "ar", "it", "es", "de"}
+
+class TranslationRequest(BaseModel):
+    text: List[str]
+    source_lang: str
+    target_lang: str
+
+@app.post("/translate")
+def translate_text(req: TranslationRequest):
+    src = req.source_lang.lower()
+    tgt = req.target_lang.lower()
+
+    # Validation
+    if src not in SUPPORTED_LANGS or tgt not in SUPPORTED_LANGS:
+        raise HTTPException(status_code=400, detail="Unsupported language")
 
     try:
-        translation = translate_marian(text, src_lang, tgt_lang)
-        return {"translation": translation}
+        result = translate(req.text, src, tgt)
+        return {"translations": result}
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=500, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Erreur de traduction: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Unexpected error: {e}")
+    finally:
+        # Libérer la mémoire, même si erreur
+        clear_cache()
+
+
+    #gestion dynamique de la mémoire (manuellement)//
+    #on peut la supprimer puisque elle est integrer dans l api translation
+@app.post("/clear-cache")
+def clear_translation_cache():
+    clear_cache()
+    return {"message": "Cache libéré avec succès"}
 
 # 📌 Lancer le serveur
 if __name__ == "__main__":
