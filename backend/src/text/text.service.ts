@@ -24,7 +24,7 @@ export class TextService {
 
     await newText.save();
 
-    return `https://de3d-154-111-224-232.ngrok-free.app/text/view/${dto.type}/${uuid}`;
+    return `https://1a29-154-111-224-232.ngrok-free.app/text/view/${dto.type}/${uuid}`;
   }
 
   async getTextByUuid(uuid: string): Promise<{ text: string; type: string }> {

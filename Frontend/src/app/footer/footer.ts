@@ -1,4 +1,3 @@
-//devenue How it works page
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -6,16 +5,13 @@ import { IonicModule } from '@ionic/angular';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/services/auth.service';
 @Component({
-  selector: 'app-navbar',
-  templateUrl: './navbar.html',
-  styleUrls: ['./navbar.scss'],
+  selector: 'app-footer',
+  templateUrl: './footer.html',
+  styleUrls: ['./footer.scss'],
   standalone: true,
   imports: [IonicModule, CommonModule, FormsModule]
 })
-export class Navbar implements OnInit {
-
-
-
+export class Footer implements OnInit {
   uploadedFileName: string = '';
   uploadedFile: File | null = null;
   mediaUrl: string = '';
@@ -25,19 +21,14 @@ export class Navbar implements OnInit {
 
   constructor( private router: Router, private authService: AuthService) {} // Injection correcte de Router
 
-
   Home() {
-    // Réinitialiser les fichiers uploadés et les champs
     this.uploadedFile = null;
     this.uploadedFileName = '';
     this.mediaUrl = '';
-
-    // Réinitialiser l'input file (pour éviter qu'il garde l'ancien fichier)
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     if (fileInput) {
-      fileInput.value = ''; // Réinitialisation de l'élément HTML input file
+      fileInput.value = ''; 
     }
-
     this.router.navigate(['/acceuil']);
   }
   ngOnInit() {
@@ -51,27 +42,23 @@ export class Navbar implements OnInit {
     this.uploadedFile = null;
     this.uploadedFileName = '';
     this.mediaUrl = '';
-
-    // Réinitialiser l'input file (pour éviter qu'il garde l'ancien fichier)
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     if (fileInput) {
-      fileInput.value = ''; // Réinitialisation de l'élément HTML input file
+      fileInput.value = ''; 
     }
-
-    // Réinitialiser l'input URL
     const urlInput = document.getElementById('urlInput') as HTMLInputElement;
     if (urlInput) {
-      urlInput.value = ''; // Réinitialisation de l'élément HTML input URL
+      urlInput.value = ''; 
     }
 
     this.router.navigate(['/acceuil-user']);
   }
   Acceuil() {
-    this.router.navigate(['/acceuil']); // 
+    this.router.navigate(['/acceuil']); 
   }
 
   Contact() {
-    this.router.navigate(['/contact']); // Navigation fonctionnelle
+    this.router.navigate(['/contact']); 
   }
   History() {
     this.router.navigate(['/history']);
@@ -79,24 +66,5 @@ export class Navbar implements OnInit {
   Historyuser() {
     this.router.navigate(['/history-user']);
   }
-  login() {
-    this.router.navigate(['/login']);
-  }
-  signup() {
-    // Déconnexion de l'utilisateur (peut être améliorée avec JWT plus tard)
-
-    this.router.navigate(['signup']);
-  }
-  logout() {
-    this.authService.logout();
-    this.isAuthenticated = false;
-    this.username = null;
-    this.router.navigate(['/']); // Redirection après déconnexion
-    this.showLogout = false; // Cache avant action
-    
-
-  }
-  getFirstLetter(name: string | undefined | null): string {
-    return name ? name.charAt(0).toUpperCase() : '';
-  }
+  
 }

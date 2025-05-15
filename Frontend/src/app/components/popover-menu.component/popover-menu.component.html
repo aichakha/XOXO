@@ -1,85 +1,85 @@
-<ion-list>
+<ion-list class="popover-menu">
   <!-- Translate -->
-  <ion-item button (click)="toggleSubmenu('translate')">
+  <ion-item button (click)="toggleSubmenu('translate')" class="menu-item">
     <ion-icon slot="start" name="language-outline"></ion-icon>
     <ion-label>Translate</ion-label>
+    <ion-icon slot="end" [name]="translateMenuOpen ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
   </ion-item>
-  <ion-list *ngIf="translateMenuOpen" class="submenu">
-    <ion-item button (click)="selectAction('translate-es')">
-      <ion-icon slot="start" name="logo-usd"></ion-icon>
+  <div *ngIf="translateMenuOpen" class="horizontal-submenu">
+    <ion-chip button (click)="selectAction('translate-es')" class="submenu-chip">
+      <ion-icon name="logo-usd"></ion-icon>
       <ion-label>Spanish</ion-label>
-    </ion-item>
-    <ion-item button (click)="selectAction('translate-fr')">
-      <ion-icon slot="start" name="logo-euro"></ion-icon>
+    </ion-chip>
+    <ion-chip button (click)="selectAction('translate-fr')" class="submenu-chip">
+      <ion-icon name="logo-euro"></ion-icon>
       <ion-label>French</ion-label>
-    </ion-item>
-    <ion-item button (click)="selectAction('translate-it')">
-      <ion-icon slot="start" name="globe-outline"></ion-icon>
+    </ion-chip>
+    <ion-chip button (click)="selectAction('translate-it')" class="submenu-chip">
+      <ion-icon name="globe-outline"></ion-icon>
       <ion-label>Italian</ion-label>
-    </ion-item>
-    <ion-item button (click)="selectAction('translate-de')">
-      <ion-icon slot="start" name="earth-outline"></ion-icon>
+    </ion-chip>
+    <ion-chip button (click)="selectAction('translate-de')" class="submenu-chip">
+      <ion-icon name="earth-outline"></ion-icon>
       <ion-label>German</ion-label>
-    </ion-item>
-    <ion-item button (click)="selectAction('translate-pt')">
-      <ion-icon slot="start" name="earth-outline"></ion-icon>
-      <ion-label>portugueuse</ion-label>
-    </ion-item>
-  </ion-list>
-
+    </ion-chip>
+    <ion-chip button (click)="selectAction('translate-pt')" class="submenu-chip">
+      <ion-icon name="earth-outline"></ion-icon>
+      <ion-label>Portuguese</ion-label>
+    </ion-chip>
+  </div>
+  
   <!-- Summarize -->
-  <ion-item button (click)="toggleSubmenu('summarize')">
+  <ion-item button (click)="toggleSubmenu('summarize')" class="menu-item">
     <ion-icon slot="start" name="document-text-outline"></ion-icon>
     <ion-label>Summarize</ion-label>
+    <ion-icon slot="end" [name]="summarizeMenuOpen ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
   </ion-item>
-  <ion-list *ngIf="summarizeMenuOpen" class="submenu">
-    <ion-item button (click)="selectAction('summarize-large')">
-      <ion-icon slot="start" name="expand-outline"></ion-icon>
+  <div *ngIf="summarizeMenuOpen" class="horizontal-submenu">
+    <ion-chip button (click)="selectAction('summarize-large')" class="submenu-chip">
+      <ion-icon name="expand-outline"></ion-icon>
       <ion-label>Large</ion-label>
-    </ion-item>
-    <ion-item button (click)="selectAction('summarize-medium')">
-      <ion-icon slot="start" name="contract-outline"></ion-icon>
+    </ion-chip>
+    <ion-chip button (click)="selectAction('summarize-medium')" class="submenu-chip">
+      <ion-icon name="contract-outline"></ion-icon>
       <ion-label>Medium</ion-label>
-    </ion-item>
-    <ion-item button (click)="selectAction('summarize-small')">
-      <ion-icon slot="start" name="ellipsis-horizontal-outline"></ion-icon>
+    </ion-chip>
+    <ion-chip button (click)="selectAction('summarize-small')" class="submenu-chip">
+      <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
       <ion-label>Small</ion-label>
-    </ion-item>
-  </ion-list>
-
+    </ion-chip>
+  </div>
+  
   <!-- Autres options -->
-  <ion-item button (click)="selectAction('edit')">
+  <ion-item button (click)="selectAction('edit')" class="menu-item">
     <ion-icon slot="start" name="create-outline"></ion-icon>
     <ion-label>Edit</ion-label>
   </ion-item>
-
-  <ion-item button (click)="selectAction('save') ">
+  
+  <ion-item button (click)="selectAction('save')" class="menu-item">
     <ion-icon slot="start" name="save-outline"></ion-icon>
     <ion-label>Save</ion-label>
   </ion-item>
-
-  <ion-item button (click)="selectAction('download')">
+  
+  <ion-item button (click)="selectAction('download')" class="menu-item">
     <ion-icon slot="start" name="download-outline"></ion-icon>
     <ion-label>Download</ion-label>
   </ion-item>
-
-  <ion-item lines="none" button (click)="toggleShareOptions()">
+  
+  <ion-item lines="none" button (click)="toggleShareOptions()" class="menu-item">
     <ion-icon slot="start" name="share-social-outline"></ion-icon>
-    Share
+    <ion-label>Share</ion-label>
     <ion-icon slot="end" [name]="showShareOptions ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
   </ion-item>
-
+  
   <!-- Sous-options de Share -->
-  <ion-list *ngIf="showShareOptions" class="share-sub-options">
-    <ion-item button (click)="selectAction('share')">
-      <ion-icon slot="start" name="link-outline"></ion-icon>
-      URL
-    </ion-item>
-
-    <ion-item (click)="openEmailModal()">
-      <ion-icon slot="start" name="mail-outline"></ion-icon>
-     Mail
-    </ion-item>
-  </ion-list>
-
+  <div *ngIf="showShareOptions" class="horizontal-submenu">
+    <ion-chip button (click)="selectAction('share')" class="submenu-chip">
+      <ion-icon name="link-outline"></ion-icon>
+      <ion-label>URL</ion-label>
+    </ion-chip>
+    <ion-chip button (click)="openEmailModal()" class="submenu-chip">
+      <ion-icon name="mail-outline"></ion-icon>
+      <ion-label>Mail</ion-label>
+    </ion-chip>
+  </div>
 </ion-list>

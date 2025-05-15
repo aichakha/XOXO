@@ -258,7 +258,7 @@ sendEmail(to: string, subject: string) {
     text: this.transcribedText
   };
 
-  this.http.post('https://de3d-154-111-224-232.ngrok-free.app/mail/send', payload).subscribe({
+  this.http.post('https://1a29-154-111-224-232.ngrok-free.app/mail/send', payload).subscribe({
     next: () => this.showToast('Email envoyé !'),
     error: err => this.showToast('Erreur envoi mail')
   });
@@ -325,7 +325,7 @@ hideSummarizeMenu() {
       this.loadingMessage = 'Summarizing...';
 
       this.presentLoading().then((loading) => {
-        this.http.post<any>('https://bf2c-154-111-224-232.ngrok-free.app/summarize/', { text, type }).subscribe({
+        this.http.post<any>('https://4d3e-154-111-224-232.ngrok-free.app/summarize/', { text, type }).subscribe({
           next: (response: any) => {
             console.log('✅ Summary received:', response);
             if (response && response.summary) {
@@ -356,7 +356,7 @@ translateText(text: string, targetLang: string) {
   this.isLoading = true;
   this.loadingMessage = 'Translating...';
   this.presentLoading1().then((loading) => {
-    this.http.post<any>('https://de3d-154-111-224-232.ngrok-free.app/translate', {
+    this.http.post<any>('https://1a29-154-111-224-232.ngrok-free.app/translate', {
       text: this.originalText,
 
       srcLang: this.detectedLanguage, 
@@ -722,7 +722,7 @@ openModal() {
     text: this.translatedText || this.transcribedText,
   };
 
-  this.http.post<any>('https://de3d-154-111-224-232.ngrok-free.app/text/generate-url', payload).subscribe(
+  this.http.post<any>('https://1a29-154-111-224-232.ngrok-free.app/text/generate-url', payload).subscribe(
     (res) => {
       const shareableUrl = res.url;
 

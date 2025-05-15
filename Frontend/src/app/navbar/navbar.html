@@ -1,4 +1,4 @@
-<ion-header class="navbar">
+<ion-header class="desktop-only">
   <div class="logo">
     <ion-buttons slot="start">
       <a (click)="isAuthenticated ? Homeuser() : Home()">
@@ -15,6 +15,31 @@
     </ul>
   </nav>
 
+  <div class="auth-buttons">
+    <ng-container *ngIf="isAuthenticated; else loggedOut">
+      <div class="user-avatar" (click)="showLogout = !showLogout">
+        {{ getFirstLetter(username) }}
+      </div>
+      <ion-button *ngIf="showLogout" (click)="logout()" class="logout-button">
+        LOGOUT
+      </ion-button>
+    </ng-container>
+
+    <ng-template #loggedOut>
+      <button class="sign-in" (click)="login()">LOG IN</button>
+      <button class="join-now" (click)="signup()">JOIN NOW</button>
+    </ng-template>
+  </div>
+</ion-header>
+
+<ion-header class="mobile-only">
+  <div class="logo">
+    <ion-buttons slot="start">
+      <a (click)="isAuthenticated ? Homeuser() : Home()">
+        <ion-img src="assets/icon/Logo2.png" style="height: 50px; width: auto;"></ion-img>
+      </a>
+    </ion-buttons>
+  </div>
   <div class="auth-buttons">
     <ng-container *ngIf="isAuthenticated; else loggedOut">
       <div class="user-avatar" (click)="showLogout = !showLogout">

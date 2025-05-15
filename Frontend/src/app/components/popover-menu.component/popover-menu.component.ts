@@ -109,7 +109,7 @@ export class PopoverMenuComponent {
     this.loadingMessage = 'Translating...';
       // Show loading spinner
     this.presentLoading1().then((loading) => {
-      this.http.post<any>('https://bf2c-154-111-224-232.ngrok-free.app/translate/', {
+      this.http.post<any>('https://4d3e-154-111-224-232.ngrok-free.app/translate/', {
         text: this.originalText,
 
         src_lang: this.detectedLanguage, // 🔹 Changer "srcLang" en "src_lang"
@@ -156,7 +156,7 @@ export class PopoverMenuComponent {
       text: finalText
     };
 
-    this.http.post('https://de3d-154-111-224-232.ngrok-free.app/mail/send', payload).subscribe({
+    this.http.post('https://1a29-154-111-224-232.ngrok-free.app/mail/send', payload).subscribe({
       next: () => {
         this.showToast('📤 Mail envoyé avec succès !');
       },

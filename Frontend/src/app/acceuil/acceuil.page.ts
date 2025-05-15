@@ -12,6 +12,7 @@ import { ModalController } from '@ionic/angular';
 import { lastValueFrom } from 'rxjs';
 import { Navbar } from "../navbar/navbar";
 
+
 @Component({
   selector: 'app-acceuil',
   standalone: true,
@@ -20,6 +21,7 @@ import { Navbar } from "../navbar/navbar";
     FormsModule,
     IonicModule,
     Navbar
+    
 ],
   templateUrl: './acceuil.page.html',
   styleUrls: ['./acceuil.page.scss'],
@@ -34,7 +36,7 @@ export class AcceuilPage {
   isAuthenticated = false;
   last4Digits: string | null = null;
   showPopup = false;
-
+ 
 
   login() {
     this.router.navigate(['/login']);
@@ -101,6 +103,25 @@ export class AcceuilPage {
     }
 
     this.router.navigate(['/acceuil']);
+  }
+  Homeuser() {
+    this.uploadedFile = null;
+    this.uploadedFileName = '';
+    this.mediaUrl = '';
+
+    // Réinitialiser l'input file (pour éviter qu'il garde l'ancien fichier)
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    if (fileInput) {
+      fileInput.value = ''; // Réinitialisation de l'élément HTML input file
+    }
+
+    // Réinitialiser l'input URL
+    const urlInput = document.getElementById('urlInput') as HTMLInputElement;
+    if (urlInput) {
+      urlInput.value = ''; // Réinitialisation de l'élément HTML input URL
+    }
+
+    this.router.navigate(['/acceuil-user']);
   }
   History() {
     this.router.navigate(['/history']);

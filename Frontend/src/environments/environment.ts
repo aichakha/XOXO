@@ -5,7 +5,7 @@
 export const environment = {
   production: false,
   //apiUrl: 'https://64q9nbwz-3000.euw.devtunnels.ms',
-   apiUrl: 'https://de3d-154-111-224-232.ngrok-free.app',
+   apiUrl: 'https://1a29-154-111-224-232.ngrok-free.app',
 };
 
 

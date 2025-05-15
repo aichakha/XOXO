@@ -10,8 +10,8 @@ import { createAuthorizationHeader } from 'src/app/utils/header';
 })
 export class SavedTextService {
   //private baseUrl = `${environment.apiUrl}/saved-text`;
-  private baseUrl = 'https://de3d-154-111-224-232.ngrok-free.app/saved-text';
-  private categoryUrl = 'https://de3d-154-111-224-232.ngrok-free.app/categories';
+  private baseUrl = 'https://1a29-154-111-224-232.ngrok-free.app/saved-text';
+  private categoryUrl = 'https://1a29-154-111-224-232.ngrok-free.app/categories';
   constructor(private http: HttpClient,private authService: AuthService) {}
 
   private getRequestOptions() {

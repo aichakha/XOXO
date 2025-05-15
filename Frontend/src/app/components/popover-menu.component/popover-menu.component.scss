@@ -1,103 +1,153 @@
-
-@use "sass:color";
-@use "sass:map";
-@use "sass:meta";
-ion-item {
-  --background: #fff;
-  --color: #333;
-
-  ion-icon {
-    color: #9b59b6; // 🎨 Mauve
-    font-size: 20px;
+ion-list.popover-menu {
+  --background: #f8f8f8;
+  --ion-color-primary: #9b59b6;
+  --ion-color-primary-rgb: 155, 89, 182;
+  --ion-color-primary-contrast: #fff;
+  --ion-color-primary-shade: #8e44ad;
+  --ion-color-primary-tint: #e8d0f1; // Nuance plus claire et rosée
+  --hover-color: rgba(232, 208, 241, 0.3); // Nouvelle couleur hover violet clair/rosé
+  
+  padding: 8px;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 320px;
+  
+  @media (min-width: 481px) {
+    min-width: 280px;
   }
-
+  
+  @media (max-width: 480px) {
+    max-width: 100%;
+    padding: 6px;
+    border-radius: 8px;
+  }
+  
+  ion-item {
+    --background: transparent;
+    --color: #333;
+    --inner-padding-end: 0px;
+    --padding-start: 16px;
+    --min-height: 48px;
+    --border-radius: 8px;
+    --transition: all 0.2s ease;
+    
+    &:hover {
+      --background: var(--hover-color); // Utilisation de la nouvelle couleur
+      transform: translateX(2px);
+      
+      ion-icon {
+        color: var(--ion-color-primary-shade); // Assombrit légèrement l'icône au hover
+      }
+    }
+    
+    &.active {
+      --background: rgba(var(--ion-color-primary-rgb), 0.15);
+    }
+    
+    @media (max-width: 480px) {
+      --min-height: 42px;
+      --padding-start: 12px;
+    }
+  }
+  
+  ion-icon {
+    color: var(--ion-color-primary);
+    font-size: 20px;
+    transition: all 0.2s ease; // Transition sur toutes les propriétés
+    
+    @media (max-width: 480px) {
+      font-size: 18px;
+    }
+  }
+  
   ion-label {
     font-weight: 500;
-  }
-}
-
-// Pour les sous-menus flottants à gauche
-.menu-item-with-sub {
-  position: relative;
-
-  .hover-submenu {
-    display: none;
-    position: absolute;
-    top: 0;
-    left: -180px;
-    background: #f8f8f8;
-    padding: 8px;
-    border-radius: 8px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    width: 160px;
-
-    ion-item {
-      --background: transparent;
-      color: #9b59b6;
-
-      ion-icon {
-        color: #9b59b6; // 👈 Encore mauve pour les sous-menus
-      }
-    }
-  }
-
-  &:hover .hover-submenu {
-    display: block;
-  }
-  .share-sub-options {
-    padding-left: 20px;
-
-    ion-item {
-      --inner-padding-end: 10px;
+    margin: 12px 0;
+    
+    @media (max-width: 480px) {
       font-size: 14px;
+      margin: 10px 0;
     }
   }
-  .email-modal-content {
-    --background: rgba(0, 0, 0, 0.3); // Assombrir le fond derrière
-
-    .email-popup {
-      background: white;
-      padding: 24px;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-      max-width: 350px;
-      margin: 10% auto;
-      text-align: center;
-
-      h2 {
-        font-size: 20px;
-        margin-bottom: 20px;
-        font-weight: bold;
-        color: #333;
-      }
-
-      ion-item {
-        margin-bottom: 12px;
-        --background: #f5f5f5;
-        --border-radius: 8px;
-      }
-
-      ion-input {
-        padding-left: 10px;
-        font-size: 14px;
-      }
-
-      .email-actions {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 16px;
-
-        ion-button {
-          font-weight: 500;
-        }
-
-        ion-button[color="medium"] {
-          color: #666;
-        }
-      }
-    }
-  }
-
-
 }
+
+.horizontal-submenu {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 8px 16px 12px;
+  margin-left: 20px;
+  border-left: 2px solid var(--ion-color-primary-tint);
+  animation: fadeIn 0.2s ease-out;
+  
+  ion-chip {
+    --background: rgba(var(--ion-color-primary-rgb), 0.1);
+    --color: #333;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 16px;
+    transition: all 0.2s ease;
+    margin: 4px 0;
+    flex-grow: 0;
+    
+    &:hover {
+      --background: var(--hover-color); // Même couleur hover que les items
+      transform: translateY(-2px);
+      
+      ion-icon {
+        transform: scale(1.1);
+        color: var(--ion-color-primary-shade);
+      }
+    }
+    
+    ion-icon {
+      color: var(--ion-color-primary);
+      font-size: 16px;
+      margin-right: 4px;
+      transition: all 0.2s ease;
+    }
+    
+    ion-label {
+      font-size: 13px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    padding: 6px 12px 10px;
+    margin-left: 12px;
+    gap: 6px;
+    
+    ion-chip {
+      height: 28px;
+      padding: 0 8px;
+      flex: 0 0 calc(50% - 6px);
+      max-width: calc(50% - 6px);
+      justify-content: flex-start;
+      overflow: hidden;
+      
+      ion-icon {
+        font-size: 14px;
+        min-width: 14px;
+      }
+      
+      ion-label {
+        font-size: 12px;
+        margin-left: 2px;
+      }
+    }
+  }
+  
+  @media (max-width: 320px) {
+    ion-chip {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+  }
+}
+
+/* (Conservez le reste de votre code existant) */
