@@ -35,7 +35,7 @@ interface Clip {
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [ClickOutsideDirective,
+  imports: [
     CommonModule,
     FormsModule,
     IonicModule, Navbar],
@@ -825,7 +825,7 @@ sendEmail(to: string, subject: string, text: string) {
     text
   };
 
-  this.http.post('https://1a29-154-111-224-232.ngrok-free.app/mail/send', payload).subscribe({
+  this.http.post('https://54ed-154-111-224-232.ngrok-free.app/mail/send', payload).subscribe({
     next: () => {
       this.showToast('📤 Mail envoyé avec succès !');
     },
@@ -869,7 +869,7 @@ openModal() {
     text: this.translatedText || this.transcribedText,
   };
 
-  this.http.post<any>('https://1a29-154-111-224-232.ngrok-free.app/text/generate-url', payload).subscribe(
+  this.http.post<any>('https://54ed-154-111-224-232.ngrok-free.app/text/generate-url', payload).subscribe(
     (res) => {
       const shareableUrl = res.url;
       // Affiche une alerte avec l'URL générée

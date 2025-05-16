@@ -1,9 +1,13 @@
-from fastapi import FastAPI, UploadFile, File, Form, HTTPException
+from fastapi import FastAPI, UploadFile, File, Form, HTTPException,Body
 import whisper
 import os
 import requests
 import shutil
 from summarize import SummarizerT5
+from pydantic import BaseModel, Field
+from typing import Optional
+#from summarize import SummarizerT5
+from summarizer import summary,get_summary
   # Classe de résumé personnalisée
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 from pydantic import BaseModel
@@ -26,33 +30,45 @@ app.add_middleware(
 # 🚀 Charger les modèles
 model = whisper.load_model("base")
 
-# 📌 Initialiser T5 pour le résumé
-class SummarizerT5:
-    def __init__(self):
-        self.tokenizer = T5Tokenizer.from_pretrained("t5-large")
-        self.model = T5ForConditionalGeneration.from_pretrained("t5-large")
+#resume onnx longt5 et parametrable
+class SummaryRequest(BaseModel):
+    text: str = Field(..., description="Texte à résumer")
+    summary_type: str = Field(default="medium", description="Type de résumé: 'small', 'medium', ou 'large'")
+    max_input_len: Optional[int] = Field(default=2048, description="Longueur maximale du texte d'entrée")
 
-    def summarize(self, text: str, max_length: int) -> str:
-        input_ids = self.tokenizer.encode(f"summarize: {text}", return_tensors="pt", max_length=512, truncation=True)
-        output = self.model.generate(input_ids, max_length=max_length, num_beams=2, early_stopping=True)
-        return self.tokenizer.decode(output[0], skip_special_tokens=True)
+# Modèle de réponse
+class SummaryResponse(BaseModel):
+    summary: str
+    length: int
+    summary_type: str
+    processing_time: float
 
-summarizer_t5 = SummarizerT5()
-# Endpoint pour obtenir un résumé
-@app.post("/summarize/")
-async def summarize_text(request: dict):
-    text = request.get('text', '')
-    summary_type = request.get('type', 'medium').lower()
+# Route principale pour obtenir un résumé
+@app.post("/summarize/", response_model=SummaryResponse)
+def summarize_text(request: SummaryRequest = Body(...)):
+    try:
+        # Vérifier que le texte n'est pas vide
+        if not request.text or len(request.text.strip()) < 10:
+            raise HTTPException(status_code=400, detail="Le texte est trop court ou vide")
+        
+        # Vérifier le type de résumé
+        if request.summary_type not in ["small", "medium", "large"]:
+            raise HTTPException(status_code=400, detail="Type de résumé invalide. Utiliser 'small', 'medium' ou 'large'")
+        
+        # Générer le résumé
+        result = get_summary(
+            text=request.text,
+            summary_type=request.summary_type,
+            max_input_len=request.max_input_len
+        )
+        
+        # Retourner le résultat
+        return result
+        
+    except Exception as e:
+        # Gérer les erreurs
+        raise HTTPException(status_code=500, detail=f"Erreur lors de la génération du résumé: {str(e)}")
 
-    # Tailles de résumé
-    sizes = {"large": 100, "medium": 50, "small": 24}
-
-    # Vérifier le type de résumé
-    if summary_type not in sizes:
-        raise HTTPException(status_code=400, detail="Type de résumé invalide. Choisir entre 'large', 'medium' ou 'small'.")
-
-    summary = summarizer_t5.summarize(text, max_length=sizes[summary_type])
-    return {"summary": summary}
 
 # 📌 Transcription audio avec Whisper
 @app.post("/transcribe/")

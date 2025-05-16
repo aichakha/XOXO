@@ -31,7 +31,7 @@ export class TranslationService {
 
       console.log('Sending translation request:', payload); // pour debug
 
-      const response = await axios.post('https://4d3e-154-111-224-232.ngrok-free.app/translate', payload);
+      const response = await axios.post('https://0565-154-111-224-232.ngrok-free.app/translate', payload);
 
       console.log('Translation microservice response:', response.data); // pour debug
 

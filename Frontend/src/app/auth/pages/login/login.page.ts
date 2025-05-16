@@ -83,7 +83,7 @@ export class LoginPage {
           localStorage.setItem('name', response.username);
           localStorage.setItem('userId', response.userId);
 
-          this.router.navigate(['/acceuil-user']); // 🔹 Rediriger après connexion
+          this.router.navigate(['/acceuil-user']);
         },
         error: (error) => {
           console.error('🚨 Login failed:', error);

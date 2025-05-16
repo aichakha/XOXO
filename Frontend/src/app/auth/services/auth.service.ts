@@ -30,7 +30,7 @@ export class AuthService {
         if (res.token) {
           localStorage.setItem('authToken', res.token);
           localStorage.setItem('username', res.email);
-          localStorage.setItem('username', res.username); // ✅ utilise le nom maintenant
+          localStorage.setItem('username', res.username); 
         }
       })
     );
@@ -75,14 +75,16 @@ export class AuthService {
 
   // ✅ Sauvegarde du token et du token décodé
   setToken(token: string): void {
-    localStorage.setItem('access_token', token);
-    try {
-      const decodedToken = jwtDecode(token);
-      localStorage.setItem('decodedToken', JSON.stringify(decodedToken));
-    } catch (error) {
-      console.error('Erreur de décodage du token:', error);
-    }
+  localStorage.setItem('access_token', token);
+  try {
+    const decodedToken = jwtDecode(token);
+    localStorage.setItem('decodedToken', JSON.stringify(decodedToken));
+    this.isAuthenticated.next(true);
+  } catch (error) {
+    console.error('Erreur de décodage du token:', error);
   }
+}
+
 
 
 // Récupération du token
@@ -148,10 +150,13 @@ setCurrentUser(user: any) {
   this.currentUserSubject.next(user);
 }
 
-logout() {
+logout(): void {
   localStorage.clear();
   this.currentUserSubject.next(null);
+  this.isAuthenticated.next(false);
+  this.router.navigate(['/acceuil']);
 }
+
 
 getCurrentUser() {
   return this.currentUserSubject.value;

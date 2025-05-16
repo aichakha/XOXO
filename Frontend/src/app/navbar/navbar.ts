@@ -40,12 +40,19 @@ export class Navbar implements OnInit {
 
     this.router.navigate(['/acceuil']);
   }
-  ngOnInit() {
+   ngOnInit() {
+    // S'abonner aux changements d'état d'authentification
+    this.authService.isAuthenticated$.subscribe(isAuth => {
+      this.isAuthenticated = isAuth;
+      console.log('🔐 Auth state changed:', isAuth);
+      
+      // Mettre à jour le username à chaque changement d'état
+      this.username = localStorage.getItem('username');
+    });
+
+    // Initialiser l'état
     this.isAuthenticated = this.authService.isLoggedIn();
-    console.log('🔐 Authenticated:', this.isAuthenticated);
-    this.authService.username$.subscribe(digits => this.username = digits);
     this.username = localStorage.getItem('username');
-    const user = localStorage.getItem('user');
   }
   Homeuser() {
     this.uploadedFile = null;
@@ -91,7 +98,7 @@ export class Navbar implements OnInit {
     this.authService.logout();
     this.isAuthenticated = false;
     this.username = null;
-    this.router.navigate(['/']); // Redirection après déconnexion
+    this.router.navigate(['/acceuil']); // Redirection après déconnexion
     this.showLogout = false; // Cache avant action
     
 
