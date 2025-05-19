@@ -1,185 +1,141 @@
-import { Injectable, BadRequestException, UnauthorizedException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, BadRequestException, UnauthorizedException, Logger } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { JwtService } from '@nestjs/jwt';
 import { OAuth2Client } from 'google-auth-library';
 import { SignupDto } from './dto/signup.dto';
+
 @Injectable()
 export class AuthService {
-  private client: OAuth2Client;
+  private readonly logger = new Logger(AuthService.name);
+  private readonly client: OAuth2Client;
 
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly jwtService: JwtService
-  ) {
+  constructor( private readonly prisma: PrismaService,private readonly jwtService: JwtService) {
     if (!process.env.GOOGLE_CLIENT_ID) {
-      throw new Error('❌ GOOGLE_CLIENT_ID non défini dans les variables d’environnement');
+      throw new Error('GOOGLE_CLIENT_ID must be defined');
     }
     this.client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
   }
 
-  // ✅ Vérification du Token Google
-  async verifyToken(token: string) {
+  private async verifyGoogleToken(token: string) {
     try {
       const ticket = await this.client.verifyIdToken({
         idToken: token,
         audience: process.env.GOOGLE_CLIENT_ID,
       });
-
-      console.log('✅ User Info:', ticket.getPayload());
+      return ticket.getPayload();
     } catch (error) {
-      console.error('❌ Échec de la vérification du token:', error);
-      throw new UnauthorizedException('Token invalide');
+      this.logger.error('Google token verification failed', error.stack);
+      throw new UnauthorizedException('Invalid Google token');
     }
   }
 
-  // ✅ Inscription utilisateur
   async signUp({ name, email, password }: SignupDto) {
     const existingUser = await this.prisma.user.findUnique({ where: { email } });
-    if (existingUser) throw new BadRequestException('Email déjà utilisé');
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
+    if (existingUser) {
+      throw new BadRequestException('Email already in use');
+    }
+    const hashedPassword = await bcrypt.hash(password, 12);
     const user = await this.prisma.user.create({
       data: { name, email, password: hashedPassword },
     });
-    const token = this.jwtService.sign({
-      sub: user.id,
-      email: user.email,
-    });
-
-    return {
-      message: 'Inscription réussie',
-      token,
-      userId: user.id,
-      username: user.name,
-    };
-  
+    return this.generateAuthResponse(user);
   }
 
-  // ✅ Connexion utilisateur
   async login(email: string, password: string) {
     const user = await this.prisma.user.findUnique({ where: { email } });
-    if (!user) throw new UnauthorizedException('Identifiants invalides');
-
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
     const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch) throw new UnauthorizedException('Identifiants invalides');
-
-    return {
-      message: 'Connexion réussie',
-      userId: user.id,
-      token: this.jwtService.sign({ email: user.email, sub: user.id }),
-      username: user.name,
-    };
+    if (!passwordMatch) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+    return this.generateAuthResponse(user);
   }
 
-  // ✅ Générer un token de réinitialisation
   async forgotPassword(email: string) {
     const user = await this.prisma.user.findUnique({ where: { email } });
-    if (!user) throw new BadRequestException('Utilisateur non trouvé');
-
+    if (!user) {
+      throw new BadRequestException('User not found');
+    }
     const resetToken = randomUUID();
     await this.prisma.user.update({
       where: { email },
       data: { resetToken },
     });
-
-    return { message: 'Token de réinitialisation généré', email, token: resetToken };
+    return { message: 'Reset token generated', email, token: resetToken };
   }
 
-  // ✅ Réinitialisation du mot de passe
   async resetPassword(email: string, token: string, newPassword: string) {
     const user = await this.prisma.user.findFirst({
       where: { email, resetToken: token },
     });
-
-    if (!user) throw new BadRequestException('Token invalide ou expiré');
-
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    if (!user) {
+      throw new BadRequestException('Invalid or expired token');
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
     await this.prisma.user.update({
       where: { id: user.id },
       data: { password: hashedPassword, resetToken: null },
     });
-
-    return { message: 'Mot de passe réinitialisé avec succès' };
+    return { message: 'Password reset successfully' };
   }
 
-  // ✅ Génération du JWT
-  async generateJwt(user: any) {
-    return this.jwtService.sign({ email: user.email, sub: user.id });
-  }
-
-  // ✅ Connexion via Google
   async googleLogin(token: string) {
-    try {
-      const ticket = await this.client.verifyIdToken({
-        idToken: token,
-        audience: process.env.GOOGLE_CLIENT_ID,
-      });
-
-      const payload = ticket.getPayload();
-      if (!payload || !payload.email || !payload.name) throw new UnauthorizedException('Token Google invalide ou incomplet');
-
-      // Vérifier si l'utilisateur existe
-      let user = await this.prisma.user.findUnique({ where: { email: payload.email } });
-
-      // Si l'utilisateur n'existe pas, le créer
-      if (!user) {
-        user = await this.prisma.user.create({
-          data: {
-            name: payload.name,
-            email: payload.email,
-            password: '', // Pas de mot de passe stocké pour Google
-          },
-        });
-      }
-
-    // Retourner l'utilisateur complet (pas le token)
-    return user;
-
-  } catch (error) {
-    console.error("❌ [Google Login] Erreur:", error);
-    throw new UnauthorizedException('Échec de la connexion Google');
-  }
-  }
-  async signupWithGoogle(token: string) {
-    try {
-      const ticket = await this.client.verifyIdToken({
-        idToken: token,
-        audience: process.env.GOOGLE_CLIENT_ID,
-      });
-  
-      const payload = ticket.getPayload();
-      if (!payload || !payload.email || !payload.name) {
-        throw new UnauthorizedException('Token Google invalide ou incomplet');
-      }
-  
-      // Vérifier si l'utilisateur existe déjà
-      const existingUser = await this.prisma.user.findUnique({ where: { email: payload.email } });
-      if (existingUser) {
-        throw new BadRequestException('Un compte avec cet email existe déjà. Veuillez vous connecter.');
-      }
-  
-      // Créer le compte utilisateur (sans mot de passe)
-      const user = await this.prisma.user.create({
+    const payload = await this.verifyGoogleToken(token);
+    if (!payload?.email || !payload?.name) {
+      throw new UnauthorizedException('Invalid Google token payload');
+    }
+    let user = await this.prisma.user.findUnique({ 
+      where: { email: payload.email } 
+    });
+    if (!user) {
+      user = await this.prisma.user.create({
         data: {
           name: payload.name,
           email: payload.email,
-          password: '', // pas de mot de passe pour Google
+          password: '',
         },
       });
-  
-      const tokenJwt = await this.generateJwt(user);
-  
-      return {
-        token: tokenJwt,
-        userId: user.id,
-        username: user.name
-      };
-    } catch (error) {
-      console.error('❌ [Google Signup Service] Erreur:', error);
-      throw new InternalServerErrorException('Erreur pendant l’inscription via Google');
     }
+    return this.generateAuthResponse(user);
+  }
+
+  async signupWithGoogle(token: string) {
+    const payload = await this.verifyGoogleToken(token);
+    if (!payload?.email || !payload?.name) {
+      throw new UnauthorizedException('Invalid Google token payload');
+    }
+    const existingUser = await this.prisma.user.findUnique({ 
+      where: { email: payload.email } 
+    });
+    if (existingUser) {
+      throw new BadRequestException('Email already registered');
+    }
+    const user = await this.prisma.user.create({
+      data: {
+        name: payload.name,
+        email: payload.email,
+        password: '',
+      },
+    });
+    return this.generateAuthResponse(user);
+  }
+
+  private generateAuthResponse(user: any) {
+    const token = this.jwtService.sign({ 
+      sub: user.id, 
+      email: user.email,
+      name: user.name
+    });
+
+    return {
+      token,
+      userId: user.id,
+      username: user.name,
+      email: user.email
+    };
   }
 }

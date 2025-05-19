@@ -25,26 +25,26 @@ export class ContactPage implements OnInit {
   username: string | null = null;
   showLogout = false; 
 
-  constructor( private router: Router, private authService: AuthService) {} // Injection correcte de Router
+  constructor( private router: Router, private authService: AuthService) {} 
 
 
   Home() {
-    // Réinitialiser les fichiers uploadés et les champs
+   
     this.uploadedFile = null;
     this.uploadedFileName = '';
     this.mediaUrl = '';
 
-    // Réinitialiser l'input file (pour éviter qu'il garde l'ancien fichier)
+   
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     if (fileInput) {
-      fileInput.value = ''; // Réinitialisation de l'élément HTML input file
+      fileInput.value = ''; 
     }
 
     this.router.navigate(['/acceuil']);
   }
   ngOnInit() {
     this.isAuthenticated = this.authService.isLoggedIn();
-    console.log('🔐 Authenticated:', this.isAuthenticated);
+   // console.log('🔐 Authenticated:', this.isAuthenticated);
     this.authService.username$.subscribe(digits => this.username = digits);
     this.username = localStorage.getItem('username');
     const user = localStorage.getItem('user');
@@ -54,16 +54,16 @@ export class ContactPage implements OnInit {
     this.uploadedFileName = '';
     this.mediaUrl = '';
 
-    // Réinitialiser l'input file (pour éviter qu'il garde l'ancien fichier)
+  
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     if (fileInput) {
-      fileInput.value = ''; // Réinitialisation de l'élément HTML input file
+      fileInput.value = ''; 
     }
 
-    // Réinitialiser l'input URL
+    
     const urlInput = document.getElementById('urlInput') as HTMLInputElement;
     if (urlInput) {
-      urlInput.value = ''; // Réinitialisation de l'élément HTML input URL
+      urlInput.value = ''; 
     }
 
     this.router.navigate(['/acceuil-user']);
@@ -71,7 +71,7 @@ export class ContactPage implements OnInit {
 
 
   Contact() {
-    this.router.navigate(['/contact']); // Navigation fonctionnelle
+    this.router.navigate(['/contact']); 
   }
   History() {
     this.router.navigate(['/history']);
@@ -83,7 +83,7 @@ export class ContactPage implements OnInit {
     this.router.navigate(['/login']);
   }
   signup() {
-    // Déconnexion de l'utilisateur (peut être améliorée avec JWT plus tard)
+    
 
     this.router.navigate(['signup']);
   }
@@ -91,8 +91,8 @@ export class ContactPage implements OnInit {
     this.authService.logout();
     this.isAuthenticated = false;
     this.username = null;
-    this.router.navigate(['/']); // Redirection après déconnexion
-    this.showLogout = false; // Cache avant action
+    this.router.navigate(['/acceuil']); 
+    this.showLogout = false;
     ;
 
   }

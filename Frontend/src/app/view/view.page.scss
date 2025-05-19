@@ -216,6 +216,16 @@ footer {
   z-index: 100;
 
 }
+.footer-button:focus,
+.footer-button:active,
+ion-button.footer-button:focus,
+ion-button.footer-button:active {
+  outline: none;
+  box-shadow: none !important;
+  --background: transparent !important;
+  --color-activated: inherit;
+}
+
 /* Style global de la barre */
 ion-toolbar {
   --background: #ffffff;

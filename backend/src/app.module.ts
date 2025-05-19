@@ -20,7 +20,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { MailModule } from './mail/mail.module';
 import { TranslationModule } from './translate/translate.module';
 @Module({
-  imports: [PrismaModule,    MailerModule.forRoot({
+  imports: [PrismaModule,ConfigModule.forRoot({isGlobal: true,}),MailerModule.forRoot({
     transport: {
       host: 'smtp.gmail.com',
       port: 587,

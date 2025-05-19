@@ -39,22 +39,21 @@ export class AuthService {
   login(email: string, password: string): Observable<{ token: string, username: string, userId: string }> {
     return this.http.post<{ token: string, username: string, userId: string }>(`${this.apiUrl}/login`, { email, password }).pipe(
       tap(response => {
-        console.log('✅ Réponse serveur:', response);
+        //console.log('✅ Réponse serveur:', response);
 
         if (response.token) {
-          console.log('✅ Login successful:', response);
+          //console.log('✅ Login successful:', response);
 
-          // 🔹 Stocker le token JWT
+       
           localStorage.setItem('access_token', response.token);
 
-          // 🔹 Stocker le nom d'utilisateur (ou 4 derniers chiffres)
+        
           localStorage.setItem('username', response.username);
           this.username$.next(response.username);
           localStorage.setItem('userId', response.userId);
-          // 🔹 Mettre à jour l'état d'authentification
+       
           this.isAuthenticated.next(true);
 
-          // 🔹 Redirection vers la page d'accueil utilisateur
           this.router.navigate(['/acceuil-user']);
         } else {
           console.error('🚨 Aucun token reçu.');
@@ -106,7 +105,7 @@ getProfile() {
   setUser(user: any): void {
 
     localStorage.setItem('user', JSON.stringify(user));
-    console.log('User stored in localStorage:', localStorage.getItem('user'));
+    //console.log('User stored in localStorage:', localStorage.getItem('user'));
   }
 
   // ✅ Récupération du token décodé
@@ -123,9 +122,9 @@ getProfile() {
 
     try {
       const decoded: any = jwtDecode(token);
-      console.log('📦 Token décodé:', decoded);
+      //console.log('📦 Token décodé:', decoded);
       const now = Math.floor(new Date().getTime() / 1000); // en secondes
-      console.log('🕒 Expiration:', decoded.exp, '| Now:', now);
+     // console.log('🕒 Expiration:', decoded.exp, '| Now:', now);
       return decoded.exp && decoded.exp > now;
 
     } catch (error) {
@@ -133,17 +132,8 @@ getProfile() {
       return false;
     }
   }
-  // ✅ Suppression du token lors de la déconnexion
 
-/*logout(): void {
-  localStorage.removeItem('access_token');
-  localStorage.removeItem('username');
-  localStorage.removeItem('userId');
-  localStorage.removeItem('decodedToken');
-  this.isAuthenticated.next(false);
-  this.router.navigate(['/login']);
-}*/
-//test logout to avoid the history confusion
+
 
 setCurrentUser(user: any) {
   localStorage.setItem('user', JSON.stringify(user));
@@ -173,10 +163,10 @@ getUserId(): string | null {
 
   try {
     const decoded: any = jwtDecode(token); // Utilisez jwt-decode
-    console.log('Decoded Token:', decoded);
+    //console.log('Decoded Token:', decoded);
     return decoded.sub; // Ou le champ où vous stockez l'ID utilisateur
   } catch (error) {
-    console.error('Error decoding token:', error);
+   // console.error('Error decoding token:', error);
     return null;
   }
 }

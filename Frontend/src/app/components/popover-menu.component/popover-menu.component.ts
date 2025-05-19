@@ -27,10 +27,10 @@ export class PopoverMenuComponent {
 
     ngOnInit() {
       if (!this.transcribedText || this.transcribedText.trim().length === 0) {
-        console.warn('❌ Aucun texte transcrit reçu dans le popover.');
+        //console.warn('❌ Aucun texte transcrit reçu dans le popover.');
         this.transcribedText = 'No transcribed text available.';
       } else {
-        console.log('✅ Texte transcrit reçu dans le popover :', this.transcribedText);
+        //console.log('✅ Texte transcrit reçu dans le popover :', this.transcribedText);
         this.originalText = this.transcribedText; 
       }
     }
@@ -69,10 +69,10 @@ export class PopoverMenuComponent {
     }).subscribe({
       next: (response) => {
         this.detectedLanguage = response.data.detections[0].language;
-        console.log('Detected language:', this.detectedLanguage);
+        //console.log('Detected language:', this.detectedLanguage);
       },
       error: (error) => {
-        console.error('Error detecting language:', error);
+        //console.error('Error detecting language:', error);
         this.detectedLanguage = 'en';
       }
     });
@@ -88,14 +88,34 @@ export class PopoverMenuComponent {
     await loading.present();  
     return loading; 
   }
-  translateText(text: string, targetLang: string) {
+
+  async canTranslate(text: string): Promise<boolean> {
+  const wordCount = text.trim().split(/\s+/).length;
+
+  if ( wordCount <= 400) {
+    return true;
+  } else {
+    const toast = await this.toastController.create({
+      message: ' Please do Summarize first (text must be between 200 and 400 words)',
+      duration: 3000,
+      color: 'warning',
+      //position: 'top'
+    });
+    await toast.present();
+    return false;
+  }
+}
+ async  translateText(text: string, targetLang: string) {
+      const canTranslate = await this.canTranslate(text);
+  if (!this.canTranslate(text)) return;
+  if (!canTranslate) return;
     console.log('👉 Translating text:', text, 'to:', targetLang);
     if (!text || !targetLang) return;
     this.originalText = text; 
     this.isLoading = true;
     this.loadingMessage = 'Translating...';
     this.presentLoading1().then((loading) => {
-      this.http.post<any>('https://0565-154-111-224-232.ngrok-free.app/translate/', {
+      this.http.post<any>('https://efa3-154-111-224-232.ngrok-free.app/translate/', {
         text: this.originalText,
 
         src_lang: this.detectedLanguage, 
@@ -138,7 +158,7 @@ export class PopoverMenuComponent {
       subject,
       text: finalText
     };
-    this.http.post('https://54ed-154-111-224-232.ngrok-free.app/mail/send', payload).subscribe({
+    this.http.post('https://4c8e-154-111-224-232.ngrok-free.app/mail/send', payload).subscribe({
       next: () => {
         this.showToast(' Email sent successfully !');
       },

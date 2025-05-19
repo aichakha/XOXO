@@ -5,8 +5,8 @@ export class UploadAudioDto {
   @IsNotEmpty()
   file: Express.Multer.File;
 
-  @IsOptional() // Si ce champ est optionnel
-  @IsUrl() // Vérifie que c'est une URL valide
+  @IsOptional() 
+  @IsUrl() 
   @IsString()
   url: string;
 }

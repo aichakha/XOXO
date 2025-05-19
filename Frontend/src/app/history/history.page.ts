@@ -569,7 +569,7 @@ async toggleFavorite(clip: Clip) {
     });
     await toast.present();
   } catch (error) {
-    console.error('Erreur de mise à jour des favoris:', error);
+   // console.error('Erreur de mise à jour des favoris:', error);
     const toast = await this.toastCtrl.create({
       message: 'Error while updating favorites.',
       duration: 2000,
@@ -607,8 +607,6 @@ async createCategory() {
   try {
     const userId = this.authService.getUserId();
     if (!userId) return;
-
-    // Vérifier si une catégorie avec ce nom existe déjà
     const existing = this.categories.find(
       (cat) => cat.name.toLowerCase().trim() === this.newCategoryName.toLowerCase().trim()
     );
@@ -617,8 +615,6 @@ async createCategory() {
       this.showToast('Category name already exists.', 'danger');
       return;
     }
-
-    // Créer la catégorie si elle n'existe pas
     await lastValueFrom(
       this.savedTextService.createCategory(this.newCategoryName, userId)
     );
@@ -627,7 +623,7 @@ async createCategory() {
     await this.loadCategories();
     this.showToast('Category created successfully.', 'success');
   } catch (error) {
-    console.error('Error creating category:', error);
+    //console.error('Error creating category:', error);
     this.showToast('An error occurred while creating the category.', 'danger');
   }
 }
@@ -652,7 +648,7 @@ async removeFromCategory(textId: string) {
     this.showToast('Category removed from the text successfully.', 'success');
     await this.loadSavedTexts();
   } catch (error) {
-    console.error('Error removing category:', error);
+    //console.error('Error removing category:', error);
     this.showToast('An error occurred while removing the category.', 'danger');
   }
 }
@@ -666,11 +662,9 @@ async showToast(message: string, color: 'success' | 'danger' = 'success') {
   });
   await toast.present();
 }
-
-
 async updateCategory(category: any) {
   try {
-    // Vérifie si un autre nom de catégorie existe déjà (hors de celui qu'on édite)
+
     const nameAlreadyUsed = this.categories.some(
       (cat) =>
         cat.id !== category.id &&
@@ -689,7 +683,7 @@ async updateCategory(category: any) {
     await this.loadCategories();
     this.showToast('Category updated successfully.', 'success');
   } catch (error) {
-    console.error('Error updating category:', error);
+    //console.error('Error updating category:', error);
     this.showToast('An error occurred while updating the category.', 'danger');
   }
 }
@@ -705,7 +699,7 @@ async deleteCategory(categoryId: string) {
         role: 'cancel',
         cssClass: 'secondary',
         handler: () => {
-          console.log('Deletion cancelled');
+         // console.log('Deletion cancelled');
         }
       },
       {
@@ -716,11 +710,10 @@ async deleteCategory(categoryId: string) {
               this.savedTextService.deleteCategory(categoryId)
             );
             await this.loadCategories();
-            // Rechargez également les textes pour refléter les changements
             await this.loadSavedTexts();
             this.showToast('Category deleted successfully.', 'success');
           } catch (error) {
-            console.error('Error deleting category:', error);
+            //console.error('Error deleting category:', error);
             this.showToast('An error occurred while deleting the category.', 'danger');
           }
         }
@@ -735,14 +728,12 @@ filterByCategory(categoryId: string | null) {
   this.applyFilters();
 }
 
-
-
 toggleFavoriteFilter() {
   this.showOnlyFavorites = !this.showOnlyFavorites;
-  this.filterClips(); // Refiltre la liste
+  this.filterClips(); 
 
 }
-//changes for testtting the update for the content:
+
 selectedClipId: string | null = null;
 
 
@@ -762,14 +753,11 @@ enableEditing(clip: any) {
   this.editingClipId = clip.id;
 }
 
-
-
-
 UpdateContent(textId: string, newContent: string) {
   this.savedTextService.updateTextContent(textId, newContent).subscribe({
     next: (res) => {
-      console.log("Contenu mis à jour :", res);
-      this.loadSavedTexts(); // Recharger la liste si tu veux voir les changements
+     // console.log("Contenu mis à jour :", res);
+      this.loadSavedTexts(); 
     },
     error: (err) => {
       console.error("Erreur lors de la mise à jour :", err);
@@ -781,29 +769,26 @@ collapseAndClose(clip: any) {
   clip.isExpanded = false;
   this.editingClipId = null;
 }
-  // Expansion + mise en mode édition
+
   expandAndEdit(clip: any) {
     clip.isExpanded = true;
     this.editingClipId = clip.id;
   }
 expandedClipId: string | null = null;
 
-// Fonction pour étendre le texte complet
-
 ExpandText(clip: any) {
   clip.isExpanded = true;
-  this.expandedClipId = clip.id;  // On stocke l'ID du clip que l'on souhaite étendre
+  this.expandedClipId = clip.id;  
 }
 
 UnCollapseText(clip: any) {
   clip.isExpanded = false;}
 
-// Fonction pour permettre l'édition du texte
 startEditing(clip: any) {
-  this.editingClipId = clip.id;  // On passe en mode édition pour ce clip
-  this.expandedClipId = null;  // On cache le texte complet
+  this.editingClipId = clip.id;  
+  this.expandedClipId = null; 
 }
-// Email method
+
 async ShowToast(message: string, color: string = 'success') {
   const toast = await this.toastController.create({
     message,
@@ -815,7 +800,7 @@ async ShowToast(message: string, color: string = 'success') {
 }
 sendEmail(to: string, subject: string, text: string) {
   if (!text || text.trim().length === 0 || text === 'Aucun texte transcrit disponible.') {
-    this.showToast('❌ Aucun texte disponible à envoyer.');
+    this.showToast(' No text available to send.');
     return;
   }
 
@@ -825,36 +810,34 @@ sendEmail(to: string, subject: string, text: string) {
     text
   };
 
-  this.http.post('https://54ed-154-111-224-232.ngrok-free.app/mail/send', payload).subscribe({
+  this.http.post('https://4c8e-154-111-224-232.ngrok-free.app/mail/send', payload).subscribe({
     next: () => {
-      this.showToast('📤 Mail envoyé avec succès !');
+      this.showToast(' Mail sent successfully !');
     },
     error: (error) => {
-      console.error('❌ Erreur lors de l’envoi du mail :', error);
-      this.showToast('Erreur lors de l’envoi du mail.');
+      //console.error('❌ Erreur lors de l’envoi du mail :', error);
+      this.showToast('Eerror sending email.');
     },
   });
 }
 
-
-// Loading method
 async PresentLoading() {
   const loading = await this.loadingCtrl.create({
-    message: this.loadingMessage,  // ✅ Utilisation du message dynamique
-    spinner: 'crescent',  // ✅ Spinner Ionic
-    backdropDismiss: false,  // ✅ Empêche la fermeture en cliquant dehors
+    message: this.loadingMessage, 
+    spinner: 'crescent', 
+    backdropDismiss: false, 
   });
 
-  await loading.present();  // ✅ Affichage du loader
-  return loading;  // ✅ Retourne l'instance pour pouvoir fermer avec `loading.dismiss()`
+  await loading.present();  
+  return loading;  
 }
 
-// Popover method
+
 async PresentPopover() {
   const popover = await this.popoverCtrl.create({
     component: PopoverMenuComponent,
     componentProps: {
-      transcribedText: this.transcribedText // 👈 Assure-toi que cette variable contient le bon texte
+      transcribedText: this.transcribedText 
     },
     translucent: true,
   });
@@ -869,10 +852,10 @@ openModal() {
     text: this.translatedText || this.transcribedText,
   };
 
-  this.http.post<any>('https://54ed-154-111-224-232.ngrok-free.app/text/generate-url', payload).subscribe(
+  this.http.post<any>('https://4c8e-154-111-224-232.ngrok-free.app/text/generate-url', payload).subscribe(
     (res) => {
       const shareableUrl = res.url;
-      // Affiche une alerte avec l'URL générée
+
       this.showAlert('Shareable Link', shareableUrl);
     },
     (error) => {
@@ -882,7 +865,7 @@ openModal() {
   );
 }
 
-// Alert method
+
 async showAlert(title: string, message: string) {
   const alert = await this.alertController.create({
     header: title,
@@ -916,7 +899,6 @@ async shareTextOrGenerateLink(text: string) {
     return;
   }
 
-  // Si l'API Web Share est disponible (mobile)
   if (navigator.share) {
     try {
       await navigator.share({
@@ -927,38 +909,38 @@ async shareTextOrGenerateLink(text: string) {
       console.log('Share cancelled', err);
     }
   }
-  // Fallback pour desktop ou navigateurs sans support
+
   else {
-    this.transcribedText = text; // Stocke le texte pour openModal()
-    this.openModal(); // Ouvre une popup avec option de copie
+    this.transcribedText = text; 
+    this.openModal(); 
   }
 }
-//épingler un texte:
+
 texts: any[] = [];
 showOnlyPinned: boolean = false;
 applyFilters() {
   let filtered = [...this.clips];
 
-  // Filtrage par catégorie
+
   if (this.selectedCategory !== null) {
     filtered = filtered.filter(clip => clip.categoryId === this.selectedCategory);
   }
 
-  // Filtrage favoris
+ 
   if (this.showOnlyFavorites) {
     filtered = filtered.filter(clip => clip.isFavorite === true);
   }
 
-  // Filtrage épinglés
+ 
   if (this.showOnlyPinned) {
     filtered = filtered.filter(clip => clip.isPinned === true);
   }
 
-  // ✅ Si ni les favoris ni les épinglés ne sont filtrés, on trie les épinglés en haut
+  
   if (!this.showOnlyFavorites && !this.showOnlyPinned) {
     filtered = filtered.sort((a, b) => {
       if (a.isPinned === b.isPinned) return 0;
-      return a.isPinned ? -1 : 1; // Épinglés en haut
+      return a.isPinned ? -1 : 1; 
     });
   }
 
@@ -986,11 +968,11 @@ FilterClips() {
       clip.title.toLowerCase().includes(search) ||
       clip.content.toLowerCase().includes(search)
     )
-    // 🔁 TRIER avec pinned d'abord
+  
     .sort((a, b) => {
       if (a.isPinned && !b.isPinned) return -1;
       if (!a.isPinned && b.isPinned) return 1;
-      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(); // ensuite trier par date
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(); 
     });
 
   if (this.showOnlyFavorites) {
@@ -1007,22 +989,22 @@ FilterClips() {
 }
 async togglePin(clip: Clip) {
   try {
-    // Appel au backend pour mettre à jour l'état "pinned"
+   
     const response = await lastValueFrom(
       this.savedTextService.updatePinStatus(clip.id, !clip.isPinned)
     );
 
     const updatedIsPinned = response?.isPinned ?? !clip.isPinned;
 
-    // Mise à jour locale
+   
     this.clips = this.clips.map(c =>
       c.id === clip.id ? { ...c, isPinned: updatedIsPinned } : c
     );
 
-    // 🔁 Réappliquer le tri, les filtres, etc.
+   
     this.FilterClips();
 
-    // Toast de confirmation
+  
     const toast = await this.toastCtrl.create({
       message: updatedIsPinned ? 'Pinned text. 📌' : 'Unpinned text.',
       duration: 2000,
@@ -1030,7 +1012,7 @@ async togglePin(clip: Clip) {
     });
     await toast.present();
   } catch (error) {
-    console.error('Erreur lors de la mise à jour de l\'épinglage:', error);
+   // console.error('Erreur lors de la mise à jour de l\'épinglage:', error);
     const toast = await this.toastCtrl.create({
       message: 'Error while updating the pinning.',
       duration: 2000,
@@ -1063,7 +1045,7 @@ async generatePDF(clip: any) {
   const splitText = doc.splitTextToSize(content, pageWidth);
   doc.text(splitText, marginLeft, marginTop);
 
-  // Obtenir un nom de fichier unique avec la date et l'heure
+  
   const now = new Date();
   const timestamp = now.getFullYear().toString() + '.'+
                     (now.getMonth() + 1).toString().padStart(2, '0') +'.'+
@@ -1081,7 +1063,7 @@ async generatePDF(clip: any) {
     });
     alert(`PDF saved: ${fileName}`);
   } catch (e) {
-    console.error('PDF save error:', e);
+    //console.error('PDF save error:', e);
     alert('Error saving PDF.');
   }
 }
@@ -1117,7 +1099,7 @@ async openEmailModal(clipText: string) {
       {
         text: 'Send',
         handler: data => {
-          this.sendEmail(data.to, data.subject, clipText)// ici
+          this.sendEmail(data.to, data.subject, clipText)
         }
       }
     ]

@@ -26,8 +26,8 @@ export class ForgotPasswordPage {
     }
 
     this.authService.forgotPassword(this.email).subscribe({
-      next: (response: { email: string; token: string }) => {  // ✅ Typage correct
-        alert('Check your email for the reset link!');
+      next: (response: { email: string; token: string }) => { 
+        //alert('Check your email for the reset link!');
         this.router.navigate(['/reset-password'], { queryParams: { email: this.email, token: response.token } });
       },
       error: (err) => console.error('Erreur de réinitialisation du mot de passe :', err)
@@ -35,7 +35,7 @@ export class ForgotPasswordPage {
 
   }
   backlogin() {
-    this.router.navigate(['/login']); // Assurez-vous d'avoir cette route définie
+    this.router.navigate(['/login']);
   }
   Home() {
     this.router.navigate(['/acceuil']);

@@ -31,9 +31,10 @@ app.add_middleware(
 model = whisper.load_model("base")
 
 #resume onnx longt5 et parametrable
+
 class SummaryRequest(BaseModel):
     text: str = Field(..., description="Texte à résumer")
-    summary_type: str = Field(default="medium", description="Type de résumé: 'small', 'medium', ou 'large'")
+    summary_type: str = Field(default="basic", description="Type de résumé: 'basic' ou 'advanced'")
     max_input_len: Optional[int] = Field(default=2048, description="Longueur maximale du texte d'entrée")
 
 # Modèle de réponse
@@ -52,7 +53,7 @@ def summarize_text(request: SummaryRequest = Body(...)):
             raise HTTPException(status_code=400, detail="Le texte est trop court ou vide")
         
         # Vérifier le type de résumé
-        if request.summary_type not in ["small", "medium", "large"]:
+        if request.summary_type not in ["basic", "advanced"]:
             raise HTTPException(status_code=400, detail="Type de résumé invalide. Utiliser 'small', 'medium' ou 'large'")
         
         # Générer le résumé

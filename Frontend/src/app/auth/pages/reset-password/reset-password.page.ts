@@ -57,12 +57,12 @@ export class ResetPasswordPage {
     const data = { email: this.email, token: this.token, newPassword: this.newPassword };
     this.authService.resetPassword(data).subscribe({
       next: () => {
-        alert('Password updated successfully!');
+        //alert('Password updated successfully!');
         this.router.navigate(['/login']);
       },
       error: (err) => {
         console.error('Reset password error:', err);
-        alert('Error: Unable to reset password. Please try again.');
+        //alert('Error: Unable to reset password. Please try again.');
       },
     });
   }

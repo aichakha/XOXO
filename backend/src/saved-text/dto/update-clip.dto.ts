@@ -16,9 +16,9 @@ export class UpdateClipDto extends PartialType(CreateSavedTextDto) {
   @IsString()
   title?: string; 
   
-  @IsOptional()  // Ajout de @IsOptional() pour éviter les erreurs si ce champ est absent
+  @IsOptional()  
   @IsString()
-  content?:string; // Ajout du titre optionnel
+  content?:string; 
 }
 
 

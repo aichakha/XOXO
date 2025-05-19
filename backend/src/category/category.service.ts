@@ -15,7 +15,6 @@ export class CategoryService {
       },
     });
   }
-
   async findAllByUser(userId: string) {
     return this.prisma.category.findMany({
       where: { userId },
@@ -36,8 +35,6 @@ export class CategoryService {
   async delete(id: string) {
     const category = await this.prisma.category.findUnique({ where: { id } });
     if (!category) throw new NotFoundException('Category not found');
-
-    // Supprime uniquement la catégorie, sans toucher aux textes
     return this.prisma.category.delete({ where: { id } });
   }
 }

@@ -5,15 +5,10 @@ import axios from 'axios';
 export class SummarizeService {
   async summarizeText(text: string): Promise<string> {
     try {
-      // Appeler l'API FastAPI pour obtenir le résumé
-      const response = await axios.post('https://0565-154-111-224-232.ngrok-free.app/summarize/', { text });
-
-      // Vérifier la réponse et renvoyer le résumé
+      const response = await axios.post('https://efa3-154-111-224-232.ngrok-free.app/summarize/', { text });
       if (response.data && response.data.summary) {
         return response.data.summary;
       }
-
-      // Si la réponse est invalide, lever une exception
       throw new InternalServerErrorException('Invalid response from summarizer');
     } catch (error) {
       console.error('Error while summarizing text:', error);

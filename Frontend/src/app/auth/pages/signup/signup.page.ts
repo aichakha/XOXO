@@ -32,7 +32,7 @@ export class SignupPage implements OnInit {
   }
 
   loadGoogleIdentityService() {
-    if (document.getElementById('google-script')) return; // Évite le double chargement du script
+    if (document.getElementById('google-script')) return; 
 
     const script = document.createElement('script');
     script.id = 'google-script';
@@ -67,14 +67,14 @@ export class SignupPage implements OnInit {
     try {
       this.authService.loginWithGoogle(token).subscribe({
         next: (response) => {
-          console.log('Connexion réussie via Google:', response);
-          sessionStorage.setItem('authToken', response.token); // Token temporaire
+          //console.log('Connexion réussie via Google:', response);
+          sessionStorage.setItem('authToken', response.token); 
           sessionStorage.setItem('username', response.username);
           this.router.navigate(['/acceuil-user']);
         },
         error: (error) => {
           console.error('Erreur de connexion Google:', error);
-          alert('Connexion Google échouée. Veuillez réessayer.');
+         // alert('Connexion Google échouée. Veuillez réessayer.');
         }
       });
     } catch (error) {
@@ -85,17 +85,16 @@ export class SignupPage implements OnInit {
   signup() {
     this.authService.signup(this.user.name,this.user.email, this.user.password).subscribe({
       next: (res: any) => {
-        console.log('Inscription réussie ✅');
+        //console.log('Inscription réussie ✅');
 
-        // 🔐 Stocker le token reçu dans le localStorage
+      
         this.authService.setToken(res.token);
-        console.log('Token stocké:', res.token);
+        //console.log('Token stocké:', res.token);
 
-        // 🧾 Afficher les infos décodées (facultatif pour debug)
+       
         const decoded = JSON.parse(localStorage.getItem('decodedToken')!);
-        console.log('🎉 Profil récupéré:', decoded);
+        //console.log('🎉 Profil récupéré:', decoded);
 
-        // 🚀 Navigation vers l'accueil user
         this.router.navigate(['/acceuil-user']);
       },
       error: (err) => {

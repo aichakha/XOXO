@@ -1,101 +1,105 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import axios from 'axios';
+import { Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import axios, { AxiosError } from 'axios';
 import { exec } from 'child_process';
 import * as FormData from 'form-data';
-import * as fs from 'fs';
+import { createReadStream, existsSync, unlinkSync, writeFileSync } from 'fs';
 import { promisify } from 'util';
+import { tmpdir } from 'os';
+import { join } from 'path';
 const execPromise = promisify(exec);
+interface WhisperResponse {text: string;}
 @Injectable()
 export class AIService {
+  private readonly logger = new Logger(AIService.name);
+  private readonly WHISPER_API_URL = 'https://efa3-154-111-224-232.ngrok-free.app/transcribe';
+  private readonly TEMP_DIR = tmpdir();
+
   async transcribeAudio(filePath: string): Promise<string> {
-    if (!fs.existsSync(filePath)) {
-      throw new InternalServerErrorException(`Fichier introuvable: ${filePath}`);
+    if (!existsSync(filePath)) {
+      throw new InternalServerErrorException(`File not found: ${filePath}`);
     }
-
+    const form = new FormData();
+    form.append('file', createReadStream(filePath));
     try {
-      const formData = new FormData();
-      formData.append('file', fs.createReadStream(filePath));
-      console.log("📤 Envoi du fichier pour transcription...");
-      const response = await axios.post('https://0565-154-111-224-232.ngrok-free.app/transcribe/', formData, {
-        headers: {
-          ...formData.getHeaders(),
-        },
-      });
-      console.log("✅ Réponse de l'API:", response.data);
-      if (response.data && response.data.text) {
-        return response.data.text;
-      } else {
-        console.error("🚨 Aucune transcription reçue !");
-        throw new InternalServerErrorException('La transcription n\'a pas été générée.');
-      }
+      this.logger.log(`Sending file for transcription: ${filePath}`);
+      const { data } = await axios.post<WhisperResponse>(
+        this.WHISPER_API_URL, 
+        form, 
+        { headers: form.getHeaders() }
+      );
+      return data.text;
     } catch (error) {
-      console.error("🚨 Erreur de transcription:", (error as any).message);
-      throw new InternalServerErrorException(`Erreur de transcription: ${(error as any).message}`);
+      const err = error as AxiosError;
+      this.logger.error(`Transcription error: ${err.message}`);
+      throw new InternalServerErrorException(`Transcription failed: ${err.message}`);
+    } finally {
+      this.cleanupFile(filePath);
     }
   }
-
   async downloadAudio(url: string): Promise<string> {
-    const filePath = 'temp_audio_from_url.wav';
-    const response = await axios.get(url, { responseType: 'arraybuffer' });
-
-    if (response.status !== 200) {
-      throw new InternalServerErrorException('Erreur lors du téléchargement du fichier audio.');
-    }
-
-    fs.writeFileSync(filePath, response.data); // Sauvegarde le fichier
-    return filePath;
-  }
-
-  async processUrl(url: string): Promise<string> {
-    console.log("🔄 Téléchargement de l'audio avec yt-dlp...");
-  
-    const outputPath = `output.mp3`; // Définir un nom de fichier standard
-  
+    const filePath = join(this.TEMP_DIR, `audio_${Date.now()}.wav`);
     try {
-      // Télécharger uniquement l'audio et le convertir en MP3
-      await execPromise(`yt-dlp -f bestaudio --extract-audio --audio-format mp3 -o ${outputPath} "${url}"`);
-  
-      if (!fs.existsSync(outputPath)) {
-        throw new Error("Le fichier audio n'a pas été téléchargé correctement.");
+      const { data } = await axios.get<ArrayBuffer>(url, { 
+        responseType: 'arraybuffer',
+        timeout: 30000
+      });
+      writeFileSync(filePath, Buffer.from(data));
+      return filePath;
+    } catch (error) {
+      this.cleanupFile(filePath);
+      const err = error as AxiosError;
+      throw new InternalServerErrorException(`Download failed: ${err.message}`);
+    }
+  }
+  async processUrl(url: string): Promise<string> {
+    const outputPath = join(this.TEMP_DIR, `audio_${Date.now()}.mp3`);
+    try {
+      this.logger.log(`Downloading audio from URL: ${url}`);    
+      await execPromise(`yt-dlp -f bestaudio --extract-audio --audio-format mp3 -o "${outputPath}" "${url}"`, {
+        timeout: 120000
+      });
+      if (!existsSync(outputPath)) {
+        throw new Error('Audio file not generated');
       }
-  
-      console.log(`✅ Audio téléchargé et enregistré sous : ${outputPath}`);
       return outputPath;
     } catch (error) {
-      console.error("🚨 Erreur lors du téléchargement avec yt-dlp:", (error as any).message);
-      throw new Error(`Erreur yt-dlp: ${(error as any).message}`);
+      this.cleanupFile(outputPath);
+      const err = error as Error;
+      this.logger.error(`yt-dlp error: ${err.message}`);
+      throw new InternalServerErrorException(`Processing failed: ${err.message}`);
     }
   }
-
   async sendToWhisper(mp3Path: string): Promise<string> {
-    if (!fs.existsSync(mp3Path)) {
-      throw new InternalServerErrorException(`Fichier introuvable: ${mp3Path}`);
+    if (!existsSync(mp3Path)) {
+      throw new InternalServerErrorException(`File not found: ${mp3Path}`);
     }
-  
-    const form = new FormData();
-    form.append('file', fs.createReadStream(mp3Path));
-  
     try {
-      console.log("📤 Envoi du fichier audio à Whisper...");
-      const response = await axios.post('https://0565-154-111-224-232.ngrok-free.app/transcribe', form, {
-        headers: { ...form.getHeaders() },
-      });
-  
-      console.log("✅ Réponse de Whisper:", response.data);
-      return response.data.text;
+      const form = new FormData();
+      form.append('file', createReadStream(mp3Path));
+      this.logger.log(`Sending to Whisper: ${mp3Path}`);
+      const { data } = await axios.post<WhisperResponse>(
+        this.WHISPER_API_URL, 
+        form, 
+        { headers: form.getHeaders() }
+      );
+      return data.text;
     } catch (error) {
-      console.error("🚨 Erreur de transcription:", (error as any).message);
-      throw new InternalServerErrorException(`Erreur de transcription: ${(error as any).message}`);
-    }finally {
-      // 🔥 Supprime le fichier après envoi
-      try {
-        fs.unlinkSync(mp3Path);
-        console.log(`🗑️ Fichier supprimé : ${mp3Path}`);
-      } catch (err) {
-        console.error("⚠️ Impossible de supprimer le fichier :", (err as any).message);
-      }
-
+      const err = error as AxiosError;
+      this.logger.error(`Whisper error: ${err.message}`);
+      throw new InternalServerErrorException(`Transcription failed: ${err.message}`);
+    } finally {
+      this.cleanupFile(mp3Path);
+    }
   }
-  
-}
+  private cleanupFile(filePath?: string): void {
+    if (!filePath) return;
+    try {
+      if (existsSync(filePath)) {
+        unlinkSync(filePath);
+        this.logger.log(`File cleaned: ${filePath}`);
+      }
+    } catch (err) {
+      this.logger.error(`Cleanup failed: ${filePath} - ${(err as Error).message}`);
+    }
+  }
 }

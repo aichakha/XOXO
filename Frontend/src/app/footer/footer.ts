@@ -19,7 +19,7 @@ export class Footer implements OnInit {
   username: string | null = null;
   showLogout = false; 
 
-  constructor( private router: Router, private authService: AuthService) {} // Injection correcte de Router
+  constructor( private router: Router, private authService: AuthService) {} 
 
   Home() {
     this.uploadedFile = null;

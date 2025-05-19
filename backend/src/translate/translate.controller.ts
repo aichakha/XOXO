@@ -17,19 +17,19 @@ export class TranslationController {
       throw new BadRequestException('Invalid input');
     }
 
-      // Si la langue source est "auto", on détecte la langue
+  
       let detectedSrcLang = srcLang.toLowerCase() === 'auto' ? await this.translationService.detectLanguage(text) : srcLang.toLowerCase();
           
-      // Traduction du texte
+    
       try {
         let translatedText = text;
 
-        // Étape 1 : Si la langue source n'est pas l'anglais, traduire vers l'anglais
+     
         if (detectedSrcLang !== 'en') {
           translatedText = await this.translationService.translate(text, detectedSrcLang, 'en');
         }
 
-        // Étape 2 : Si la langue cible n'est pas l'anglais, traduire de l'anglais vers la langue cible
+   
         if (tgtLang.toLowerCase() !== 'en') {
           translatedText = await this.translationService.translate(translatedText, 'en', tgtLang.toLowerCase());
         }

@@ -19,7 +19,7 @@ export class MailService {
           pass: this.appPassword,
         },
         tls: {
-          rejectUnauthorized: false, // <-- ignorer les certificats non vérifiés
+          rejectUnauthorized: false, 
         },
       });
 
@@ -30,8 +30,8 @@ export class MailService {
         text,
       });
     } catch (error) {
-      console.error('Erreur lors de l’envoi du mail :', error);
-      throw new InternalServerErrorException('Erreur lors de l’envoi du mail');
+      console.error("Error sending email :", error);
+      throw new InternalServerErrorException('Error sending email');
     }
   }
 }

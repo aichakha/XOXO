@@ -7,27 +7,27 @@
   </ion-item>
   <div *ngIf="translateMenuOpen" class="horizontal-submenu">
     <ion-chip button (click)="selectAction('translate-es')" class="submenu-chip">
-      <ion-icon name="logo-usd"></ion-icon>
+      <ion-icon name="flag-outline"></ion-icon>
       <ion-label>Spanish</ion-label>
     </ion-chip>
     <ion-chip button (click)="selectAction('translate-fr')" class="submenu-chip">
-      <ion-icon name="logo-euro"></ion-icon>
+      <ion-icon name="flag-outline"></ion-icon>
       <ion-label>French</ion-label>
     </ion-chip>
     <ion-chip button (click)="selectAction('translate-it')" class="submenu-chip">
-      <ion-icon name="globe-outline"></ion-icon>
+      <ion-icon name="flag-outline"></ion-icon>
       <ion-label>Italian</ion-label>
     </ion-chip>
     <ion-chip button (click)="selectAction('translate-de')" class="submenu-chip">
-      <ion-icon name="earth-outline"></ion-icon>
+      <ion-icon name="flag-outline"></ion-icon>
       <ion-label>German</ion-label>
     </ion-chip>
     <ion-chip button (click)="selectAction('translate-en')" class="submenu-chip">
-      <ion-icon name="earth-outline"></ion-icon>
+      <ion-icon name="flag-outline"></ion-icon>
       <ion-label>English</ion-label>
     </ion-chip>
     <ion-chip button (click)="selectAction('translate-ar')" class="submenu-chip">
-      <ion-icon name="earth-outline"></ion-icon>
+      <ion-icon name="flag-outline"></ion-icon>
       <ion-label>Arabic</ion-label>
     </ion-chip>
   </div>
@@ -39,18 +39,15 @@
     <ion-icon slot="end" [name]="summarizeMenuOpen ? 'chevron-up-outline' : 'chevron-down-outline'"></ion-icon>
   </ion-item>
   <div *ngIf="summarizeMenuOpen" class="horizontal-submenu">
-    <ion-chip button (click)="selectAction('summarize-large')" class="submenu-chip">
-      <ion-icon name="expand-outline"></ion-icon>
-      <ion-label>Large</ion-label>
-    </ion-chip>
-    <ion-chip button (click)="selectAction('summarize-medium')" class="submenu-chip">
+    <ion-chip button (click)="selectAction('summarize-basic')" class="submenu-chip">
       <ion-icon name="contract-outline"></ion-icon>
-      <ion-label>Medium</ion-label>
+      <ion-label>Basic</ion-label>
     </ion-chip>
-    <ion-chip button (click)="selectAction('summarize-small')" class="submenu-chip">
-      <ion-icon name="ellipsis-horizontal-outline"></ion-icon>
-      <ion-label>Small</ion-label>
+    <ion-chip button (click)="selectAction('summarize-advanced')" class="submenu-chip">
+      <ion-icon name="expand-outline"></ion-icon>
+      <ion-label>Advanced</ion-label>
     </ion-chip>
+   
   </div>
   
   <!-- Autres options -->

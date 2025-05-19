@@ -10,8 +10,8 @@ import { createAuthorizationHeader } from 'src/app/utils/header';
 })
 export class SavedTextService {
   //private baseUrl = `${environment.apiUrl}/saved-text`;
-  private baseUrl = 'https://54ed-154-111-224-232.ngrok-free.app/saved-text';
-  private categoryUrl = 'https://54ed-154-111-224-232.ngrok-free.app/categories';
+  private baseUrl = 'https://4c8e-154-111-224-232.ngrok-free.app/saved-text';
+  private categoryUrl = 'https://4c8e-154-111-224-232.ngrok-free.app/categories';
   constructor(private http: HttpClient,private authService: AuthService) {}
 
   private getRequestOptions() {
@@ -32,7 +32,7 @@ export class SavedTextService {
 
   saveText(data: { userId: string, content: string }): Observable<any> {
     const options = createAuthorizationHeader();
-    console.log('Sending to:', this.baseUrl, 'Data:', data,'Request headers:', options);
+   // console.log('Sending to:', this.baseUrl, 'Data:', data,'Request headers:', options);
     return this.http.post(this.baseUrl, data, {headers: options}).pipe(
       catchError(this.handleError)
     );
@@ -42,19 +42,19 @@ export class SavedTextService {
   }
   getSavedTexts(userId: string): Observable<any> {
     const options = createAuthorizationHeader();
-    console.log('Request options:', options);
+    //console.log('Request options:', options);
     return this.http.get(`${this.baseUrl}/${userId}`, {headers: options}).pipe(
       catchError(this.handleError)
     );
   }
   deleteSavedText(id: string): Observable<any> {
     const options = createAuthorizationHeader();
-    console.log('Delete request options:', options);
+    //console.log('Delete request options:', options);
     return this.http.delete(`${this.baseUrl}/${id}`, {headers: options}).pipe(
       catchError(this.handleError) );
   }
   private handleError(error: HttpErrorResponse) {
-    console.error('API Error:', error);
+    //console.error('API Error:', error);
     let errorMessage = 'An unknown error occurred';
     if (error.error instanceof ErrorEvent) { errorMessage = `Client-side error: ${error.error.message}`;
     } else {  errorMessage = `Server-side error: ${error.status} ${error.message}`; }
@@ -62,7 +62,7 @@ export class SavedTextService {
   }
   updateSavedText(id: string, data: { title?: string; content?: string }): Observable<any> {
     const options = this.getRequestOptions();
-    console.log('Update request options:', options);
+    //console.log('Update request options:', options);
     return this.http.patch(`${this.baseUrl}/${id}`, data, options).pipe(   catchError(this.handleError) );
   }
   toggleFavorite(id: string, isFavorite: boolean): Observable<any> {

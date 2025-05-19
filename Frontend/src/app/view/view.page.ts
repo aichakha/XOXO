@@ -41,14 +41,14 @@ export class ViewPage implements OnInit {
   translateMenuOpen = false;
   translateMenuPosition = { x: 0, y: 0 };
 
-  selectedLanguage: string = 'fr'; // Langue cible par défaut
+  selectedLanguage: string = 'fr'; 
   detectedLanguage: string = 'en';
   uploadedFileName: string | null = null;
   mediaUrl: string="";
   uploadedFile: string | null = "";
   summarizeMenuOpen = false;
   dropdownOpen = false;
-  showLogout = false; // Contrôle direct de la visibilité
+  showLogout = false; 
   loadingMessage: string = 'Converting...';
   showDropdown = false;
   languages = [
@@ -69,18 +69,18 @@ showEmailModal: boolean = false;
 
 
 
-  constructor(private router: Router,
+  constructor(private router: Router,private alertCtrl: AlertController,
      private route: ActivatedRoute,
    private http: HttpClient,
    private savedTextService: SavedTextService,
    private loadingCtrl: LoadingController,
     private loadingController: LoadingController,
-    private toastController: ToastController, // Injecting ToastController
-    private authService: AuthService, // Injecting AuthService
+    private toastController: ToastController, 
+    private authService: AuthService, 
     private alertController:AlertController,
     private popoverCtrl: PopoverController  ) {}
 
-  showSummary: boolean = false; // ✅ Zone de texte cachée par défaut
+  showSummary: boolean = false; 
   ngOnInit() {
     this.isAuthenticated = this.authService.isLoggedIn();
     console.log('🔐 Authenticated:', this.isAuthenticated);
@@ -90,7 +90,7 @@ showEmailModal: boolean = false;
     this.route.queryParams.subscribe({
       next: (params) => {
         this.transcribedText = params['text'] || 'No transcribed text available';
-        // Ne pas appeler summarizeText ici pour que le résumé soit généré uniquement sur demande
+      
         this.isLoading = false;
       },
       error: (error: any) => {
@@ -106,13 +106,13 @@ showEmailModal: boolean = false;
     this.uploadedFileName = '';
     this.mediaUrl = '';
 
-    // Réinitialiser l'input file (pour éviter qu'il garde l'ancien fichier)
+   
     const fileInput = document.getElementById('fileInput') as HTMLInputElement;
     if (fileInput) {
-      fileInput.value = ''; // Réinitialisation de l'élément HTML input file
+      fileInput.value = ''; 
     }
 
-    // Réinitialiser l'input URL
+  
     const urlInput = document.getElementById('urlInput') as HTMLInputElement;
     if (urlInput) {
       urlInput.value = ''; // Réinitialisation de l'élément HTML input URL
@@ -128,7 +128,7 @@ showEmailModal: boolean = false;
       translucent: true,
       showBackdrop: true,
       componentProps: {
-        transcribedText: this.transcribedText // 👈 Envoie le texte vers le composant
+        transcribedText: this.transcribedText 
       }
     });
 
@@ -139,11 +139,11 @@ showEmailModal: boolean = false;
     if (data) {
       let loading = null;
 
-      // Affiche le spinner uniquement pour certaines actions
+
       const actionsWithLoading = [
         'translate-en', 'translate-fr', 'translate-es',
         'translate-de', 'translate-it', 'translate-ar',
-        'summarize-large', 'summarize-medium', 'summarize-small'
+        'summarize-basic', 'summarize-advanced'
       ];
 
       if (actionsWithLoading.includes(data)) {
@@ -156,7 +156,7 @@ showEmailModal: boolean = false;
         await loading.present();
       }
 
-      // Traitement des actions
+    
       switch (data) {
         case 'translate-en':
           await this.translateAndReset(this.transcribedText, 'en');
@@ -177,15 +177,13 @@ showEmailModal: boolean = false;
           await this.translateAndReset(this.transcribedText, 'ar');
           break;
 
-        case 'summarize-large':
-          await this.summarizeText(this.transcribedText, 'large');
+        case 'summarize-advanced':
+          await this.summarizeAndReset(this.transcribedText, 'advanced');
           break;
-        case 'summarize-medium':
-          await this.summarizeText(this.transcribedText, 'medium');
+        case 'summarize-basic':
+          await this.summarizeAndReset(this.transcribedText, 'basic');
           break;
-        case 'summarize-small':
-          await this.summarizeText(this.transcribedText, 'small');
-          break;
+       
 
         case 'edit':
           this.toggleEditMode();
@@ -213,23 +211,23 @@ showEmailModal: boolean = false;
       }
     }
 
-    // Ferme les menus déroulants s'ils sont visibles
+   
     this.translateMenuOpen = false;
     this.summarizeMenuOpen = false;
   }
-    // Fonction pour détecter la langue du texte
+   
   detectLanguage(text: string) {
-    // Exemple de requête pour une API de détection de langue, par exemple Google Translate API ou un service similaire
+
     this.http.post<any>('https://api.detectlanguage.com/0.2/detect', {
       q: text
     }).subscribe({
       next: (response) => {
-        this.detectedLanguage = response.data.detections[0].language; // Récupérer la langue détectée
+        this.detectedLanguage = response.data.detections[0].language; 
         console.log('Detected language:', this.detectedLanguage);
       },
       error: (error) => {
         console.error('Error detecting language:', error);
-        this.detectedLanguage = 'en'; // Si l'API échoue, utiliser l'anglais par défaut
+        this.detectedLanguage = 'en'; 
       }
     });
   }
@@ -240,7 +238,7 @@ showEmailModal: boolean = false;
       'translate-es': 'Translating to Spanish...',
       'translate-de': 'Translating to German...',
       'translate-it': 'Translating to Italian...',
-      'translate-pt': 'Translating to Portuguese...',
+      'translate-ar': 'Translating to arabic...',
       'summarize-large': 'Generating large summary...',
       'summarize-medium': 'Generating medium summary...',
       'summarize-small': 'Generating short summary...'
@@ -250,7 +248,7 @@ showEmailModal: boolean = false;
 
 
 sendEmail(to: string, subject: string) {
-  console.log('Texte à envoyer:', this.transcribedText); // 👈 vérifie ici qu’il n’est pas vide
+  console.log('Texte à envoyer:', this.transcribedText); 
 
   const payload = {
     to,
@@ -258,29 +256,23 @@ sendEmail(to: string, subject: string) {
     text: this.transcribedText
   };
 
-  this.http.post('https://54ed-154-111-224-232.ngrok-free.app/mail/send', payload).subscribe({
+  this.http.post('https://4c8e-154-111-224-232.ngrok-free.app/mail/send', payload).subscribe({
     next: () => this.showToast('Email envoyé !'),
     error: err => this.showToast('Erreur envoi mail')
   });
 }
 
-
-
-
   async PresentLoading() {
     const loading = await this.loadingCtrl.create({
-      message: this.loadingMessage,  // ✅ Utilisation du message dynamique
-      spinner: 'crescent',  // ✅ Spinner Ionic
-      backdropDismiss: false,  // ✅ Empêche la fermeture en cliquant dehors
+      message: this.loadingMessage, 
+      spinner: 'crescent', 
+      backdropDismiss: false, 
     });
 
-    await loading.present();  // ✅ Affichage du loader
-    return loading;  // ✅ Retourne l'instance pour pouvoir fermer avec `loading.dismiss()`
+    await loading.present();  
+    return loading; 
   }
 
-
-
-// Ferme le sous-menu Translate
 hideTranslateMenu() {
   this.translateMenuOpen = false;
 }
@@ -294,15 +286,15 @@ Homeuser() {
   this.uploadedFileName = '';
   this.mediaUrl = '';
 
-  // Réinitialiser l'input file (pour éviter qu'il garde l'ancien fichier)
+ 
   const fileInput = document.getElementById('fileInput') as HTMLInputElement;
   if (fileInput) {
-    fileInput.value = ''; // Réinitialisation de l'élément HTML input file
+    fileInput.value = ''; 
   }
-      // Réinitialiser l'input URL
+   
       const urlInput = document.getElementById('urlInput') as HTMLInputElement;
       if (urlInput) {
-        urlInput.value = ''; // Réinitialisation de l'élément HTML input URL
+        urlInput.value = ''; 
       }
   this.router.navigate(['/acceuil-user']);
 }
@@ -317,15 +309,15 @@ showSummarizeMenu() {
 hideSummarizeMenu() {
   this.summarizeMenuOpen = false;
 }
-    // ✅ Fonction pour envoyer le texte au backend et obtenir un résumé
-    summarizeText(text: string, type: string) {
+ 
+   /* summarizeText(text: string, type: string) {
       console.log(`👉 Summarizing text with level: ${type}`);
 
       this.isLoading = true;
       this.loadingMessage = 'Summarizing...';
 
       this.presentLoading().then((loading) => {
-        this.http.post<any>('https://54ed-154-111-224-232.ngrok-free.app/summarize', { text, type }).subscribe({
+        this.http.post<any>('https://efa3-154-111-224-232.ngrok-free.app/summarize/', { text, type }).subscribe({
           next: (response: any) => {
             console.log('✅ Summary received:', response);
             if (response && response.summary) {
@@ -346,17 +338,95 @@ hideSummarizeMenu() {
         });
       });
     }
+*/
+isFirstSummary: boolean = true;
+summarizeAndReset(text: string, type: string) {
+  if (!this.originalText) {
+    this.originalText = this.transcribedText;
+  }
+
+  if (this.isFirstSummary) {
+    this.isFirstSummary = false;
+  } else {
+    this.transcribedText = this.originalText;
+  }
+
+  console.log('Text has been reset to transcribed (original):', this.transcribedText);
+
+  this.summarizeText(this.transcribedText, type);
+}
+summarizeText(text: string, summary_type: string , max_input_len: number = 2048) {
+  console.log(`👉 Summarizing text with level: ${summary_type}`);
+
+  this.isLoading = true;
+  this.loadingMessage = 'Summarizing...';
+  this.errorMessage = '';
+
+  const payload = {
+    text: text,
+    summary_type: summary_type,
+    max_input_len: max_input_len
+  };
+
+  this.presentLoading().then((loading) => {
+    this.http.post<any>('https://efa3-154-111-224-232.ngrok-free.app/summarize/', payload).subscribe({
+      next: (response) => {
+        console.log('✅ Summary received:', response);
+
+        if (response && response.summary) {
+          this.transcribedText = response.summary;
+
+          // Si tu veux "revenir au texte original" pour la prochaine génération
+          // réinitialise ici si nécessaire (par exemple stocker le texte original dans une variable séparée)
+          // this.originalText = text;
+
+        } else {
+          console.error('⚠️ Invalid response format:', response);
+          this.errorMessage = 'Invalid response from server';
+        }
+
+        this.isLoading = false;
+        loading.dismiss();
+      },
+      error: (error) => {
+        console.error('❌ Error generating summary:', error);
+        this.errorMessage = 'Error generating the summary';
+        this.isLoading = false;
+        loading.dismiss();
+      }
+    });
+  });
+}
 
 originalText: string = ''; 
 
-translateText(text: string, targetLang: string) {
+async canTranslate(text: string): Promise<boolean> {
+  const wordCount = text.trim().split(/\s+/).length;
+
+  if (wordCount <= 400) {
+    return true;
+  } else {
+    const toast = await this.toastController.create({
+      message: ' Please do Summarize first (text must be between 200 and 400 words)',
+      duration: 3000,
+      color: 'warning',
+      //position: 'top'
+    });
+    await toast.present();
+    return false;
+  }
+}
+async translateText(text: string, targetLang: string) {
+  const canTranslate = await this.canTranslate(text);
+  if (!this.canTranslate(text)) return;
+  if (!canTranslate) return;
   console.log('👉 Translating text:', text, 'to:', targetLang);
   if (!text || !targetLang) return;
   this.originalText = text; 
   this.isLoading = true;
   this.loadingMessage = 'Translating...';
   this.presentLoading1().then((loading) => {
-    this.http.post<any>('https://54ed-154-111-224-232.ngrok-free.app/translate', {
+    this.http.post<any>('https://4c8e-154-111-224-232.ngrok-free.app/translate', {
       text: this.originalText,
 
       srcLang: this.detectedLanguage, 
@@ -381,13 +451,13 @@ isFirstTranslation: boolean = true;
 
 translateAndReset(text: string, targetLang: string) {
   if (!this.originalText) {
-    this.originalText = this.transcribedText; // Sauvegarder une seule fois le texte transcrit (Whisper)
+    this.originalText = this.transcribedText; 
   }
   if (this.isFirstTranslation) {
-    this.isFirstTranslation = false;  // Désactiver l'indicateur après la première traduction
+    this.isFirstTranslation = false;  
   } else {
-    // Réinitialiser le texte traduit et garder le texte transcrit (original)
-    this.translatedText = null;  // Effacer la traduction uniquement si ce n'est pas la première fois
+  
+    this.translatedText = null;  
   }
 
   
@@ -430,10 +500,10 @@ resetText() {
 
 
   logout() {
-    // Déconnexion de l'utilisateur (peut être améliorée avec JWT plus tard)
+
     localStorage.removeItem('user');
     this.router.navigate(['/login']);
-    this.showLogout = false; // Cache avant action
+    this.showLogout = false; 
     this.authService.logout();
   }
 
@@ -448,34 +518,29 @@ resetText() {
     }
   }
 
-  // Show full-page loading spinner
   async presentLoading() {
     const loading = await this.loadingCtrl.create({
-      message: 'Summarizing...',  // Message personnalisé
-      spinner: 'crescent',  // Type de spinner (tu peux changer si tu veux)
-      cssClass: 'full-page-loading',  // Classe CSS pour personnaliser le style du spinner
-      backdropDismiss: false,  // Empêche la fermeture quand on clique en dehors
+      message: 'Summarizing...',  
+      spinner: 'crescent', 
+      cssClass: 'full-page-loading', 
+      backdropDismiss: false,  
     });
 
-    await loading.present();  // Affiche le loader
-    return loading;  // Retourne l'instance du loader pour pouvoir le fermer plus tard
+    await loading.present();  
+    return loading; 
   }
 
-  // Opens the email modal
-
-
-// Closes the email modal
 closeModal() {
   document.getElementById("emailModal")!.style.display = "none";
 }
 
 
-// Function to copy text when the button is clicked
+
 async copyText() {
   const textToCopy = this.translatedText || this.transcribedText;
 
   try {
-    // Copy the text to clipboard using Clipboard API
+   
     await navigator.clipboard.writeText(textToCopy);
 
     // Show toast notification after successfully copying text
@@ -500,26 +565,20 @@ async copyText() {
     toast.present();
   }
 }
-// Fonction pour masquer le menu de téléchargement
+
 hideDownloadMenu() {
   this.downloadMenuOpen = false;
 }
-// Fonction pour afficher le menu de téléchargement
+
 showDownloadMenu() {
   this.downloadMenuOpen = !this.downloadMenuOpen;
   this.translateMenuOpen = false;
   this.summarizeMenuOpen = false;
 }
-/*toggleDropdown(event: Event) {
-    event.stopPropagation();
-    this.dropdownOpen = !this.dropdownOpen;
-    console.log('Dropdown toggled:', this.dropdownOpen);
-  }*/
-
     toggleDropdown() {
       setTimeout(() => {
         this.dropdownOpen = !this.dropdownOpen;
-      }, 0); // Laisse le cycle Angular finir
+      }, 0); 
     }
 
 
@@ -707,7 +766,7 @@ async PresentPopover() {
   const popover = await this.popoverCtrl.create({
     component: PopoverMenuComponent,
     componentProps: {
-      transcribedText: this.transcribedText // 👈 Assure-toi que cette variable contient le bon texte
+      transcribedText: this.transcribedText 
     },
     translucent: true,
   });
@@ -722,11 +781,11 @@ openModal() {
     text: this.translatedText || this.transcribedText,
   };
 
-  this.http.post<any>('https://54ed-154-111-224-232.ngrok-free.app/text/generate-url', payload).subscribe(
+  this.http.post<any>('https://4c8e-154-111-224-232.ngrok-free.app/text/generate-url', payload).subscribe(
     (res) => {
       const shareableUrl = res.url;
 
-      // Affiche une alerte avec l'URL générée
+     
       this.showAlert('Shareable Link', shareableUrl);
     },
     (error) => {
@@ -760,7 +819,7 @@ async showAlert(title: string, message: string) {
 getFirstLetter(name: string | undefined | null): string {
   return name ? name.charAt(0).toUpperCase() : '';
 }
-  //show toast fonction pour feedback:
+  
   async showToast(message: string) {
     const toast = await this.toastCtrl.create({
       message,
