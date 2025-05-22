@@ -10,7 +10,6 @@ import { Observable, Subscribable } from 'rxjs';
 import { AlertController } from '@ionic/angular';
 import { ModalController } from '@ionic/angular';
 import { lastValueFrom } from 'rxjs';
-import { Navbar } from "../navbar/navbar";
 
 
 @Component({
@@ -20,8 +19,6 @@ import { Navbar } from "../navbar/navbar";
     CommonModule,
     FormsModule,
     IonicModule,
-    Navbar
-    
 ],
   templateUrl: './acceuil.page.html',
   styleUrls: ['./acceuil.page.scss'],

@@ -5,7 +5,7 @@ import axios from 'axios';
 export class SummarizeService {
   async summarizeText(text: string): Promise<string> {
     try {
-      const response = await axios.post('https://efa3-154-111-224-232.ngrok-free.app/summarize/', { text });
+      const response = await axios.post('https://8ba2-102-158-116-161.ngrok-free.app/summarize/', { text });
       if (response.data && response.data.summary) {
         return response.data.summary;
       }

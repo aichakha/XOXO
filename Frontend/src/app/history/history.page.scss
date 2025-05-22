@@ -13,7 +13,6 @@ $font-size-base: 16px;
 
 ion-content {
  --background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)),
-  url('/assets/icon/about-img.png') no-repeat center center;
   background-size: 100% 100%;
   //display: flex;
   justify-content: center;
@@ -22,8 +21,8 @@ ion-content {
   position: relative;
   overflow-y: auto;
   width: 100vw;
-  background-image: linear-gradient(to right top, #b499ff, #c1acff, #cfc0ff, #ddd3ff, #ebe6ff, #ebe6ff, #ebe6ff, #ebe6ff, #ddd3ff, #cfc0ff, #c1acff, #b499ff);
-  background-size: 100% 100%; // Ajuste aussi cette image sur toute la fenêtre
+  background: url("/assets/blobs.svg") no-repeat center center;
+  background-size: cover;
 }
 
 // Mixins
@@ -53,7 +52,6 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: linear-gradient(to bottom, $secondary-color, $primary-color);
 }
 
 // Barre de navigation
@@ -367,10 +365,10 @@ ion-card-content.collapsed {
 footer {
   text-align: center;
   padding: 10px;
-  background-color: #fff; /* ✅ Fond blanc (sans transparence) */
   width: 100%;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-  margin-top: 0;
+  position: fixed;
+  bottom: 0;
+  left: 0;
 
   p {
     margin: 0;
@@ -434,7 +432,6 @@ footer {
 
   ion-footer {
     padding: 12px;
-    background-color: #fff; /* ✅ Fond blanc */
     border-bottom-left-radius: 12px;
     border-bottom-right-radius: 12px;
     font-size: 14px;

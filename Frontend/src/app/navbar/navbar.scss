@@ -7,23 +7,6 @@ $secondary-color: #a38cd6; // Couleur secondaire (violet clair)
 $font-family: Arial, sans-serif; // Police de caractères
 $font-size-base: 16px; // Taille de base de la police
 $text-color: #333;
-// Navbar
-.navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding:  10px;
-    background-color: rgba(255, 255, 255, 0.8); // Fond semi-transparent
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin-bottom: 20px;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1000;
-    
-  
-  }
   
   .logo {
     display: flex;
@@ -59,36 +42,6 @@ $text-color: #333;
     }
   }
   
-  // Boutons d'authentification
-  .auth-buttons {
-    display: flex;
-    gap: 15px;
-    button {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.3s ease;
-      font-weight: bold;
-    }
-    .sign-in {
-      background: transparent;
-      color: $primary-color;
-      border: 2px solid $primary-color;
-      &:hover {
-        background: $primary-color;
-        color: white;
-      }
-    }
-    .join-now {
-      background: #9893f4;
-      color: white;
-      &:hover {
-        background:#9893f4;
-      }
-    }
-  }
   .user-avatar {
     display: flex;
     align-items: center;
@@ -140,8 +93,8 @@ $text-color: #333;
     align-items: center;
     width: 100%;
     padding:  10px;
-    background-color: rgba(255, 255, 255, 0.8); // Fond semi-transparent
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background: transparent;
+    box-shadow: none;
     margin-bottom: 20px;
     position: fixed;
     top: 0;

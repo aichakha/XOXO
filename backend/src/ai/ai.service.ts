@@ -11,7 +11,7 @@ interface WhisperResponse {text: string;}
 @Injectable()
 export class AIService {
   private readonly logger = new Logger(AIService.name);
-  private readonly WHISPER_API_URL = 'https://efa3-154-111-224-232.ngrok-free.app/transcribe';
+  private readonly WHISPER_API_URL = 'https://8ba2-102-158-116-161.ngrok-free.app/transcribe';
   private readonly TEMP_DIR = tmpdir();
 
   async transcribeAudio(filePath: string): Promise<string> {

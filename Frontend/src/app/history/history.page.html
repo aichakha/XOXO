@@ -11,12 +11,12 @@
         (ionInput)="filterClips()"
         placeholder="Search in your history..."
         animated
-        debounce="300" style="color: blueviolet;">
+        debounce="300" style="color: #9893f4;">
       </ion-searchbar>
     </div>
     <!-- Category management section -->
     <div *ngIf="isAuthenticated" class="categories-section">
-      <ion-chip class="category-chip" (click)="toggleFavoriteFilter()" style="color: blueviolet;">
+      <ion-chip class="category-chip" (click)="toggleFavoriteFilter()" style="color: #9893f4;">
         <ion-icon
     [name]="showOnlyFavorites ? 'heart' : 'heart-outline'"
     [color]="showOnlyFavorites ? 'danger' : 'medium'"
@@ -26,7 +26,7 @@
       </ion-chip>
 
 
-      <ion-chip class="category-chip" (click)="togglePinnedFilter()" style="color: blueviolet;">
+      <ion-chip class="category-chip" (click)="togglePinnedFilter()" style="color: #9893f4;">
         <ion-icon
         [name]="showOnlyPinned ? 'pin' : 'pin-outline'"
         [color]="showOnlyPinned ? 'secondary' : 'medium'"
@@ -35,20 +35,20 @@
       <span>{{ showOnlyPinned ? 'Only Pinned' : 'All Texts' }}</span>
       </ion-chip>
 
-      <ion-chip (click)="resetFilters()" [outline]="selectedCategory !== null || showOnlyPinned" style="color: blueviolet;">
+      <ion-chip (click)="resetFilters()" [outline]="selectedCategory !== null || showOnlyPinned" style="color: #9893f4;">
         All
       </ion-chip>
 
 
       <ion-chip *ngFor="let category of categories"
                 (click)="filterByCategory(category.id)"
-                [outline]="selectedCategory !== category.id" style="color: blueviolet;">
+                [outline]="selectedCategory !== category.id" style="color: #9893f4;">
         {{ category.name }}
         <ion-icon name="create-outline" (click)="editingCategory = category; $event.stopPropagation()"></ion-icon>
-        <ion-icon name="trash"  (click)="deleteCategory(category.id); $event.stopPropagation()" style="color: rgb(114, 35, 187);"></ion-icon>
+        <ion-icon name="trash"  (click)="deleteCategory(category.id); $event.stopPropagation()" style="color: #9893f4;"></ion-icon>
       </ion-chip>
 
-      <ion-chip (click)="showCategoryModal = true" style="color: blueviolet;">
+      <ion-chip (click)="showCategoryModal = true" style="color: #9893f4;">
         <ion-icon name="add"></ion-icon>
         New Category
       </ion-chip>
@@ -62,9 +62,9 @@
         <ion-card-title>Edit Category</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-       <ion-input [(ngModel)]="editingCategory.name" style="color: blueviolet;"></ion-input>
-      <ion-button (click)="updateCategory(editingCategory)"  style="--background: blueviolet; --color: white;"> Save </ion-button>
-      <ion-button (click)="editingCategory = null" fill="outline"   style="--border-color: blueviolet; --color: blueviolet;"> Cancel  </ion-button>
+       <ion-input [(ngModel)]="editingCategory.name" style="color: #9893f4;"></ion-input>
+      <ion-button (click)="updateCategory(editingCategory)"  style="--background: #9893f4; --color: white;"> Save </ion-button>
+      <ion-button (click)="editingCategory = null" fill="outline"   style="--border-color: #9893f4; --color: #9893f4;"> Cancel  </ion-button>
     </ion-card-content>
   </ion-card>
 </div>
@@ -78,9 +78,9 @@
         <ion-card-title>New Category</ion-card-title>
       </ion-card-header>
       <ion-card-content>
-        <ion-input [(ngModel)]="newCategoryName" placeholder="Category name"  style="color: blueviolet;"></ion-input>
-       <ion-button (click)="createCategory(); showCategoryModal = false"  style="--background: blueviolet; --color: white;">   Create  </ion-button>
-       <ion-button (click)="showCategoryModal = false" fill="outline" style="--border-color: blueviolet; --color: blueviolet;">  Cancel  </ion-button>
+        <ion-input [(ngModel)]="newCategoryName" placeholder="Category name"  style="color: #9893f4;"></ion-input>
+       <ion-button (click)="createCategory(); showCategoryModal = false"  style="--background: #9893f4; --color: white;">   Create  </ion-button>
+       <ion-button (click)="showCategoryModal = false" fill="outline" style="--border-color: #9893f4; --color: #9893f4;">  Cancel  </ion-button>
       </ion-card-content>
     </ion-card>
   </div>
@@ -118,7 +118,7 @@
               <!-- Affichage texte -->
               <div *ngIf="!clip.isExpanded">
                 {{ clip.content | slice:0:100 }}<span *ngIf="clip.content.length > 100">...</span>
-                <div class="see-more" *ngIf="clip.content.length > 100" (click)="clip.isExpanded = true" style="color: blueviolet;">
+                <div class="see-more" *ngIf="clip.content.length > 100" (click)="clip.isExpanded = true" style="color: #9893f4;">
                   See More ...
                 </div>
               </div>
@@ -133,7 +133,7 @@
                   (keydown.enter)="updateContentAutoSave(clip.id, clip.content)">
                 </ion-textarea>
 
-                <div class="see-less" (click)="clip.isExpanded = false" style="color: blueviolet;">
+                <div class="see-less" (click)="clip.isExpanded = false" style="color: #9893f4;">
                   See Less ...
                 </div>
               </div>
@@ -186,7 +186,7 @@
 
 
         <ion-button fill="clear" size="small" (click)="selectAction('download', clip); $event.stopPropagation()">
-          <ion-icon name="download-outline" style="font-size: 24px; color: blueviolet;"></ion-icon>
+          <ion-icon name="download-outline" style="font-size: 24px; color: #9893f4;"></ion-icon>
         </ion-button>
 
 
@@ -229,7 +229,7 @@
     </ng-template>
   </ion-content>
 
-  <!-- ✅ Footer -->
+ <!-- ✅ Footer -->
   <footer class="footer desktop-only">
     <p>© 2025 Recapify Inc. All rights reserved.</p>
   </footer>
@@ -270,4 +270,6 @@
     </ion-buttons>
   </ion-toolbar>
 </ion-footer>
+
 </div>
+ 

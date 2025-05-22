@@ -256,7 +256,7 @@ sendEmail(to: string, subject: string) {
     text: this.transcribedText
   };
 
-  this.http.post('https://4c8e-154-111-224-232.ngrok-free.app/mail/send', payload).subscribe({
+  this.http.post('https://d141-102-158-116-161.ngrok-free.app/mail/send', payload).subscribe({
     next: () => this.showToast('Email envoyé !'),
     error: err => this.showToast('Erreur envoi mail')
   });
@@ -317,7 +317,7 @@ hideSummarizeMenu() {
       this.loadingMessage = 'Summarizing...';
 
       this.presentLoading().then((loading) => {
-        this.http.post<any>('https://efa3-154-111-224-232.ngrok-free.app/summarize/', { text, type }).subscribe({
+        this.http.post<any>('https://8ba2-102-158-116-161.ngrok-free.app/summarize/', { text, type }).subscribe({
           next: (response: any) => {
             console.log('✅ Summary received:', response);
             if (response && response.summary) {
@@ -369,7 +369,7 @@ summarizeText(text: string, summary_type: string , max_input_len: number = 2048)
   };
 
   this.presentLoading().then((loading) => {
-    this.http.post<any>('https://efa3-154-111-224-232.ngrok-free.app/summarize/', payload).subscribe({
+    this.http.post<any>('https://8ba2-102-158-116-161.ngrok-free.app/summarize/', payload).subscribe({
       next: (response) => {
         console.log('✅ Summary received:', response);
 
@@ -426,7 +426,7 @@ async translateText(text: string, targetLang: string) {
   this.isLoading = true;
   this.loadingMessage = 'Translating...';
   this.presentLoading1().then((loading) => {
-    this.http.post<any>('https://4c8e-154-111-224-232.ngrok-free.app/translate', {
+    this.http.post<any>('https://d141-102-158-116-161.ngrok-free.app/translate', {
       text: this.originalText,
 
       srcLang: this.detectedLanguage, 
@@ -781,7 +781,7 @@ openModal() {
     text: this.translatedText || this.transcribedText,
   };
 
-  this.http.post<any>('https://4c8e-154-111-224-232.ngrok-free.app/text/generate-url', payload).subscribe(
+  this.http.post<any>('https://d141-102-158-116-161.ngrok-free.app/text/generate-url', payload).subscribe(
     (res) => {
       const shareableUrl = res.url;
 

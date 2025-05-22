@@ -16,10 +16,7 @@
       <p>OR</p>
       <input type="text" id="urlInput" placeholder="INSERT LINK TO THE MEDIA" class="input-link" [(ngModel)]="mediaUrl" (ngModelChange)="uploadedFile = null">
 
-      <ion-button  [disabled]="!canConvert()" (click)="convertToText()"
-  style="--background: #9893f4;">
-  CONVERT TO TEXT
-</ion-button>
+      <ion-button [disabled]="!canConvert() " (click)="convertToText()">CONVERT TO TEXT</ion-button>
     </div>
   </main>
 
@@ -37,7 +34,7 @@
         fill="clear"
         (click)="History()">
         <div class="button-content">
-          <ion-icon name="document-text-outline" style="color: #8d60d5;"></ion-icon>
+          <ion-icon name="document-text-outline"></ion-icon>
           <ion-label class="footer-label">History</ion-label>
         </div>
       </ion-button>
@@ -47,7 +44,7 @@
         fill="clear"
         (click)="Homeuser()">
         <div class="button-content">
-          <ion-icon name="home-outline" style="color: #8d60d5;"></ion-icon>
+          <ion-icon name="home-outline"></ion-icon>
           <ion-label class="footer-label">Home</ion-label>
         </div>
       </ion-button>
@@ -57,7 +54,7 @@
         fill="clear"
         (click)="Contact()">
         <div class="button-content">
-          <ion-icon name="help-circle-outline" style="color: #8d60d5;"></ion-icon>
+          <ion-icon name="help-circle-outline"></ion-icon>
           <ion-label class="footer-label">Help</ion-label>
         </div>
       </ion-button>

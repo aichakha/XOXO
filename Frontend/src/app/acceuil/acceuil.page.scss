@@ -1,465 +1,116 @@
-// Variables
-$primary-color: #6a5acd; // Couleur principale (violet)
-$secondary-color: #a38cd6; // Couleur secondaire (violet clair)
-$font-family: Arial, sans-serif; // Police de caractères
-$font-size-base: 16px; // Taille de base de la police
-$text-color: #333;        // Couleur du texte
-$button-text-color: white; // Couleur du texte des boutons
-
-// Mixins
-@mixin flex-center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.container {
-  @include flex-center;
-  flex-direction: column;
-  width: 100%;
-  height: 100vh;
-  margin: 0;
-  background-image: linear-gradient(to right top, #b499ff, #c1acff, #cfc0ff, #ddd3ff, #ebe6ff, #ebe6ff, #ebe6ff, #ebe6ff, #ddd3ff, #cfc0ff, #c1acff, #b499ff);
-  background-size: cover;
-  overflow-x: hidden; // Empêche le défilement horizontal
-}
-
-ion-content {
-  --background: linear-gradient(to right top, #b499ff, #c1acff, #cfc0ff, #ddd3ff, #ebe6ff, #ebe6ff, #ebe6ff, #ebe6ff, #ddd3ff, #cfc0ff, #c1acff, #b499ff);
-  background-size: cover;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100%;
-  width: 100%;
-}
-
-.icon-container {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px; // Espacement entre l'icône et le nom du fichier
-}
-
-.file-name {
-  font-size: 14px;
-  color: #333;
-  font-weight: bold;
-  white-space: nowrap; // Évite que le texte passe à la ligne
-}
-
-// Upload Section - Amélioré pour responsive
-.upload-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100vh; // <-- changer de auto à 100vh
+.acceuil-page {
+  --background: #eef2f7;
   padding: 20px;
-  box-sizing: border-box;
-}
-
-.upload-box {
-  background: rgba(255, 255, 255, 0.9);
-  padding: 20px;
-  border-radius: 30px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
-  width: 100%;
-  max-width: 400px;
+}
+
+.auth-buttons {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
-  
-  .icon {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    border-radius: 50%;
-    width: 80px;
-    height: 80px;
-    margin-bottom: 10px;
-  }
-  
-  .icon img {
-    width: 60px;
-    cursor: pointer;
-  }
-  
-  input[type="file"] {
-    display: none;
-  }
-  
-  .upload-text {
-    font-weight: bold;
-    margin: 10px 0;
-    color: $text-color;
+  gap: 15px;
+  margin: 30px 0;
+
+  button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
     font-size: 16px;
-  }
-  
-  .input-link {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 20px;
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-sizing: border-box;
-  }
-  
-  ion-button {
-    width: 100%;
-    background: $primary-color;
-    color: $button-text-color;
-    border-radius: 10px;
-    margin-top: 15px;
-    &:disabled {
-      background: gray;
-    }
-  }
-}
-
-// Footer
-footer {
-  text-align: center;
-  padding: 10px;
-  background-color: rgba(255, 255, 255, 0.8);
-  width: 100%;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  
-  p {
-    margin: 0;
-    color: #333;
-    font-size: 14px;
-  }
-}
-.desktop-only {
-  display: block;
-}
-
-.mobile-only {
-  display: none;
-}
-// Improved Responsive (Mobile)
-@media screen and (max-width: 480px) {
-  .desktop-only {
-    display: none;
-  }
-  
-  .mobile-only {
-    display: block;
-    //margin-top: 130px;
-    
-  }
-  .navbar {
-    flex-direction: column;
-    padding: 10px;
-   
-    nav ul {
-      flex-direction: row;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .auth-buttons {
-      flex-direction: row;
-      gap: 5px;
-    }
+    cursor: pointer;
+    transition: background 0.3s ease;
+    font-weight: bold;
   }
 
-  .upload-section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100vh; // <-- changer de auto à 100vh
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-
-  .upload-box {
-    justify-content: center;
-    width: 90%;
-    padding: 15px;
-    border-radius: 20px;
-    
-    .icon {
-      width: 60px;
-      height: 60px;
-    }
-    
-    .icon img {
-      width: 40px;
-    }
-    
-    .upload-text {
-      font-size: 14px;
-    }
-    
-    .input-link {
-      padding: 8px;
-    }
-  }
-}
-
-// Fix pour petit écran mobile
-@media screen and (max-width: 360px) {
-  .upload-box {
-    width: 95%;
-    padding: 10px;
-    
-    
-    .icon {
-      width: 50px;
-      height: 50px;
-    }
-    
-    .icon img {
-      width: 35px;
-    }
-  }
-}
-
-/* Loading spinner styles et animations - non modifiés */
-.full-page-loading {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-  animation: fadeIn 0.5s forwards, scaleUp 0.5s ease-out;
-}
-
-.full-page-loading .loading-spinner {
-  border: 5px solid rgba(255, 255, 255, 0.3);
-  border-top: 5px solid white;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: rotateAndScale 1.5s linear infinite;
-}
-
-@keyframes rotateAndScale {
-  0% { transform: rotate(0deg) scale(1); }
-  50% { transform: rotate(180deg) scale(1.2); }
-  100% { transform: rotate(360deg) scale(1); }
-}
-
-@keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
-}
-
-@keyframes scaleUp {
-  0% { transform: scale(0); }
-  100% { transform: scale(1); }
-}
-
-// Bouton styles
-.bouton {
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: bold;
-  transition: background 0.3s ease;
-
-  &.bouton {
+  .log-in {
     background: transparent;
-    color: $primary-color;
-    border: 2px solid $primary-color;
-
+    color: #9893f4;
+    border: 2px solid #9893f4;
     &:hover {
-      background-color: $secondary-color;
+      background: #9893f4;
       color: white;
     }
   }
-}
 
-// Styles pour les boutons d'authentification responsifs
-@media screen and (max-width: 480px) {
-  .auth-buttons {
-    button {
-      padding: 8px 12px;
-      font-size: 14px;
+  .join-now {
+    background: #9893f4;
+    color: white;
+    &:hover {
+      background: #c8c5ff;
+      color: #9893f4;
     }
   }
 }
-ion-icon {
-  color:$primary-color;
-  font-size: 24px;
-}
-/* Style global de la barre */
-ion-toolbar {
-  --background: #ffffff;
-  --border-color: #e0e0e0;
-  --border-width: 1px 0 0 0;
-  --padding-top: 10px;
-  --padding-bottom: 10px;
-  width: 100%;
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+
+
+img {
+  // Adjust based on your logo size
+  width: 350px;
 }
 
-.footer-buttons {
+.hero {
   display: flex;
-  justify-content: space-around;
-  width: 100%;
-}
-
-.footer-button {
-  --color: #666666;
-  --color-activated: #3880ff;
-  --padding-start: 0;
-  --padding-end: 0;
-  margin: 0;
- // height: 100%;
-}
-
-.button-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   justify-content: center;
-  gap: 4px;
+  align-items: center;
+  flex-direction: column;
+  padding: 60px 20px;
 }
 
-.footer-icon {
-  font-size: 30px;
-}
-
-.footer-label {
-  font-size: 14px;
-  font-weight: 500;
-  text-transform: capitalize;
-}
-
-.footer-button.ion-activated .footer-icon,
-.footer-button.ion-activated .footer-label {
-  color: var(--ion-color-primary);
-}
-
-.footer-button {
-  transition: transform 0.2s ease;
-}
-
-.footer-button:active {
-  transform: scale(0.95);
-}
-/* Style pour le bouton actif */
-.footer-button.active {
-  --color: var(--ion-color-primary); 
-}
-
-.footer-button.active .footer-icon {
-  color: var(--ion-color-primary);
-  transform: scale(1.1);
-}
-
-.footer-button.active .footer-label {
-  color: var(--ion-color-primary);
+.hero-text h1 {
+  font-size: 3rem;
   font-weight: bold;
+  color: #2c3e50;
 }
 
-/* Animation douce pour les changements */
-.footer-icon {
-  transition: transform 0.3s ease, color 0.3s ease;
+.hero-text p {
+  font-size: 1.4rem;
+  color: #555;
+  margin-bottom: 40px;
 }
 
-.footer-label {
-  transition: color 0.3s ease, font-weight 0.3s ease;
+.hero-image img {
+  width: 100%;
+  max-width: 450px;
+  height: auto;
 }
 
-.popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 300px;
-  height: 200px;
-  perspective: 1000px;
+.features {
   display: flex;
-  align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.5); /* Assombrit le fond */
-  border-radius: 10px;
+  flex-wrap: wrap;
+  gap: 50px;
+  padding: 50px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-.popup-inner {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  transform-style: preserve-3d;
-  transition: transform 0.6s;
+.second-row {
+  margin-top: 40px; // Adds spacing between rows
 }
 
-.flipped {
-  transform: rotateY(180deg);
-}
-
-/* La carte qui va tourner */
-.popup-card {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 400px;
-  height: 500px;
-  perspective: 1000px;
-  z-index: 11;
-}
-
-/* Effet de rotation */
-.card-inner {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  transition: transform 0.6s;
-  transform-style: preserve-3d;
-}
-
-/* Lorsque la popup est affichée, elle tourne */
-.popup-card:hover .card-inner {
-  transform: rotateY(180deg);
-}
-/* Faces avant et arrière */
-.card-front,
-.card-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
-  border-radius: 0.5rem;
+.feature {
+  flex: 1 1 300px;
+  max-width: 300px;
   text-align: center;
+
+  .feature-icon {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin-bottom: 15px;
+  }
 }
 
-.card-front {
-  background:linear-gradient(to right top, #b499ff, #c1acff, #cfc0ff, #ddd3ff, #ebe6ff, #ebe6ff, #ebe6ff, #ebe6ff, #ddd3ff, #cfc0ff, #c1acff, #b499ff);
-  border: 1px solid #e5e7eb;
+
+.footer {
+  text-align: center;
+  padding: 20px;
+  font-size: 1rem;
+  color: #555;
 }
 
-.card-back {
-  background:linear-gradient(to right top, #b499ff, #c1acff, #cfc0ff, #ddd3ff, #ebe6ff, #ebe6ff, #ebe6ff, #ebe6ff, #ddd3ff, #cfc0ff, #c1acff, #b499ff);
-  color: white;
-  transform: rotateY(180deg);
-  gap: 16px;
+@keyframes fadeInPage {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
