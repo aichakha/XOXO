@@ -1,15 +1,12 @@
 <app-navbar></app-navbar>
 
 <ion-content class="ion-padding">
-  <!-- Positionnement relatif pour le dropdown -->
   <div class="main-content" style="position: relative;">
-
-
-    <!-- CARTE DE TRANSCRIPTION -->
+    <!-- Transcription Card -->
     <ion-card>
       <ion-card-header>
         <div class="header-inline">
-          <ion-card-title class="title-text">    Result:</ion-card-title>
+          <ion-card-title class="title-text">Result:</ion-card-title>
           <div class="header-buttons">
             <ion-button fill="clear" (click)="presentPopover($event)">
               <ion-icon name="menu-outline"></ion-icon>
@@ -39,38 +36,30 @@
   </div>
 </ion-content>
 
+<!-- ✅ Fixed Desktop Footer -->
 <footer class="footer desktop-only">
-    <p>© 2025 Recapify Inc. All rights reserved.</p>
-  </footer>
-   <ion-footer class ="mobile-only">
+  <p>© 2025 Recapify Inc. All rights reserved.</p>
+</footer>
+
+<!-- ✅ Mobile Footer (sticky using ion-footer) -->
+<ion-footer class="mobile-only">
   <ion-toolbar>
     <ion-buttons class="footer-buttons">
-      
-      <!-- Bouton History -->
-      <ion-button 
-        class="footer-button" 
-        fill="clear"
-        (click)="History()">
+      <ion-button class="footer-button" fill="clear" (click)="History()">
         <div class="button-content">
           <ion-icon name="document-text-outline"></ion-icon>
           <ion-label class="footer-label">History</ion-label>
         </div>
       </ion-button>
-      <!-- Bouton Home -->
-      <ion-button 
-        class="footer-button" 
-        fill="clear"
-        (click)="isAuthenticated ? Homeuser() : Home()">
+
+      <ion-button class="footer-button" fill="clear" (click)="isAuthenticated ? Homeuser() : Home()">
         <div class="button-content">
           <ion-icon name="home-outline"></ion-icon>
           <ion-label class="footer-label">Home</ion-label>
         </div>
       </ion-button>
-      <!-- Bouton Help -->
-      <ion-button
-        class="footer-button" 
-        fill="clear"
-        (click)="Contact()">
+
+      <ion-button class="footer-button" fill="clear" (click)="Contact()">
         <div class="button-content">
           <ion-icon name="help-circle-outline"></ion-icon>
           <ion-label class="footer-label">Help</ion-label>

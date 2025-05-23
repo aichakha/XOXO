@@ -220,6 +220,17 @@ footer {
         padding: 10px;
       }
 
+      .container {
+        min-height: 100vh;
+        width: 100vw;
+        background: url("/assets/blobs-phone.svg") no-repeat center center;
+        background-size: cover;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        z-index: 0;
+      }
+
       .step-card {
         width: 95%; /* Make cards take up most of the width on smaller screens */
         margin-bottom: 20px; /* Add space between cards */

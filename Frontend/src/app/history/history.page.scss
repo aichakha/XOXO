@@ -651,10 +651,20 @@ ion-chip ion-icon:hover {
   
   .mobile-only {
     display: block;
-    //margin-top: 130px;
-    
   }
   
+  ion-content {
+ --background: linear-gradient(rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.1)),
+  background-size: 100% 100%;
+  justify-content: center;
+  align-items: center;
+  height: auto;
+  position: relative;
+  overflow-y: auto;
+  width: 100vw;
+  background: url("/assets/blobs-phone.svg") no-repeat center center;
+  background-size: cover;
+  }
 }
 
 

@@ -1,16 +1,20 @@
 ion-content {
-  --background: linear-gradient(to bottom right, #f0e8ff, #d0b7ff);
-  color: #000;
+  --background: none;
+  background: url("/assets/blobs.svg") no-repeat center center;
+  background-size: cover;
   display: flex;
   flex-direction: column;
-  height: 100%;
+  min-height: 100vh;
+  width: 100%;
 }
+
 
 .main-content {
   position: relative;
   flex: 1;
-  padding-top: 70px;
+  padding: 70px 16px 80px; // add bottom padding for desktop footer
 }
+
 
 .navbar-center {
   flex: 1;
@@ -40,12 +44,11 @@ ion-button {
 }
 
 ion-card {
-  background-color: #fff;
+  margin-top: 20px;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  margin-top: 20px;
- 
 }
+
 
 ion-card-title {
   font-weight: bold;
@@ -130,15 +133,16 @@ ion-item:hover {
 
 
 // Pied de page
-footer {
-  text-align: center;
-  padding: 10px;
-  background-color: rgba(255, 255, 255, 0.8); // Fond semi-transparent
-  width: 100%;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-
+footer.footer {
   position: fixed;
   bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px 0;
+  text-align: center;
+  background: transparent; // transparent background
+  box-shadow: none;
+  z-index: 1000;
 
   p {
     margin: 0;
@@ -146,14 +150,16 @@ footer {
     font-size: 14px;
   }
 }
-.footer {
-  flex-shrink: 0;
-  text-align: center;
-  padding: 1rem;
-  background-color: rgba(255, 255, 255, 0.8);
+
+ion-footer.mobile-only {
+  position: fixed;
+  bottom: 0;
+  left: 0;
   width: 100%;
+  background: rgba(255, 255, 255, 0.8); // Optional mobile background
   box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
 }
+
 
 /* ANIMATION */
 @keyframes fadeIn {
@@ -312,6 +318,7 @@ ion-toolbar {
 .mobile-only {
   display: none;
 }
+
 // Improved Responsive (Mobile)
 @media screen and (max-width: 480px) {
   .desktop-only {
@@ -319,16 +326,24 @@ ion-toolbar {
   }
   
   .mobile-only {
-    display: block;
-    //margin-top: 130px;
-    
+    display: block;    
   }
+
+  ion-content {
+  --background: none;
+  background: url("/assets/blobs-phone.svg") no-repeat center center;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
+
   ion-card {
   background-color: #fff;
   border-radius: 16px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   margin-top: 70px;
- 
 }
   
 }
