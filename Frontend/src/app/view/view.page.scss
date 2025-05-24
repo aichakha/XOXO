@@ -115,7 +115,7 @@ ion-item {
   color: #333;
 }
 ion-icon {
-  font-size: 20px;
+  font-size: 24px;
   color: #7a49d0;
 }
 ion-item:hover {
@@ -237,8 +237,6 @@ ion-toolbar {
   --background: #ffffff;
   --border-color: #e0e0e0;
   --border-width: 1px 0 0 0;
-  --padding-top: 10px;
-  --padding-bottom: 10px;
   width: 100%;
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
 }
