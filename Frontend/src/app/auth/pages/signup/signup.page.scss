@@ -1,8 +1,8 @@
 /* Styling for ion-content */
 ion-content {
   --background: none;
-  background: linear-gradient(to right, #000000b3, #00000000);
-  background-size: contain;
+  background: url("/assets/blobs.svg") no-repeat center center;
+  background-size: cover;
   display: flex;
   align-items: center;
   height: 100vh;
@@ -14,18 +14,19 @@ ion-content {
 /* Styling for the form container */
 .form-container {
   width: 100%; /* Full width of its parent container */
-  max-width:480px;
-  height: 450px;
+  max-width: 450px;
+  height: 465px;
   background: #fff;
- 
+  padding: 1.5rem;
   border-radius: 30px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
   max-height: 80vh;
   overflow: hidden;
-  opacity: 0.9;
-  margin: 50px; /* Ensure the container is centered */
+  margin-top: 75px;
+  margin-left: 150px;
 }
+
 @media (max-width: 768px) {
   .form-container {
     padding: 1rem;
@@ -34,28 +35,32 @@ ion-content {
     margin-top: 20px;
     width: 120%;
     margin-left: 20px;
-  }}
+  }
+}
 
 @media (width: 768px) {
-    .form-container {
-      padding: 1rem;
-      max-width: 90%;
-      max-height: 90vh;
-      margin-top: 40px;
-      width: 80%;
-      opacity: 0.8;
-      margin-left: 20px;
-    }}
-    @media (width: 820px) {
-      .form-container {
-        padding: 1rem;
-        max-width: 90%;
-        max-height: 90vh;
-        margin-top: 40px;
-        width: 80%;
-        opacity: 0.8;
-        margin-left: 20px;
-      }}
+  .form-container {
+    padding: 1rem;
+    max-width: 90%;
+    max-height: 90vh;
+    margin-top: 40px;
+    width: 80%;
+    opacity: 0.8;
+    margin-left: 20px;
+  }
+}
+
+@media (width: 820px) {
+  .form-container {
+    padding: 1rem;
+    max-width: 90%;
+    max-height: 90vh;
+    margin-top: 40px;
+    width: 80%;
+    opacity: 0.8;
+    margin-left: 20px;
+  }
+}
 
 h2 {
   font-size: 1.5rem;
@@ -89,6 +94,7 @@ a {
 
   &:hover {
     text-decoration: underline;
+    cursor: pointer;
   }
 }
 
@@ -98,7 +104,6 @@ ion-button {
   --color: white;
   --border-radius: 10px;
   font-size: 1.1rem;
-
   transition: 0.3s ease-in-out;
   width: 100%; /* Ensure button spans full width */
 
@@ -116,9 +121,10 @@ ion-button {
   position: fixed;
   bottom: 0;
   right: 0;
-  width: 30%; /* Réduire la taille sur les grands écrans */
+  width: 40%; /* Réduire la taille sur les grands écrans */
+  margin-right: 80px;
   height: auto;
-  //opacity: 0.8;
+  opacity: 0.8;
   pointer-events: none; /* Empêche l’image d'interférer avec les clics */
   z-index: -1;
   mix-blend-mode: multiply;
@@ -128,19 +134,12 @@ ion-button {
 @media (max-width: 768px) {
   .background-image {
     width: 85%;
-    opacity: 0.6;
-    margin-left: 100px; ;
+    opacity: 0.8;
+    margin-right: 35px;
   }
-
  
-}
-
-@media (width: 768px) {
-  .background-image {
-    width: 67%;
-    //opacity: 0.6;
-    margin-left: 100px; 
+  ion-content {
+    background: url("/assets/blobs-phone.svg") no-repeat center center;
+    background-size: cover;
   }
-
- 
 }

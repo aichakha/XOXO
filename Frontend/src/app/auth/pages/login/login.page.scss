@@ -1,8 +1,8 @@
 /* Styling for ion-content */
 ion-content {
   --background: none;
-  background: linear-gradient(to right, #000000b3, #00000000);
-  background-size: contain;
+  background: url("/assets/blobs.svg") no-repeat center center;
+  background-size: cover;
   display: flex;
   flex-direction: column; 
   justify-content: center; /* Center the content horizontally */
@@ -40,7 +40,8 @@ ion-content {
     max-width: 90%;
     max-height: 90vh;
     margin-top: 35px;
-
+    max-height: 420px;         // ✅ Reduce visible height
+    
     ion-button {
       font-size: 0.9rem;
       padding: 10px;
@@ -50,8 +51,8 @@ ion-content {
       font-size: 1rem;
     }
   }
-
 }
+
 /* Wrapper for the form */
 .form-wrapper {
   width: 100%; /* Ensures the form takes up the full container width */
@@ -60,6 +61,7 @@ ion-content {
   justify-content: flex-start;
   gap: 1rem; /* Adds spacing between form fields */
 }
+
 
 /* Prevent image from taking up too much space */
 .image-container {
@@ -112,6 +114,7 @@ a {
 
   &:hover {
     text-decoration: underline;
+    cursor: pointer;
   }
 }
 ion-item {
@@ -126,7 +129,8 @@ ion-input {
   position: fixed;
   bottom: 0;
   right: 0;
-  width: 50%; /* Réduire la taille sur les grands écrans */
+  width: 45%; /* Réduire la taille sur les grands écrans */
+  margin-right: 3%;
   height: auto;
   opacity: 0.8;
   pointer-events: none; /* Empêche l’image d'interférer avec les clics */
@@ -137,18 +141,12 @@ ion-input {
 /* Ajustement pour les écrans de petite taille (mobile) */
 @media (max-width: 768px) {
   .background-image {
-    width: 100%;
-    opacity: 0.6;
+    width: 90%;
+    opacity: 0.8;
   }
 
- 
-}
-
-/* Ajustement pour les écrans moyens et grands (tablettes, bureau, etc.) */
-@media (min-width: 769px) {
-  .background-image {
-    width: 45%; /* Ajuste encore plus pour les grands écrans */
-    opacity: 0.8;
-
+  ion-content {
+    background: url("/assets/blobs-phone.svg") no-repeat center center;
+    background-size: cover;
   }
 }
