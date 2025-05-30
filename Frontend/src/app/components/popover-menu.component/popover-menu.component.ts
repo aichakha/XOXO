@@ -115,7 +115,7 @@ export class PopoverMenuComponent {
     this.isLoading = true;
     this.loadingMessage = 'Translating...';
     this.presentLoading1().then((loading) => {
-      this.http.post<any>('https://8ba2-102-158-116-161.ngrok-free.app/translate/', {
+      this.http.post<any>('https://aede-197-26-245-239.ngrok-free.app/translate/', {
         text: this.originalText,
 
         src_lang: this.detectedLanguage, 
@@ -158,7 +158,7 @@ export class PopoverMenuComponent {
       subject,
       text: finalText
     };
-    this.http.post('https://d141-102-158-116-161.ngrok-free.app/mail/send', payload).subscribe({
+    this.http.post('https://ccc1-197-26-245-239.ngrok-free.app/mail/send', payload).subscribe({
       next: () => {
         this.showToast(' Email sent successfully !');
       },

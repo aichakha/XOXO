@@ -810,7 +810,7 @@ sendEmail(to: string, subject: string, text: string) {
     text
   };
 
-  this.http.post('https://d141-102-158-116-161.ngrok-free.app/mail/send', payload).subscribe({
+  this.http.post('https://ccc1-197-26-245-239.ngrok-free.app/mail/send', payload).subscribe({
     next: () => {
       this.showToast(' Mail sent successfully !');
     },
@@ -852,7 +852,7 @@ openModal() {
     text: this.translatedText || this.transcribedText,
   };
 
-  this.http.post<any>('https://d141-102-158-116-161.ngrok-free.app/text/generate-url', payload).subscribe(
+  this.http.post<any>('https://ccc1-197-26-245-239.ngrok-free.app/text/generate-url', payload).subscribe(
     (res) => {
       const shareableUrl = res.url;
 
