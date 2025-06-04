@@ -256,7 +256,7 @@ sendEmail(to: string, subject: string) {
     text: this.transcribedText
   };
 
-  this.http.post('https://ccc1-197-26-245-239.ngrok-free.app/mail/send', payload).subscribe({
+  this.http.post('https://714e-154-111-224-232.ngrok-free.app/mail/send', payload).subscribe({
     next: () => this.showToast('Email envoyé !'),
     error: err => this.showToast('Erreur envoi mail')
   });
@@ -310,52 +310,71 @@ hideSummarizeMenu() {
   this.summarizeMenuOpen = false;
 }
  
-   /* summarizeText(text: string, type: string) {
-      console.log(`👉 Summarizing text with level: ${type}`);
+// === VARIABLES D'ÉTAT ===
+originalText: string = ''; // Texte transcrit initial (jamais modifié)
+originalSummary: string = ''; // Résumé du texte original (si créé)
 
-      this.isLoading = true;
-      this.loadingMessage = 'Summarizing...';
-
-      this.presentLoading().then((loading) => {
-        this.http.post<any>('https://aede-197-26-245-239.ngrok-free.app/summarize/', { text, type }).subscribe({
-          next: (response: any) => {
-            console.log('✅ Summary received:', response);
-            if (response && response.summary) {
-              this.transcribedText = response.summary;
-            } else {
-              console.error('⚠️ Invalid response format:', response);
-              this.errorMessage = 'Invalid response from server';
-            }
-            this.isLoading = false;
-            loading.dismiss();
-          },
-          error: (error) => {
-            console.error('❌ Error generating summary:', error);
-            this.errorMessage = 'Error generating the summary';
-            this.isLoading = false;
-            loading.dismiss();
-          }
-        });
-      });
-    }
-*/
+hasBeenSummarized: boolean = false; // Indique si un résumé a été créé
 isFirstSummary: boolean = true;
+isFirstTranslation: boolean = true;
+sourceLanguage: string = ''; // Langue du texte source
+
+
+// === MÉTHODES UTILITAIRES ===
+getWordCount(text: string): number {
+  return text.trim().split(/\s+/).filter(word => word.length > 0).length;
+}
+
+
+// Vérification si traduction possible (limite 500 mots)
+async canTranslate(text: string): Promise<boolean> {
+  const wordCount = this.getWordCount(text);
+  console.log('📊 Word count:', wordCount);
+  
+  if (wordCount <= 500) {
+    console.log('✅ Translation allowed');
+    return true;
+  } else {
+    console.log('❌ Translation blocked - text too long');
+    const toast = await this.toastController.create({
+      message: `Text too long (${wordCount} words). Please summarize first (maximum 500 words).`,
+      duration: 4000,
+      color: 'warning',
+      buttons: [
+        {
+          text: 'OK',
+          role: 'cancel'
+        }
+      ]
+    });
+    await toast.present();
+    return false;
+  }
+}
+
+// === MÉTHODES DE RÉSUMÉ ===
 summarizeAndReset(text: string, type: string) {
+ 
   if (!this.originalText) {
     this.originalText = this.transcribedText;
+    this.sourceLanguage = this.detectedLanguage;
+    console.log('💾 Original text saved for future operations');
   }
 
+  // Réinitialiser au texte original avant de résumer
   if (this.isFirstSummary) {
     this.isFirstSummary = false;
+    console.log('🔄 First summary operation');
   } else {
     this.transcribedText = this.originalText;
+    console.log('🔄 Reset to original text before new summary');
   }
 
-  console.log('Text has been reset to transcribed (original):', this.transcribedText);
-
+  console.log('📝 Starting summary from original text');
   this.summarizeText(this.transcribedText, type);
 }
-summarizeText(text: string, summary_type: string , max_input_len: number = 2048) {
+
+summarizeText(text: string, summary_type: string, max_input_len: number = 2048) {
   console.log(`👉 Summarizing text with level: ${summary_type}`);
 
   this.isLoading = true;
@@ -369,16 +388,20 @@ summarizeText(text: string, summary_type: string , max_input_len: number = 2048)
   };
 
   this.presentLoading().then((loading) => {
-    this.http.post<any>('https://aede-197-26-245-239.ngrok-free.app/summarize/', payload).subscribe({
+    this.http.post<any>('https://714e-154-111-224-232.ngrok-free.app/summarize/', payload).subscribe({
       next: (response) => {
         console.log('✅ Summary received:', response);
 
         if (response && response.summary) {
           this.transcribedText = response.summary;
-
-          // Si tu veux "revenir au texte original" pour la prochaine génération
-          // réinitialise ici si nécessaire (par exemple stocker le texte original dans une variable séparée)
-          // this.originalText = text;
+          this.originalSummary = response.summary; // Sauvegarder le résumé  //new 
+          this.hasBeenSummarized = true;//new
+          
+          // Statistiques  new
+          const originalWordCount = this.getWordCount(this.originalText);
+          const summaryWordCount = this.getWordCount(response.summary);
+          console.log(`📊 Summary stats: ${originalWordCount} → ${summaryWordCount} words`);
+          console.log('💡 Summary will be used as source for translations');
 
         } else {
           console.error('⚠️ Invalid response format:', response);
@@ -398,76 +421,123 @@ summarizeText(text: string, summary_type: string , max_input_len: number = 2048)
   });
 }
 
-originalText: string = ''; 
-
-async canTranslate(text: string): Promise<boolean> {
-  const wordCount = text.trim().split(/\s+/).length;
-
-  if (wordCount <= 400) {
-    return true;
-  } else {
-    const toast = await this.toastController.create({
-      message: ' Please do Summarize first (text must be between 200 and 400 words)',
-      duration: 3000,
-      color: 'warning',
-      //position: 'top'
-    });
-    await toast.present();
-    return false;
+// === MÉTHODES DE TRADUCTION ===
+translateAndReset(text: string, targetLang: string) {
+  if (!this.originalText) {
+    this.originalText = this.transcribedText;
+    this.sourceLanguage = this.detectedLanguage; // new
+    console.log('💾 Original text and source language saved');
   }
+
+  if (this.isFirstTranslation) {
+    this.isFirstTranslation = false;
+    console.log('🔄 First translation operation');
+  } else {
+    this.translatedText = null; // Reset pour compatibilité
+    console.log('🔄 Reset for new translation');
+  }
+
+  // Déterminer le texte SOURCE à traduire
+  let sourceTextToTranslate: string;
+  // new
+  if (this.hasBeenSummarized && this.originalSummary) {
+    // Si un résumé existe, TOUJOURS l'utiliser comme source
+    sourceTextToTranslate = this.originalSummary;
+    console.log('🎯 Using SUMMARY as translation source (consistent)');
+  } else {
+    // Sinon utiliser le texte original
+    sourceTextToTranslate = this.originalText;
+    console.log('🎯 Using ORIGINAL text as translation source');
+  }
+
+  console.log(`🌐 Translation: ${this.sourceLanguage} → ${targetLang}`);
+  console.log('📄 Source text preview:', sourceTextToTranslate.substring(0, 100) + '...');
+
+  // Effectuer la traduction
+  this.translateText(sourceTextToTranslate, targetLang);//new
 }
+
 async translateText(text: string, targetLang: string) {
+  // Vérifier la limite de 500 mots
   const canTranslate = await this.canTranslate(text);
-  if (!this.canTranslate(text)) return;
-  if (!canTranslate) return;
-  console.log('👉 Translating text:', text, 'to:', targetLang);
-  if (!text || !targetLang) return;
-  this.originalText = text; 
+  if (!canTranslate) {
+    console.log('🚫 Translation cancelled - text exceeds 500 words');
+    return;
+  }
+
+  console.log('👉 Starting translation process');
+  if (!text || !targetLang) {
+    console.log('❌ Missing text or target language');
+    return;
+  }
+
   this.isLoading = true;
   this.loadingMessage = 'Translating...';
-  this.presentLoading1().then((loading) => {
-    this.http.post<any>('https://ccc1-197-26-245-239.ngrok-free.app/translate', {
-      text: this.originalText,
+  this.errorMessage = '';
 
-      srcLang: this.detectedLanguage, 
+  this.presentLoading1().then((loading) => {
+    this.http.post<any>('https://714e-154-111-224-232.ngrok-free.app/translate', {
+      text: text, // Utiliser le texte passé en paramètre  // new
+      srcLang: this.sourceLanguage || this.detectedLanguage,
       tgtLang: targetLang
     }).subscribe({
       next: (response) => {
         console.log('✅ Translation received:', response);
-        this.transcribedText = response.translation; 
+        this.transcribedText = response.translation;
         this.isLoading = false;
-        loading.dismiss(); 
+        loading.dismiss();
       },
       error: (error) => {
         console.error('❌ Error translating:', error);
         this.errorMessage = 'Erreur lors de la traduction.';
         this.isLoading = false;
-        loading.dismiss(); 
+        loading.dismiss();
       }
     });
   });
 }
-isFirstTranslation: boolean = true;
 
-translateAndReset(text: string, targetLang: string) {
-  if (!this.originalText) {
-    this.originalText = this.transcribedText; 
+// === MÉTHODES DE RÉINITIALISATION ===
+resetText() {
+  this.translatedText = null;
+  if (this.originalText) {
+    this.transcribedText = this.originalText;
+    console.log('🔄 Text reset to original:', this.transcribedText.substring(0, 50) + '...');
   }
-  if (this.isFirstTranslation) {
-    this.isFirstTranslation = false;  
-  } else {
-  
-    this.translatedText = null;  
-  }
-
-  
-  this.transcribedText = this.originalText;
-
-  console.log('Text has been reset to transcribed (original):', this.transcribedText);
-
-  
-  this.translateText(this.transcribedText, targetLang);
 }
+
+resetToOriginal() {
+  if (this.originalText) {
+    this.transcribedText = this.originalText;
+    this.translatedText = null;
+    this.hasBeenSummarized = false;
+    this.originalSummary = '';
+    this.isFirstSummary = true;
+    this.isFirstTranslation = true;
+    console.log('🔄 Complete reset to original state');
+  }
+}
+
+// === MÉTHODES D'ÉTAT ===
+getCurrentStatus(): string {
+  const wordCount = this.getWordCount(this.transcribedText);
+  let status = 'original';
+  
+  if (this.hasBeenSummarized) {
+    status = 'summarized';
+  }
+  
+  const lastTranslation = this.transcribedText !== this.originalText && !this.hasBeenSummarized ? ' (translated)' : '';
+  
+  return `Current: ${wordCount} words (${status}${lastTranslation})`;
+}
+
+isTranslationAllowed(): boolean {
+  const wordCount = this.getWordCount(this.hasBeenSummarized ? this.originalSummary : this.originalText);
+  return wordCount <= 500;
+}
+
+// === MÉTHODES DE LOADING ===
 async presentLoading1() {
   const loading = await this.loadingCtrl.create({
     message: 'Translating...', 
@@ -478,11 +548,6 @@ async presentLoading1() {
 
   await loading.present();  
   return loading;  
-}
-resetText() {
-  this.translatedText = null; 
-  this.transcribedText = this.originalText;
-  console.log('Text has been reset to original:', this.transcribedText);
 }
 
 
@@ -781,7 +846,7 @@ openModal() {
     text: this.translatedText || this.transcribedText,
   };
 
-  this.http.post<any>('https://ccc1-197-26-245-239.ngrok-free.app/text/generate-url', payload).subscribe(
+  this.http.post<any>('https://714e-154-111-224-232.ngrok-free.app/text/generate-url', payload).subscribe(
     (res) => {
       const shareableUrl = res.url;
 

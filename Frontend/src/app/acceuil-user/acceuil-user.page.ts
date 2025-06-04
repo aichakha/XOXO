@@ -165,7 +165,7 @@ export class AcceuilUserPage implements OnInit,AfterViewInit {
     let apiUrl = '';
 
     if (this.uploadedFile) {
-      apiUrl = 'https://ccc1-197-26-245-239.ngrok-free.app/ai/transcribe';
+      apiUrl = 'https://714e-154-111-224-232.ngrok-free.app/ai/transcribe';
       formData.append('file', this.uploadedFile);
 
       const loading = await this.loadingCtrl.create({
@@ -207,7 +207,7 @@ export class AcceuilUserPage implements OnInit,AfterViewInit {
       });
 
     } else if (this.mediaUrl.trim()) {
-      apiUrl = 'https://ccc1-197-26-245-239.ngrok-free.app/ai/process';
+      apiUrl = 'https://714e-154-111-224-232.ngrok-free.app/ai/process';
       const requestBody = { url: encodeURIComponent(this.mediaUrl) };
 
 

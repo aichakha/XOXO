@@ -14,11 +14,14 @@ import {
   shareSocialOutline, shareOutline, mailOutline, pin, pinOutline, downloadOutline, linkOutline, copyOutline, menuOutline, languageOutline,
   logoUsd, logoEuro, globeOutline, earthOutline, documentOutline, documentTextOutline, expandOutline, contractOutline, ellipsisHorizontalOutline,
   createOutline, saveOutline, homeOutline, helpCircleOutline,
+  flagOutline,
+  chevronUpOutline,
+  chevronDownOutline,
 } from 'ionicons/icons';
 
 addIcons({
-  heart, helpCircleOutline, homeOutline, pin, pinOutline,
-  trash, shareSocialOutline, menu, mailOutline,
+  heart, helpCircleOutline, homeOutline, pin, pinOutline,'flag-outline': flagOutline,'chevron-up-outline': chevronUpOutline,
+  trash, shareSocialOutline, menu, mailOutline,'chevron-down-outline': chevronDownOutline,
   linkOutline, heartOutline, downloadOutline,
   documentTextOutline, copyOutline, shareOutline,
   menuOutline, languageOutline, logoUsd, logoEuro,
